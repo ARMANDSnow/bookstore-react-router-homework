@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+tmp/
+*.log
+.env
+
+# Homework hand-in files and generated documents
+*.pdf
+*.docx
+*.zip
+答题纸.txt
+scripts/create_answer_doc.py
