@@ -11,3 +11,22 @@ tmp/
 *.zip
 答题纸.txt
 scripts/create_answer_doc.py
+
+# Backend build artifacts
+backend/target/
+backend/lib/
+
+# Local tooling caches
+.claude/
+.playwright-cli/
+
+# Author's local working folders (not part of the deliverable)
+临时文件/
+作业说明图片/
+历史文件/
+提交文件/
+课程要求与提交文件/
+辅助脚本/
+构建产物/
+output/
+作业答题纸.docx
