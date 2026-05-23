@@ -1,103 +1,137 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { Row, Col, Typography, Button, Descriptions, Breadcrumb, Divider, Image, Card, Tag, Space, Skeleton } from "antd";
+import { ShoppingCartOutlined, PayCircleOutlined, LeftOutlined } from "@ant-design/icons";
 import BookCard from "../components/BookCard.jsx";
 
-export default function BookDetailPage({ books, selectedBook, onBookSelect, onAddToCart }) {
+const { Title, Paragraph, Text } = Typography;
+
+export default function BookDetailPage({ books, loading, selectedBook, onBookSelect, onAddToCart }) {
   const { bookId } = useParams();
   const { state } = useLocation();
+  const navigate = useNavigate();
+  
   const book =
     state?.book ||
     (selectedBook?.id === bookId ? selectedBook : null) ||
     books.find((item) => item.id === bookId);
 
+  if (loading) {
+    return <Skeleton active paragraph={{ rows: 10 }} />;
+  }
+
   if (!book) {
     return (
-      <section className="empty-state">
-        <h1>没有找到这本书</h1>
-        <p>请返回书籍列表重新选择。</p>
-        <Link className="button button-primary" to="/books">
+      <div style={{ textAlign: "center", padding: "100px 0" }}>
+        <Title level={2}>没有找到这本书</Title>
+        <Button type="primary" onClick={() => navigate("/books")}>
           返回列表
-        </Link>
-      </section>
+        </Button>
+      </div>
     );
   }
 
-  const relatedBooks = books.filter((item) => item.category === book.category && item.id !== book.id).slice(0, 3);
+  const relatedBooks = books.filter((item) => item.category === book.category && item.id !== book.id).slice(0, 4);
 
   return (
-    <>
-      <nav className="breadcrumb" aria-label="面包屑">
-        <Link to="/books">首页</Link>
-        <span>/</span>
-        <span>{book.title}</span>
-      </nav>
-      <section className="detail-layout">
-        <figure className="detail-cover">
-          <img src={book.image} alt={`${book.title}封面`} />
-        </figure>
-        <article className="detail-content">
-          <header className="section-header compact">
-            <p className="eyebrow">Book Detail</p>
-            <h1>{book.title}</h1>
-            <p>{book.author} 著</p>
-          </header>
-          <div className="price-box">
-            <strong>¥{book.price.toFixed(2)}</strong>
-            <span>原价 ¥{book.originalPrice.toFixed(2)}</span>
-            <mark>{book.badge}</mark>
-          </div>
-          <p className="detail-summary">{book.summary}</p>
-          <ul className="feature-list">
-            <li>分类：{book.categoryLabel}</li>
-            <li>评分：{book.rating}</li>
-            <li>库存：现货充足</li>
-            <li>配送：满 99 元包邮</li>
-          </ul>
-          <div className="detail-actions">
-            <button className="button button-primary" type="button" onClick={() => onAddToCart(book)}>
-              加入购物车
-            </button>
-            <Link className="button button-secondary" to="/cart">
-              立即结算
-            </Link>
-            <Link className="text-link" to="/books">
-              返回列表
-            </Link>
-          </div>
-        </article>
-      </section>
-      <section className="detail-sections">
-        <article className="info-card">
-          <header className="section-header compact">
-            <h2>内容亮点</h2>
-          </header>
-          <p>{book.highlight}</p>
-        </article>
-        <article className="info-card">
-          <header className="section-header compact">
-            <h2>适合人群</h2>
-          </header>
-          <p>{book.audience}</p>
-        </article>
-        <article className="info-card">
-          <header className="section-header compact">
-            <h2>读者评价</h2>
-          </header>
-          <p>{book.review}</p>
-        </article>
-      </section>
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <Breadcrumb
+        items={[
+          { title: <a onClick={() => navigate("/books")}>首页</a> },
+          { title: "书籍详情" },
+          { title: book.title },
+        ]}
+      />
+
+      <Card variant="borderless" className="detail-card" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+        <Row gutter={[48, 24]}>
+          <Col xs={24} md={8} style={{ textAlign: "center" }}>
+            <Image
+              src={book.image}
+              alt={book.title}
+              style={{ width: "100%", maxWidth: 300, boxShadow: "0 8px 24px rgba(0,0,0,0.15)", borderRadius: 8 }}
+            />
+          </Col>
+          <Col xs={24} md={16}>
+            <Title level={1} style={{ marginBottom: 8 }}>{book.title}</Title>
+            <Text type="secondary" style={{ fontSize: 16 }}>{book.author} 著</Text>
+            
+            <div className="detail-price-panel" style={{ margin: "24px 0", padding: "16px 24px", background: "#fcf8e3", borderRadius: 8 }}>
+              <Space align="baseline" size="large">
+                <span className="price-text" style={{ fontSize: 28 }}>¥{book.price.toFixed(2)}</span>
+                <span className="original-price" style={{ fontSize: 16 }}>定价: ¥{book.originalPrice.toFixed(2)}</span>
+                {book.badge && <Tag color="red">{book.badge}</Tag>}
+              </Space>
+            </div>
+
+            <Paragraph style={{ fontSize: 16, lineHeight: 1.8 }}>
+              {book.summary}
+            </Paragraph>
+
+            <Descriptions column={2} style={{ marginTop: 24 }}>
+              <Descriptions.Item label="分类">{book.categoryLabel}</Descriptions.Item>
+              <Descriptions.Item label="豆瓣评分">
+                <Text type="warning" strong>{book.rating}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="库存状态">
+                <Tag color="green">现货充足</Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="配送服务">满 99 元包邮</Descriptions.Item>
+            </Descriptions>
+
+            <Space size="middle" style={{ marginTop: 32 }}>
+              <Button 
+                type="primary" 
+                size="large" 
+                icon={<ShoppingCartOutlined />} 
+                onClick={() => onAddToCart(book)}
+              >
+                加入购物车
+              </Button>
+              <Button 
+                size="large" 
+                icon={<PayCircleOutlined />} 
+                onClick={() => navigate("/cart")}
+              >
+                立即结算
+              </Button>
+              <Button type="link" icon={<LeftOutlined />} onClick={() => navigate("/books")}>
+                返回列表
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+      </Card>
+
+      <Row gutter={[24, 24]}>
+        <Col xs={24} md={8}>
+          <Card title="内容亮点" variant="borderless" className="info-card" style={{ height: "100%" }}>
+            <Paragraph>{book.highlight}</Paragraph>
+          </Card>
+        </Col>
+        <Col xs={24} md={8}>
+          <Card title="适合人群" variant="borderless" className="info-card" style={{ height: "100%" }}>
+            <Paragraph>{book.audience}</Paragraph>
+          </Card>
+        </Col>
+        <Col xs={24} md={8}>
+          <Card title="读者评价" variant="borderless" className="info-card" style={{ height: "100%" }}>
+            <Paragraph>{book.review}</Paragraph>
+          </Card>
+        </Col>
+      </Row>
+
       {relatedBooks.length > 0 && (
-        <section className="related-section">
-          <header className="section-header compact">
-            <p className="eyebrow">Related</p>
-            <h2>同类推荐</h2>
-          </header>
-          <div className="books-grid related-grid">
+        <>
+          <Divider titlePlacement="left">同类推荐</Divider>
+          <Row gutter={[24, 24]}>
             {relatedBooks.map((item) => (
-              <BookCard key={item.id} book={item} onBookSelect={onBookSelect} onAddToCart={onAddToCart} />
+              <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
+                <BookCard book={item} onBookSelect={onBookSelect} onAddToCart={onAddToCart} />
+              </Col>
             ))}
-          </div>
-        </section>
+          </Row>
+        </>
       )}
-    </>
+    </div>
   );
 }

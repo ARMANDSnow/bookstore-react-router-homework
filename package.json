@@ -9,11 +9,12 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.1",
     "@vitejs/plugin-react": "^5.0.4",
-    "vite": "^7.1.7",
+    "antd": "^6.3.6",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.3"
-  },
-  "devDependencies": {}
+    "react-router-dom": "^7.9.3",
+    "vite": "^7.1.7"
+  }
 }
