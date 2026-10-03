@@ -39,6 +39,15 @@
 3. **JUnit 单元测试**：`backend/src/test/` 下 26 个用例（Service 层 Mockito + Repository 层 `@DataJpaTest`），`mvn test` 全绿，用 H2 内存库、不依赖 MySQL。
 4. **详情页接真接口**：`BookDetailPage` 改为 `useEffect` 调 `GET /api/v1/book/{id}`，优先展示数据库数据。
 
+### 界面改造（温暖纸感）
+
+采用米白背景、墨绿主色和宋体标题，通过 CSS 变量与 Ant Design `ConfigProvider` 统一颜色、字号、按钮和表单。
+
+- **导航与选书**：顶部品牌、全站搜索与横向导航；书籍封面完整显示，分类和价格排序配合真实搜索结果。
+- **购买流程**：详情页分区展示书籍信息；购物车在桌面采用商品列表与右侧金额摘要，手机改为逐件商品布局；订单保留日期与书名筛选。
+- **账户与管理**：登录注册、个人信息、消费统计、书籍管理和用户管理沿用同一套样式，保留现有接口和操作。
+- **手机适配**：导航抽屉、自动换行的筛选与按钮、完整可操作的表单，以及可横向滚动的数据表格。
+
 ---
 
 ## 二、目录结构与设计理由
@@ -59,7 +68,7 @@
 │   │   ├── authService.js
 │   │   └── cartService.js
 │   ├── components/          ← 通用组件
-│   │   ├── Layout.jsx       ← Sider + Header（用户名、退出按钮）
+│   │   ├── Layout.jsx       ← 顶部搜索与导航、账户、手机导航抽屉
 │   │   ├── BookCard.jsx
 │   │   ├── HeroBanner.jsx
 │   │   └── CategoryFilter.jsx
@@ -162,7 +171,7 @@
 |------|------|----------|
 | JDK | 17 及以上（编译目标为 17，实测 17–26 均可运行） | `java -version` |
 | Maven | 3.8+（或用 IDE 内置） | `mvn -version` |
-| Node.js | 18 及以上 | `node -version` |
+| Node.js | 20.19+（20.x）或 22.12+ | `node --version` |
 | MySQL | 8.x（服务需已启动） | `mysqladmin ping` |
 
 > **关于 JDK 版本**：`pom.xml` 编译目标是 Java 17。若你的机器是 JDK 21+，跑测试所需的 Mockito / ByteBuddy 版本已在 `pom.xml` 里处理好兼容，`mvn test` 可直接运行，无需切换 JDK。
@@ -607,7 +616,7 @@ if (payload && Object.prototype.hasOwnProperty.call(payload, "code")) {
 | 必要注释 | 2 | 已实现 | `pom.xml`、配置类、关键业务方法、README 与架构文档补充了答辩说明 |
 | **D. 界面友好** | **5** | 已实现 | Ant Design 页面、电子商务常见操作路径、响应式布局 |
 | 操作习惯 | 2 | 已实现 | 书籍浏览 → 详情 → 加购 → 购物车 → 下单 → 个人中心订单历史 |
-| 界面美观 | 2 | 已实现 | 统一布局、分类筛选、图书卡片、详情页、购物车表格、订单卡片 |
+| 界面美观 | 2 | 已实现 | 米白与墨绿主题、完整书封、分类筛选、详情分区、响应式购物车、订单卡片及统一账户与管理页面 |
 | 体验完整度 | 1 | 已实现 | 登录态持久化、后端不可达时图书列表降级展示、操作反馈使用 Ant Design message |
 
 ---

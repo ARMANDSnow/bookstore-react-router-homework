@@ -1,80 +1,71 @@
-import { Card, Button, Typography, Tag, Space } from "antd";
-import { ShoppingCartOutlined, EyeOutlined } from "@ant-design/icons";
+import { useRef, useState } from "react";
+import { Button } from "antd";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 
-const { Text } = Typography;
-
-// 纯展示组件：只根据 book props 渲染卡片，不自己请求数据、不保存业务状态。
-// 查看详情/加入购物车都通过回调交给父组件 App.jsx 处理，便于复用和测试。
+// 卡片只展示书籍与触发回调，登录、购物车及后端请求仍由 App 负责。
 export default function BookCard({ book, onBookSelect, onAddToCart }) {
+  const [adding, setAdding] = useState(false);
+  const addingRef = useRef(false);
   const stock = book.stock;
   const soldOut = stock !== undefined && stock !== null && stock <= 0;
   const price = Number(book.price || 0);
   const originalPrice = Number(book.originalPrice || 0);
+  const titleId = `book-title-${book.id}`;
+
+  async function handleAddToCart() {
+    if (soldOut || addingRef.current) return;
+    addingRef.current = true;
+    setAdding(true);
+    try {
+      await onAddToCart(book);
+    } finally {
+      addingRef.current = false;
+      setAdding(false);
+    }
+  }
 
   return (
-    <Card
-      hoverable
-      className="book-card-container"
-      cover={
-        <img
-          alt={book.title}
-          src={book.image}
-          // 点击封面等价于"查看详情"，由父组件负责路由跳转。
-          onClick={() => onBookSelect(book)}
-          style={{ cursor: "pointer", borderBottom: "1px solid #f0f0f0" }}
-        />
-      }
-      actions={[
-        <Button
-          type="text"
-          icon={<EyeOutlined />}
-          onClick={() => onBookSelect(book)}
-          key="view"
-        >
-          查看详情
-        </Button>,
-        <Button
-          type="text"
-          icon={<ShoppingCartOutlined />}
-          // 加车需要用户信息和后端调用，放在父组件统一处理。
-          onClick={() => onAddToCart(book)}
-          key="add"
-          style={{ color: "#2f6f64" }}
-          disabled={soldOut}
-        >
-          {soldOut ? "缺货" : "加入购物车"}
-        </Button>,
-      ]}
-      style={{ borderRadius: 8, overflow: "hidden" }}
-      styles={{ body: { padding: 16 } }}
-    >
-      <Card.Meta
-        title={
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span
-              onClick={() => onBookSelect(book)}
-              style={{ cursor: "pointer", flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}
-            >
-              {book.title}
-            </span>
-            {book.badge && <Tag color="volcano">{book.badge}</Tag>}
+    <article className="book-card" aria-labelledby={titleId}>
+      <button
+        type="button"
+        className="cover-link"
+        onClick={() => onBookSelect(book)}
+        aria-label={`查看《${book.title}》详情`}
+      >
+        <img src={book.image} alt={book.title} width={150} height={220} loading="lazy" />
+      </button>
+      <div className="book-info">
+        <div className="book-kicker">
+          <span>{book.categoryName || book.category}</span>
+          {book.badge && <><span className="tiny-line" aria-hidden="true" /><span>{book.badge}</span></>}
+        </div>
+        <h3 className="book-title" id={titleId}>
+          <button type="button" className="title-button" onClick={() => onBookSelect(book)}>{book.title}</button>
+        </h3>
+        <p className="book-author">{book.author} 著</p>
+        <p className="book-description">{book.description || book.summary}</p>
+        <div className="book-meta-row">
+          <span className={`book-stock${soldOut ? " sold-out" : ""}`}>
+            {soldOut ? "暂时缺货" : stock == null ? "现货充足" : `库存 ${stock} 本`}
+          </span>
+          <Button type="link" className="book-detail-link" onClick={() => onBookSelect(book)}>查看详情</Button>
+        </div>
+        <div className="book-buy">
+          <div className="book-price">
+            <span className="price-text"><span className="currency">¥</span>{price.toFixed(2)}</span>
+            {originalPrice > price && <span className="original-price" aria-label={`原价 ${originalPrice.toFixed(2)} 元`}>¥{originalPrice.toFixed(2)}</span>}
           </div>
-        }
-        description={
-          <Space direction="vertical" size={4} style={{ width: "100%" }}>
-            <Text type="secondary">{book.author} 著</Text>
-            <Text type={soldOut ? "danger" : "secondary"}>
-              {soldOut ? "暂时缺货" : stock == null ? "现货充足" : `库存 ${stock} 本`}
-            </Text>
-            <div style={{ marginTop: 8 }}>
-              <span className="price-text">¥{price.toFixed(2)}</span>
-              {originalPrice > price && (
-                <span className="original-price">¥{originalPrice.toFixed(2)}</span>
-              )}
-            </div>
-          </Space>
-        }
-      />
-    </Card>
+          <Button
+            className="add-button"
+            icon={<ShoppingCartOutlined />}
+            onClick={handleAddToCart}
+            loading={adding}
+            disabled={soldOut || adding}
+          >
+            {soldOut ? "缺货" : "加入购物车"}
+          </Button>
+        </div>
+      </div>
+    </article>
   );
 }

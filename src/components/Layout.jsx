@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Layout as AntLayout, Menu, Badge, Button, Space, Avatar } from "antd";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button, Drawer, Input } from "antd";
 import {
-  HomeOutlined,
   ShoppingCartOutlined,
   UserOutlined,
   BookOutlined,
@@ -11,173 +10,134 @@ import {
   DatabaseOutlined,
   OrderedListOutlined,
   BarChartOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
 
-const { Header, Sider, Content } = AntLayout;
-
 export default function Layout({ cartCount, children, user, onLogout }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-
-  // 根据当前路由高亮菜单项。答辩时可说明：路由状态来自 React Router，不用手动维护 selectedKey。
-  const getSelectedKey = () => {
-    if (location.pathname.startsWith("/books")) return "books";
-    if (location.pathname.startsWith("/cart")) return "cart";
-    if (location.pathname.startsWith("/orders")) return "orders";
-    if (location.pathname.startsWith("/stats")) return "stats";
-    if (location.pathname.startsWith("/admin/users")) return "admin-users";
-    if (location.pathname.startsWith("/admin/books")) return "admin-books";
-    if (location.pathname.startsWith("/profile")) return "profile";
-    return "books";
-  };
-
+  const navigate = useNavigate();
+  const keyword = new URLSearchParams(location.search).get("keyword") || "";
+  const [searchValue, setSearchValue] = useState(keyword);
   const isAdmin = user?.role === "ADMIN";
 
-  const menuItems = [
-    // Layout 是可复用框架组件：只关心导航、角标和登录展示，不关心书籍/订单业务细节。
-    {
-      key: "books",
-      icon: <HomeOutlined />,
-      label: <Link to="/books">主页</Link>,
-    },
-    {
-      key: "cart",
-      icon: <ShoppingCartOutlined />,
-      label: (
-        <Link to="/cart">
-          购物车{" "}
-          <Badge
-            count={cartCount}
-            size="small"
-            offset={[10, 0]}
-            style={{ backgroundColor: "#1890ff" }}
-          />
-        </Link>
-      ),
-    },
-    {
-      key: "orders",
-      icon: <OrderedListOutlined />,
-      label: <Link to="/orders">{isAdmin ? "订单管理" : "我的订单"}</Link>,
-    },
-    {
-      key: "stats",
-      icon: <BarChartOutlined />,
-      label: <Link to="/stats">统计分析</Link>,
-    },
-    ...(isAdmin
-      ? [
-          {
-            key: "admin-users",
-            icon: <TeamOutlined />,
-            label: <Link to="/admin/users">用户管理</Link>,
-          },
-          {
-            key: "admin-books",
-            icon: <DatabaseOutlined />,
-            label: <Link to="/admin/books">书籍管理</Link>,
-          },
-        ]
-      : []),
-    {
-      key: "profile",
-      icon: <UserOutlined />,
-      label: <Link to="/profile">个人信息</Link>,
-    },
+  useEffect(() => {
+    setSearchValue(keyword);
+  }, [keyword]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname, location.search]);
+
+  const links = [
+    { path: "/books", label: "图书目录", icon: <BookOutlined /> },
+    { path: "/cart", label: "购物车", icon: <ShoppingCartOutlined /> },
+    { path: "/orders", label: isAdmin ? "订单管理" : "我的订单", icon: <OrderedListOutlined /> },
+    { path: "/stats", label: "统计分析", icon: <BarChartOutlined /> },
+    ...(isAdmin ? [
+      { path: "/admin/users", label: "用户管理", icon: <TeamOutlined /> },
+      { path: "/admin/books", label: "书籍管理", icon: <DatabaseOutlined /> },
+    ] : []),
+    { path: "/profile", label: "个人信息", icon: <UserOutlined /> },
   ];
 
-  return (
-    <AntLayout style={{ minHeight: "100vh" }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-        theme="light"
-        style={{
-          boxShadow: "2px 0 8px 0 rgba(29,35,41,.05)",
-          zIndex: 10,
-        }}
+  function searchBooks(value) {
+    const query = (value || "").trim();
+    navigate(query ? `/books?keyword=${encodeURIComponent(query)}` : "/books");
+  }
+
+  function navigationLink(link) {
+    const active = location.pathname === link.path ||
+      (link.path === "/books" && location.pathname.startsWith("/books/"));
+    return (
+      <Link
+        key={link.path}
+        to={link.path}
+        className={`nav-link${active ? " active" : ""}`}
+        aria-current={active ? "page" : undefined}
+        onClick={() => setMenuOpen(false)}
       >
-        <div
-          className="app-logo"
-          style={{
-            height: 64,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: collapsed ? 24 : 20,
-            fontWeight: "bold",
-            color: "#1f4f49",
-            borderBottom: "1px solid rgba(47, 111, 100, 0.12)",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-          }}
-        >
-          <BookOutlined style={{ marginRight: collapsed ? 0 : 8 }} />
-          {!collapsed && "知页书城"}
-        </div>
-        <Menu
-          theme="light"
-          mode="inline"
-          selectedKeys={[getSelectedKey()]}
-          items={menuItems}
-          style={{ borderRight: 0, marginTop: 16 }}
-        />
-      </Sider>
-      <AntLayout>
-        <Header
-          style={{
-            padding: "0 24px",
-            background: "#fff",
-            boxShadow: "0 1px 4px rgba(0,21,41,.08)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Space size={16} align="center">
+        {link.icon}
+        <span>{link.label}</span>
+        {link.path === "/cart" && cartCount > 0 && (
+          <span className="nav-count" aria-label={`购物车 ${cartCount} 本图书`}>{cartCount}</span>
+        )}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="bookstore-app">
+      <a className="skip-link" href="#main-content">跳到主要内容</a>
+      <header className="site-header">
+        <div className="header-inner">
+          <Link className="brand" to="/books" aria-label="知页书城，返回图书目录">
+            <span className="brand-mark" aria-hidden="true"><BookOutlined /></span>
+            <span>
+              <strong className="brand-name">知页书城</strong>
+              <span className="brand-tag">把好书带回家</span>
+            </span>
+          </Link>
+
+          <div className="site-search" role="search" aria-label="搜索图书">
+            <label className="search-label" htmlFor="book-search">搜索图书</label>
+            <Input.Search
+              id="book-search"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+              onSearch={searchBooks}
+              placeholder="搜索书名 / 作者"
+              allowClear
+              enterButton="搜索"
+              size="large"
+            />
+          </div>
+
+          <div className="header-account">
             {user ? (
-              // Header 的 user 来自 App.jsx 顶层状态；登录/退出后通过 CustomEvent 同步刷新。
               <>
-                <Avatar
-                  size="small"
-                  icon={<UserOutlined />}
-                  style={{ backgroundColor: "#2f6f64" }}
-                />
-                <span>欢迎回来，{user.username}</span>
-                <Button
-                  size="small"
-                  icon={<LogoutOutlined />}
-                  onClick={onLogout}
-                >
-                  退出登录
-                </Button>
+                <Link to="/profile" className="account-chip" aria-label={`查看 ${user.username} 的个人信息`}>
+                  <span className="account-avatar" aria-hidden="true">{String(user.username || "读者").slice(0, 1).toUpperCase()}</span>
+                  <span className="account-copy">
+                    <strong>{user.username}</strong>
+                    <small>{isAdmin ? "管理员账户" : "读者账户"}</small>
+                  </span>
+                </Link>
+                <Button className="header-logout" type="text" icon={<LogoutOutlined />} onClick={onLogout}>退出登录</Button>
               </>
             ) : (
-              // 未登录时给出入口，真正的登录表单在 ProfilePage。
-              <>
-                <span>未登录</span>
-                <Link to="/profile">
-                  <Button size="small" type="primary">
-                    去登录
-                  </Button>
-                </Link>
-              </>
+              <Button className="header-login" onClick={() => navigate("/profile")} icon={<UserOutlined />}>去登录</Button>
             )}
-          </Space>
-        </Header>
-        <Content
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            background: "#fff",
-            borderRadius: 8,
-            overflow: "initial",
-          }}
-        >
-          {children}
-        </Content>
-      </AntLayout>
-    </AntLayout>
+            <Button
+              className="mobile-menu-toggle"
+              icon={<MenuOutlined />}
+              onClick={() => setMenuOpen(true)}
+              aria-label="打开导航菜单"
+            />
+          </div>
+        </div>
+        <nav className="top-nav" aria-label="主要导航">
+          {links.map(navigationLink)}
+          {!isAdmin && <span className="nav-tail">每一本，都是新世界的入口</span>}
+        </nav>
+      </header>
+
+      <Drawer title="知页书城" open={menuOpen} onClose={() => setMenuOpen(false)} placement="right">
+        <nav className="mobile-nav" aria-label="移动端导航">
+          {links.map(navigationLink)}
+        </nav>
+        {user && <Button type="text" icon={<LogoutOutlined />} onClick={() => { setMenuOpen(false); onLogout(); }}>退出登录</Button>}
+      </Drawer>
+
+      <main id="main-content" className="site-main" tabIndex={-1}>
+        {children}
+      </main>
+      <footer className="site-footer">
+        <div className="site-footer-inner">
+          <span><strong>知页书城</strong> · 把好书带回家</span>
+          <span>从技术实践到人文思考，找到适合你的那一本。</span>
+        </div>
+      </footer>
+    </div>
   );
 }

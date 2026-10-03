@@ -2,15 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Button,
-  Card,
   DatePicker,
   message,
-  Row,
-  Col,
-  Space,
   Statistic,
   Table,
-  Typography,
 } from "antd";
 import { BarChartOutlined, SearchOutlined } from "@ant-design/icons";
 import {
@@ -21,7 +16,6 @@ import {
 import { formatPrice } from "../utils/formatter.js";
 
 const { RangePicker } = DatePicker;
-const { Title, Text } = Typography;
 
 export default function StatsPage({ user }) {
   const [range, setRange] = useState(null);
@@ -64,111 +58,115 @@ export default function StatsPage({ user }) {
   }, [refresh]);
 
   if (!user) {
-    return <Alert type="warning" showIcon message="请先登录后查看统计" />;
+    return (
+      <section className="page stats-page">
+        <header className="page-heading">
+          <div>
+            <p className="eyebrow">阅读记录</p>
+            <h1>统计分析</h1>
+            <p className="page-description">查看图书购买记录与消费情况。</p>
+          </div>
+        </header>
+        <div className="state-panel">
+          <Alert type="warning" showIcon message="请先登录后查看统计" />
+        </div>
+      </section>
+    );
   }
 
   const salesColumns = [
-    { title: "排名", render: (_, __, index) => index + 1, width: 80 },
-    { title: "书名", dataIndex: "bookTitle" },
-    { title: "销量", dataIndex: "quantity" },
-    { title: "销售额", dataIndex: "totalAmount", render: formatPrice },
+    { title: "排名", render: (_, __, index) => index + 1, width: 68 },
+    { title: "书名", dataIndex: "bookTitle", width: 210 },
+    { title: "销量", dataIndex: "quantity", width: 80, align: "right" },
+    { title: "销售额", dataIndex: "totalAmount", render: formatPrice, width: 120, align: "right" },
   ];
 
   const userColumns = [
-    { title: "排名", render: (_, __, index) => index + 1, width: 80 },
-    { title: "用户", dataIndex: "username" },
-    { title: "订单数", dataIndex: "orderCount" },
-    { title: "累计消费", dataIndex: "totalAmount", render: formatPrice },
+    { title: "排名", render: (_, __, index) => index + 1, width: 68 },
+    { title: "用户", dataIndex: "username", width: 180 },
+    { title: "订单数", dataIndex: "orderCount", width: 90, align: "right" },
+    { title: "累计消费", dataIndex: "totalAmount", render: formatPrice, width: 140, align: "right" },
   ];
 
   const customerColumns = [
-    { title: "书名", dataIndex: "bookTitle" },
-    { title: "购买数量", dataIndex: "quantity" },
-    { title: "金额", dataIndex: "totalAmount", render: formatPrice },
+    { title: "书名", dataIndex: "bookTitle", width: 260 },
+    { title: "购买数量", dataIndex: "quantity", width: 120, align: "right" },
+    { title: "金额", dataIndex: "totalAmount", render: formatPrice, width: 140, align: "right" },
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <Space direction="vertical" size={2}>
-        <Title level={2} style={{ margin: 0 }}>统计分析</Title>
-        <Text type="secondary">
-          {isAdmin ? "按指定时间范围查看图书销量和用户消费排行。" : "按指定时间范围查看自己的购书情况。"}
-        </Text>
-      </Space>
-
-      <Card variant="borderless" className="profile-card">
-        <Space wrap>
-          <RangePicker value={range} onChange={setRange} />
-          <Button type="primary" icon={<SearchOutlined />} onClick={refresh}>
-            统计
-          </Button>
-        </Space>
-      </Card>
+    <section className="page stats-page">
+      <header className="page-heading">
+        <div>
+          <p className="eyebrow">{isAdmin ? "书城经营" : "阅读记录"}</p>
+          <h1>统计分析</h1>
+          <p className="page-description">
+            {isAdmin ? "按指定时间范围查看图书销量和用户消费排行。" : "按指定时间范围查看自己的购书情况。"}
+          </p>
+        </div>
+      </header>
+      <div className="paper-panel filter-bar stats-filter">
+        <span className="stats-filter-label">统计时间</span>
+        <RangePicker value={range} onChange={setRange} aria-label="统计日期范围" />
+        <Button type="primary" icon={<SearchOutlined />} onClick={refresh} loading={loading}>
+          统计
+        </Button>
+      </div>
 
       {isAdmin ? (
-        <Row gutter={[16, 16]}>
-          <Col xs={24} lg={12}>
-            <Card
-              title={<Space><BarChartOutlined />热销榜</Space>}
-              variant="borderless"
-              className="profile-card"
-            >
-              <Table
-                rowKey="bookId"
-                loading={loading}
-                columns={salesColumns}
-                dataSource={salesRank}
-                pagination={false}
-              />
-            </Card>
-          </Col>
-          <Col xs={24} lg={12}>
-            <Card
-              title={<Space><BarChartOutlined />消费榜</Space>}
-              variant="borderless"
-              className="profile-card"
-            >
-              <Table
-                rowKey="userId"
-                loading={loading}
-                columns={userColumns}
-                dataSource={userRank}
-                pagination={false}
-              />
-            </Card>
-          </Col>
-        </Row>
+        <div className="stats-rank-grid">
+          <section className="table-panel stats-table-panel" aria-labelledby="sales-rank-title">
+            <h2 id="sales-rank-title" className="stats-section-title"><BarChartOutlined /> 热销榜</h2>
+            <Table
+              rowKey="bookId"
+              loading={loading}
+              columns={salesColumns}
+              dataSource={salesRank}
+              pagination={false}
+              scroll={{ x: 478 }}
+            />
+          </section>
+          <section className="table-panel stats-table-panel" aria-labelledby="spending-rank-title">
+            <h2 id="spending-rank-title" className="stats-section-title"><BarChartOutlined /> 消费榜</h2>
+            <Table
+              rowKey="userId"
+              loading={loading}
+              columns={userColumns}
+              dataSource={userRank}
+              pagination={false}
+              scroll={{ x: 478 }}
+            />
+          </section>
+        </div>
       ) : (
-        <Row gutter={[16, 16]}>
-          <Col xs={24} md={12}>
-            <Card variant="borderless" className="profile-card">
-              <Statistic title="购书总本数" value={customerStats?.totalBooks || 0} suffix="本" />
-            </Card>
-          </Col>
-          <Col xs={24} md={12}>
-            <Card variant="borderless" className="profile-card">
+        <>
+          <div className="metric-grid stats-metrics">
+            <section className="metric-card">
+              <Statistic title="购书总本数" value={customerStats?.totalBooks || 0} suffix="本" loading={loading} />
+            </section>
+            <section className="metric-card">
               <Statistic
                 title="购书总金额"
                 value={Number(customerStats?.totalAmount || 0)}
                 precision={2}
                 prefix="¥"
-                valueStyle={{ color: "#cf1322" }}
-              />
-            </Card>
-          </Col>
-          <Col xs={24}>
-            <Card title="购书明细" variant="borderless" className="profile-card">
-              <Table
-                rowKey="bookId"
                 loading={loading}
-                columns={customerColumns}
-                dataSource={customerStats?.books || []}
-                pagination={false}
               />
-            </Card>
-          </Col>
-        </Row>
+            </section>
+          </div>
+          <section className="table-panel stats-table-panel" aria-labelledby="customer-books-title">
+            <h2 id="customer-books-title" className="stats-section-title">购书明细</h2>
+            <Table
+              rowKey="bookId"
+              loading={loading}
+              columns={customerColumns}
+              dataSource={customerStats?.books || []}
+              pagination={false}
+              scroll={{ x: 520 }}
+            />
+          </section>
+        </>
       )}
-    </div>
+    </section>
   );
 }

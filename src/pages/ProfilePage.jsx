@@ -3,7 +3,6 @@ import {
   Form,
   Input,
   Button,
-  Card,
   message,
   Tabs,
   Descriptions,
@@ -13,7 +12,6 @@ import {
   Empty,
   Skeleton,
   Space,
-  Divider,
 } from "antd";
 import {
   LockOutlined,
@@ -27,7 +25,7 @@ import { login, register } from "../services/authService.js";
 import { getOrders } from "../api/bookstoreApi.js";
 import { formatDateTime, formatPrice } from "../utils/formatter.js";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 function LoginPanel({ onSuccess }) {
   const [form] = Form.useForm();
@@ -49,7 +47,7 @@ function LoginPanel({ onSuccess }) {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleLogin}>
+    <Form form={form} layout="vertical" onFinish={handleLogin} className="account-form">
       <Form.Item
         label="用户名"
         name="username"
@@ -85,7 +83,7 @@ function LoginPanel({ onSuccess }) {
           登录
         </Button>
       </Form.Item>
-      <Text type="secondary" style={{ display: "block", textAlign: "center" }}>
+      <Text type="secondary" className="account-demo-note">
         演示账号：demo / 123456
       </Text>
     </Form>
@@ -111,7 +109,7 @@ function RegisterPanel() {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleRegister}>
+    <Form form={form} layout="vertical" onFinish={handleRegister} className="account-form">
       <Form.Item
         label="用户名"
         name="username"
@@ -207,55 +205,49 @@ function OrderHistory({ userId }) {
     refresh();
   }, [refresh]);
 
-  if (loading) return <Skeleton active paragraph={{ rows: 4 }} />;
+  if (loading) return <div className="state-panel"><Skeleton active paragraph={{ rows: 4 }} /></div>;
   if (!orders.length)
-    return <Empty description="还没有订单，快去下单吧" />;
+    return <div className="state-panel"><Empty description="还没有订单，快去下单吧" /></div>;
 
   return (
     <List
+      className="account-order-list"
       itemLayout="vertical"
       dataSource={orders}
       renderItem={(order) => (
-        <List.Item
-          key={order.id}
-          extra={
-            <Space direction="vertical" align="end">
+        <List.Item key={order.id}>
+          <div className="account-order-heading">
+            <div>
+              <h3><ShoppingOutlined /> 订单 #{order.id}</h3>
+              <p className="account-order-date">下单时间：{formatDateTime(order.createdAt)}</p>
+            </div>
+            <Space className="account-order-total" direction="vertical" align="end">
               <Tag color={order.status === "PAID" ? "green" : "orange"}>
                 {order.status === "PAID" ? "已支付" : "待支付"}
               </Tag>
-              <Text strong style={{ fontSize: 18, color: "#cf1322" }}>
+              <Text strong className="price-text">
                 {formatPrice(order.totalAmount)}
               </Text>
             </Space>
-          }
-        >
-          <List.Item.Meta
-            avatar={<ShoppingOutlined style={{ fontSize: 24, color: "#2f6f64" }} />}
-            title={`订单 #${order.id}`}
-            description={`下单时间：${formatDateTime(order.createdAt)}`}
-          />
+          </div>
           <List
+            className="account-order-items"
             size="small"
             dataSource={order.items}
             renderItem={(item) => (
               <List.Item key={item.id}>
-                <Space>
+                <div className="account-order-book">
                   {item.bookImage && (
                     <img
                       src={item.bookImage}
                       alt={item.bookTitle}
-                      style={{
-                        width: 32,
-                        height: 44,
-                        objectFit: "cover",
-                        borderRadius: 2,
-                      }}
+                      className="account-order-cover"
                     />
                   )}
-                  <span>{item.bookTitle}</span>
-                  <Text type="secondary">× {item.quantity}</Text>
-                  <Text>{formatPrice(item.unitPrice)}</Text>
-                </Space>
+                  <span className="account-order-book-title">{item.bookTitle}</span>
+                  <Text type="secondary" className="account-order-quantity">× {item.quantity}</Text>
+                  <Text className="account-order-unit-price">{formatPrice(item.unitPrice)}</Text>
+                </div>
               </List.Item>
             )}
           />
@@ -269,18 +261,22 @@ export default function ProfilePage({ user, onLogout }) {
   if (user) {
     // 已登录态：展示用户 DTO（不含 password）和订单历史。
     return (
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 0" }}>
-        <Card
-          title="账户信息"
-          variant="borderless"
-          style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
-          extra={
+      <section className="page account-page">
+        <header className="page-heading">
+          <div>
+            <p className="eyebrow">我的书城</p>
+            <h1>个人信息</h1>
+            <p className="page-description">管理账户信息，回顾每一次选书。</p>
+          </div>
+          <div className="page-actions">
             <Button danger icon={<LogoutOutlined />} onClick={onLogout}>
               退出登录
             </Button>
-          }
-        >
-          <Descriptions column={1} bordered size="small">
+          </div>
+        </header>
+        <section className="paper-panel account-overview" aria-labelledby="account-overview-title">
+          <h2 id="account-overview-title" className="account-section-title">账户信息</h2>
+          <Descriptions column={{ xs: 1, sm: 2 }} layout="vertical" size="small">
             <Descriptions.Item label="用户名">{user.username}</Descriptions.Item>
             <Descriptions.Item label="角色">
               <Tag color={user.role === "ADMIN" ? "gold" : "blue"}>
@@ -298,30 +294,28 @@ export default function ProfilePage({ user, onLogout }) {
               {formatDateTime(user.createdAt)}
             </Descriptions.Item>
           </Descriptions>
-        </Card>
-
-        <Divider />
-
-        <Card
-          title="我的订单"
-          variant="borderless"
-          style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
-        >
+        </section>
+        <section className="paper-panel account-orders" aria-labelledby="account-orders-title">
+          <h2 id="account-orders-title" className="account-section-title">我的订单</h2>
           <OrderHistory userId={user.id} />
-        </Card>
-      </div>
+        </section>
+      </section>
     );
   }
 
   // 未登录态：同一页面内用 Tabs 切换登录/注册，两个表单都走 Service 层而不是直接 fetch。
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto", padding: "24px 0" }}>
-      <Card
-        title={<Title level={4} style={{ margin: 0 }}>欢迎来到知页书城</Title>}
-        variant="borderless"
-        style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
-      >
+    <section className="page account-page account-auth-page">
+      <header className="page-heading">
+        <div>
+          <p className="eyebrow">我的书城</p>
+          <h1>欢迎来到知页书城</h1>
+          <p className="page-description">登录后保存购物车，查看您的订单与购书记录。</p>
+        </div>
+      </header>
+      <section className="paper-panel account-auth">
         <Tabs
+          className="account-auth-tabs"
           defaultActiveKey="login"
           items={[
             {
@@ -336,7 +330,7 @@ export default function ProfilePage({ user, onLogout }) {
             },
           ]}
         />
-      </Card>
-    </div>
+      </section>
+    </section>
   );
 }

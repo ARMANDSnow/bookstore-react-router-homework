@@ -1,234 +1,76 @@
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Table,
-  Button,
-  InputNumber,
-  Popconfirm,
-  Card,
-  Row,
-  Col,
-  Statistic,
-  Typography,
-  Space,
-  Skeleton,
-  Alert,
-} from "antd";
-import {
-  DeleteOutlined,
-  ShoppingCartOutlined,
-  CreditCardOutlined,
-} from "@ant-design/icons";
+import { Alert, Button, InputNumber, Popconfirm, Skeleton } from "antd";
+import { ArrowRightOutlined, DeleteOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { formatPrice } from "../utils/formatter.js";
 
-const { Title, Text } = Typography;
+export default function CartPage({ cart, loading, user, onUpdateQuantity, onRemove, onSubmitOrder }) {
+  const pendingRef = useRef(new Set());
+  const [pendingBookIds, setPendingBookIds] = useState(new Set());
 
-export default function CartPage({
-  cart,
-  loading,
-  user,
-  onUpdateQuantity,
-  onRemove,
-  onSubmitOrder,
-}) {
+  async function changeQuantity(item, value) {
+    if (value == null || pendingRef.current.has(item.bookId)) return;
+    // ref 在同一事件周期同步加锁；状态负责在完整接口刷新期间禁用控件。
+    pendingRef.current.add(item.bookId);
+    setPendingBookIds(new Set(pendingRef.current));
+    try {
+      await onUpdateQuantity(item.id, value);
+    } finally {
+      pendingRef.current.delete(item.bookId);
+      setPendingBookIds(new Set(pendingRef.current));
+    }
+  }
+
   if (!user) {
-    // 购物车是用户维度的数据。未登录时不请求后端，直接引导去个人信息页登录。
-    return (
-      <div style={{ maxWidth: 600, margin: "60px auto" }}>
-        <Alert
-          type="warning"
-          showIcon
-          message="尚未登录"
-          description="请先去「个人信息」登录，登录后购物车数据会自动从后端加载并随你保留。"
-          action={
-            <Link to="/profile">
-              <Button type="primary">去登录</Button>
-            </Link>
-          }
-        />
-      </div>
-    );
+    return <div className="state-panel"><Alert type="warning" showIcon message="尚未登录" description="请先去「个人信息」登录，登录后购物车数据会自动从后端加载并随你保留。" action={<Link to="/profile" className="commerce-login-link">去登录 <ArrowRightOutlined /></Link>} /></div>;
   }
-
   if (loading) {
-    return <Skeleton active paragraph={{ rows: 8 }} />;
+    return <div className="state-panel" role="status" aria-label="正在加载购物车"><Skeleton active paragraph={{ rows: 8 }} /></div>;
   }
-
-  const subtotal = cart.reduce(
-    // 前端展示用金额：以后端返回的 price/quantity 计算当前购物车小计。
-    // 真正下单金额以后端 placeOrder 事务内重新计算为准，避免前端金额被篡改。
-    (sum, item) => sum + Number(item.price) * item.quantity,
-    0
-  );
+  // 展示金额使用后端返回的单价与数量；真实下单仍由原来的回调交给后端计算。
+  const subtotal = cart.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
   const shipping = subtotal > 0 && subtotal < 99 ? 12 : 0;
   const total = subtotal + shipping;
-
-  const columns = [
-    // Ant Design Table 的列配置：每一列声明 title/dataIndex/render。
-    // render 用于把 DTO 字段渲染成链接、价格、数量控件和删除按钮。
-    {
-      title: "商品信息",
-      dataIndex: "title",
-      key: "title",
-      render: (text, record) => (
-        <Space>
-          <img
-            src={record.image}
-            alt={text}
-            style={{
-              width: 50,
-              height: 70,
-              objectFit: "cover",
-              borderRadius: 4,
-            }}
-          />
-          <Link to={`/books/${record.bookId}`} style={{ fontWeight: 500 }}>
-            {text}
-          </Link>
-        </Space>
-      ),
-    },
-    {
-      title: "单价",
-      dataIndex: "price",
-      key: "price",
-      render: (price) => <Text type="danger">{formatPrice(price)}</Text>,
-    },
-    {
-      title: "数量",
-      key: "quantity",
-      render: (_, record) => (
-        <InputNumber
-          min={1}
-          max={record.stock ?? 99}
-          value={record.quantity}
-          // 数量变化立即调用父组件回调；父组件再通过 cartService 调 PUT 接口并刷新列表。
-          onChange={(value) => onUpdateQuantity(record.id, value)}
-        />
-      ),
-    },
-    {
-      title: "库存",
-      dataIndex: "stock",
-      key: "stock",
-      render: (stock) => (stock == null ? "—" : `${stock} 本`),
-    },
-    {
-      title: "小计",
-      key: "subtotal",
-      render: (_, record) => (
-        <Text strong>{formatPrice(record.price * record.quantity)}</Text>
-      ),
-    },
-    {
-      title: "操作",
-      key: "action",
-      render: (_, record) => (
-        <Popconfirm
-          title="确定要移除该商品吗？"
-          // 二次确认后调用 DELETE /cart/items/{id}，避免误删。
-          onConfirm={() => onRemove(record.id)}
-          okText="确定"
-          cancelText="取消"
-        >
-          <Button type="text" danger icon={<DeleteOutlined />} />
-        </Popconfirm>
-      ),
-    },
-  ];
+  const count = cart.reduce((sum, item) => sum + Number(item.quantity), 0);
 
   if (!cart.length) {
-    return (
-      <div style={{ textAlign: "center", padding: "100px 0" }}>
-        <ShoppingCartOutlined
-          style={{ fontSize: 64, color: "#d9d9d9", marginBottom: 24 }}
-        />
-        <Title level={3}>购物车是空的</Title>
-        <Text type="secondary" style={{ display: "block", marginBottom: 24 }}>
-          快去挑选几本好书吧！
-        </Text>
-        <Link to="/books">
-          <Button type="primary" size="large">
-            去逛逛
-          </Button>
-        </Link>
-      </div>
-    );
+    return <section className="state-panel cart-empty"><ShoppingCartOutlined aria-hidden="true" /><h1>购物车是空的</h1><p className="page-description">去书架挑一本，给自己留一点阅读时间。</p><Link className="commerce-primary-link" to="/books">浏览图书 <ArrowRightOutlined /></Link></section>;
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      <Title level={2}>我的购物车</Title>
-
-      <Table
-        columns={columns}
-        dataSource={cart}
-        rowKey="id"
-        pagination={false}
-        className="cart-table"
-        style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}
-      />
-
-      <Row justify="end">
-        <Col xs={24} md={10} lg={8}>
-          <Card
-            className="cart-summary-card"
-            style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 16,
-              }}
-            >
-              <Text>商品总价</Text>
-              <Text>{formatPrice(subtotal)}</Text>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 16,
-              }}
-            >
-              <Text>
-                运费{" "}
-                {shipping === 0 && <Text type="success">(满99包邮)</Text>}
-              </Text>
-              <Text>{formatPrice(shipping)}</Text>
-            </div>
-            <hr
-              style={{
-                border: 0,
-                borderTop: "1px solid #f0f0f0",
-                margin: "16px 0",
-              }}
-            />
-            <Statistic
-              title={
-                <span style={{ fontSize: 16, fontWeight: "bold" }}>
-                  应付总额
-                </span>
-              }
-              value={total}
-              precision={2}
-              prefix="¥"
-              valueStyle={{ color: "#cf1322", fontWeight: "bold" }}
-            />
-            <Button
-              type="primary"
-              size="large"
-              block
-              style={{ marginTop: 24, height: 48, fontSize: 18 }}
-              icon={<CreditCardOutlined />}
-              // 提交订单的核心链路在后端 OrderServiceImpl.placeOrder，前端只负责触发和展示反馈。
-              onClick={onSubmitOrder}
-            >
-              提交订单
-            </Button>
-          </Card>
-        </Col>
-      </Row>
+    <div className="page cart-page">
+      <div className="page-heading"><div><p className="eyebrow">把喜欢的书，带回日常</p><h1>你的书袋</h1><p className="page-description">已选择 {count} 件商品，确认数量后即可提交订单。</p></div><Link className="commerce-secondary-link" to="/books">继续选书 <ArrowRightOutlined /></Link></div>
+      <div className="cart-layout">
+        <section className="cart-products" aria-labelledby="cart-products-title">
+          <h2 id="cart-products-title">已选图书 <span>{count} 件</span></h2>
+          <div className="cart-list-heading" aria-hidden="true"><span>商品信息</span><span>单价</span><span>数量</span><span>库存</span><span>小计</span><span>操作</span></div>
+          <div className="cart-product-list">
+            {cart.map((item) => {
+              const pending = pendingBookIds.has(item.bookId);
+              return (
+              <article className="cart-product" key={item.id} aria-label={`购物车中的《${item.title}》`} aria-busy={pending}>
+                <div className="cart-product-book"><Link to={`/books/${item.bookId}`} className="cart-product-cover" aria-label={`查看《${item.title}》详情`}><img src={item.image} alt={`《${item.title}》完整书封`} width="60" height="86" /></Link><div><Link className="cart-product-title" to={`/books/${item.bookId}`}>{item.title}</Link><p>图书 · {item.stock == null ? "库存信息暂不可用" : item.stock <= 0 ? "暂时缺货" : `库存 ${item.stock} 本`}</p></div></div>
+                <div className="cart-unit-price"><span className="cart-mobile-label">单价</span>{formatPrice(item.price)}</div>
+                <div className="cart-quantity-cell"><span className="cart-mobile-label">数量</span><div className="cart-quantity-control" role="group" aria-label={`《${item.title}》数量`}>
+                  <Button type="text" icon={<MinusOutlined />} disabled={pending || item.quantity <= 1} aria-label={`减少《${item.title}》数量`} onClick={() => changeQuantity(item, Number(item.quantity) - 1)} />
+                  <InputNumber min={1} max={item.stock ?? 99} value={item.quantity} controls={false} disabled={pending} aria-label={`《${item.title}》数量`} onChange={(value) => changeQuantity(item, value)} />
+                  <Button type="text" icon={<PlusOutlined />} disabled={pending || item.quantity >= (item.stock ?? 99)} loading={pending} aria-label={`增加《${item.title}》数量`} onClick={() => changeQuantity(item, Number(item.quantity) + 1)} />
+                </div></div>
+                <div className="cart-product-stock"><span className="cart-mobile-label">库存</span>{item.stock == null ? "—" : `${item.stock} 本`}</div>
+                <div className="cart-product-subtotal"><span className="cart-mobile-label">小计</span>{formatPrice(item.price * item.quantity)}</div>
+                <div className="cart-remove"><Popconfirm title="确定要移除该商品吗？" disabled={pending} onConfirm={() => { if (!pendingRef.current.has(item.bookId)) return onRemove(item.id); }} okText="确定" cancelText="取消"><Button type="text" icon={<DeleteOutlined />} disabled={pending} aria-label={`移除《${item.title}》`}>移除</Button></Popconfirm></div>
+              </article>
+              );
+            })}
+          </div>
+        </section>
+        <aside className="paper-panel cart-summary" aria-labelledby="cart-summary-title">
+          <h2 id="cart-summary-title">结算明细</h2>
+          <dl><div><dt>商品合计 <span>{count} 件</span></dt><dd>{formatPrice(subtotal)}</dd></div><div><dt>运费 {shipping === 0 && <span>满 99 包邮</span>}</dt><dd>{formatPrice(shipping)}</dd></div><div className="cart-summary-total"><dt>应付总额</dt><dd>{formatPrice(total)}</dd></div></dl>
+          <Button type="primary" size="large" block disabled={pendingBookIds.size > 0} onClick={onSubmitOrder}>提交订单 <ArrowRightOutlined /></Button>
+          <p>商品满 ¥99 免运费，未满 ¥99 运费 ¥12。</p>
+        </aside>
+      </div>
     </div>
   );
 }
