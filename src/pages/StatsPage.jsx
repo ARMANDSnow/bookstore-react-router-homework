@@ -107,7 +107,7 @@ export default function StatsPage({ user }) {
       </header>
       <div className="paper-panel filter-bar stats-filter">
         <span className="stats-filter-label">统计时间</span>
-        <RangePicker value={range} onChange={setRange} aria-label="统计日期范围" />
+        <RangePicker value={range} onChange={setRange} aria-label="统计日期范围" classNames={{ popup: { root: "bookstore-date-popup" } }} />
         <Button type="primary" icon={<SearchOutlined />} onClick={refresh} loading={loading}>
           统计
         </Button>

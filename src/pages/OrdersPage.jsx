@@ -40,7 +40,7 @@ export default function OrdersPage({ user }) {
     <div className="page orders-page">
       <div className="page-heading"><div><p className="eyebrow">每一次选择，都是阅读的起点</p><h1>{isAdmin ? "订单管理" : "我的订单"}</h1><p className="page-description">{isAdmin ? "查看系统中的全部订单，按日期和书名查找。" : "查看历史订单，按下单日期和书名查找。"}</p></div></div>
       <section className="filter-bar orders-filters" aria-label="订单筛选">
-        <div className="orders-filter-field orders-date-field"><label htmlFor="orders-date-range">下单日期</label><RangePicker id="orders-date-range" value={range} onChange={setRange} className="orders-date-range" classNames={{ popup: { root: "orders-date-popup" } }} /></div>
+        <div className="orders-filter-field orders-date-field"><label htmlFor="orders-date-range">下单日期</label><RangePicker id="orders-date-range" value={range} onChange={setRange} className="orders-date-range" classNames={{ popup: { root: "bookstore-date-popup" } }} /></div>
         <div className="orders-filter-field orders-book-field"><label htmlFor="orders-book-name">书籍名称</label><Input id="orders-book-name" allowClear placeholder="输入书名" value={bookName} onChange={(event) => setBookName(event.target.value)} onPressEnter={refresh} /></div>
         <Button type="primary" icon={<SearchOutlined />} onClick={refresh}>筛选订单</Button>
       </section>
