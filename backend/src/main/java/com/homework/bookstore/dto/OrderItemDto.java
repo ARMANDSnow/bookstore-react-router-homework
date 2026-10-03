@@ -3,6 +3,13 @@ package com.homework.bookstore.dto;
 import com.homework.bookstore.entity.OrderItem;
 import java.math.BigDecimal;
 
+/**
+ * 订单明细响应 DTO。
+ *
+ * <p>注意 bookTitle/bookImage/unitPrice 来自 {@code order_items} 表的快照字段，
+ * 不是每次都从 {@code books} 表实时读取。答辩时可说明：历史订单必须保持下单时价格，
+ * 不能因为以后书籍改价而变化。
+ */
 public class OrderItemDto {
 
     private Long id;
@@ -13,6 +20,7 @@ public class OrderItemDto {
     private Integer quantity;
     private BigDecimal subtotal;
 
+    /** 实体转 DTO，并计算小计：单价快照 × 数量。 */
     public static OrderItemDto from(OrderItem item) {
         OrderItemDto dto = new OrderItemDto();
         dto.setId(item.getId());

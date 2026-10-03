@@ -31,6 +31,7 @@ export default function CartPage({
   onSubmitOrder,
 }) {
   if (!user) {
+    // 购物车是用户维度的数据。未登录时不请求后端，直接引导去个人信息页登录。
     return (
       <div style={{ maxWidth: 600, margin: "60px auto" }}>
         <Alert
@@ -53,6 +54,8 @@ export default function CartPage({
   }
 
   const subtotal = cart.reduce(
+    // 前端展示用金额：以后端返回的 price/quantity 计算当前购物车小计。
+    // 真正下单金额以后端 placeOrder 事务内重新计算为准，避免前端金额被篡改。
     (sum, item) => sum + Number(item.price) * item.quantity,
     0
   );
@@ -60,6 +63,8 @@ export default function CartPage({
   const total = subtotal + shipping;
 
   const columns = [
+    // Ant Design Table 的列配置：每一列声明 title/dataIndex/render。
+    // render 用于把 DTO 字段渲染成链接、价格、数量控件和删除按钮。
     {
       title: "商品信息",
       dataIndex: "title",
@@ -94,11 +99,18 @@ export default function CartPage({
       render: (_, record) => (
         <InputNumber
           min={1}
-          max={99}
+          max={record.stock ?? 99}
           value={record.quantity}
+          // 数量变化立即调用父组件回调；父组件再通过 cartService 调 PUT 接口并刷新列表。
           onChange={(value) => onUpdateQuantity(record.id, value)}
         />
       ),
+    },
+    {
+      title: "库存",
+      dataIndex: "stock",
+      key: "stock",
+      render: (stock) => (stock == null ? "—" : `${stock} 本`),
     },
     {
       title: "小计",
@@ -113,6 +125,7 @@ export default function CartPage({
       render: (_, record) => (
         <Popconfirm
           title="确定要移除该商品吗？"
+          // 二次确认后调用 DELETE /cart/items/{id}，避免误删。
           onConfirm={() => onRemove(record.id)}
           okText="确定"
           cancelText="取消"
@@ -208,6 +221,7 @@ export default function CartPage({
               block
               style={{ marginTop: 24, height: 48, fontSize: 18 }}
               icon={<CreditCardOutlined />}
+              // 提交订单的核心链路在后端 OrderServiceImpl.placeOrder，前端只负责触发和展示反馈。
               onClick={onSubmitOrder}
             >
               提交订单

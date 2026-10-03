@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 
 /**
  * 给前端用的购物车明细 DTO，包含书籍快照字段，避免前端再发一次查书请求。
+ *
+ * <p>它把 {@code CartItem + Book} 两个实体的信息压平成一个 JSON 对象：
+ * 前端表格可以直接渲染 title/image/price/quantity/subtotal，不需要理解 JPA 关联关系。
  */
 public class CartItemDto {
 
@@ -16,10 +19,12 @@ public class CartItemDto {
     private String image;
     private BigDecimal price;
     private BigDecimal originalPrice;
+    private Integer stock;
     private Integer quantity;
     private BigDecimal subtotal;
     private LocalDateTime updatedAt;
 
+    /** 实体转 DTO：从 CartItem 的 book 关联对象取展示字段，并计算小计。 */
     public static CartItemDto from(CartItem item) {
         CartItemDto dto = new CartItemDto();
         dto.setId(item.getId());
@@ -29,6 +34,7 @@ public class CartItemDto {
         dto.setImage(item.getBook().getImage());
         dto.setPrice(item.getBook().getPrice());
         dto.setOriginalPrice(item.getBook().getOriginalPrice());
+        dto.setStock(item.getBook().getStock());
         dto.setQuantity(item.getQuantity());
         dto.setSubtotal(item.getBook().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
         dto.setUpdatedAt(item.getUpdatedAt());
@@ -89,6 +95,14 @@ public class CartItemDto {
 
     public void setOriginalPrice(BigDecimal originalPrice) {
         this.originalPrice = originalPrice;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
     public Integer getQuantity() {

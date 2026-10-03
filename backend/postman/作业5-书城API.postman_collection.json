@@ -1,0 +1,229 @@
+{
+  "info": {
+    "_postman_id": "a5f0e1c2-0005-4a5b-9c3d-bookstore0005",
+    "name": "作业5 - 线上书城核心 API",
+    "description": "作业 5 要求的三个核心 API 测试集合：用户注册、获取书籍列表、获取书籍详情。\n\n导入后请确认后端已启动（默认 http://localhost:8080）。集合变量 baseUrl / bookId 可在 Variables 选项卡修改。\n\n- 注册请求带 pre-request 脚本，每次自动生成随机用户名与邮箱，避免撞唯一约束，可反复点击成功。\n- 末尾附一个「书籍详情-不存在(404)」请求，用于演示统一异常处理（code=40404）。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. 用户注册 POST /api/v1/users/register",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// 生成随机后缀，保证用户名/邮箱唯一，便于反复测试",
+              "const rnd = Math.random().toString(36).slice(2, 8);",
+              "pm.collectionVariables.set('rnd', rnd);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const json = pm.response.json();",
+              "pm.test('业务码 code=0', () => pm.expect(json.code).to.eql(0));",
+              "pm.test('返回用户信息且不含 password', () => {",
+              "  pm.expect(json.data).to.have.property('id');",
+              "  pm.expect(json.data).to.not.have.property('password');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"test_{{rnd}}\",\n  \"password\": \"123456\",\n  \"email\": \"test_{{rnd}}@example.com\",\n  \"phone\": \"13800000000\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/users/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "users",
+            "register"
+          ]
+        },
+        "description": "新用户注册，将信息存入数据库。成功返回 {code:0, message:\"注册成功\", data:{id,username,email,phone,createdAt}}（不含 password）。"
+      }
+    },
+    {
+      "name": "2. 获取所有书籍 GET /api/v1/books",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const json = pm.response.json();",
+              "pm.test('业务码 code=0', () => pm.expect(json.code).to.eql(0));",
+              "pm.test('data 为数组', () => pm.expect(json.data).to.be.an('array'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "books"
+          ]
+        },
+        "description": "从数据库查询所有书籍，返回 BookDto 列表。"
+      }
+    },
+    {
+      "name": "3. 获取书籍详情 GET /api/v1/book/{id}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const json = pm.response.json();",
+              "pm.test('业务码 code=0', () => pm.expect(json.code).to.eql(0));",
+              "pm.test('返回的 id 与请求一致', () => pm.expect(json.data.id).to.eql(pm.collectionVariables.get('bookId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/book/{{bookId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "book",
+            "{{bookId}}"
+          ]
+        },
+        "description": "按 id 查询单本书籍详情，返回 BookDto。bookId 默认 clean-code，可在 Variables 修改为 design / deep-work / three-body / js-advanced / sapiens 等。"
+      }
+    },
+    {
+      "name": "4.（演示）书籍详情-不存在 → 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "const json = pm.response.json();",
+              "pm.test('业务码 code=40404', () => pm.expect(json.code).to.eql(40404));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/book/not-exist-id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "book",
+            "not-exist-id"
+          ]
+        },
+        "description": "传入不存在的 id，演示 BookService 抛 BusinessException(40404) → 全局异常处理翻译为 HTTP 404。"
+      }
+    },
+    {
+      "name": "5.（迭代三）关键字搜索 GET /api/v1/books?keyword=",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const json = pm.response.json();",
+              "pm.test('业务码 code=0', () => pm.expect(json.code).to.eql(0));",
+              "pm.test('每个结果的标题或作者都包含关键字', () => {",
+              "  const kw = pm.request.url.query.get('keyword').toLowerCase();",
+              "  json.data.forEach(b => pm.expect((b.title + b.author).toLowerCase()).to.include(kw));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books?keyword=代码",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "books"
+          ],
+          "query": [
+            {
+              "key": "keyword",
+              "value": "代码",
+              "description": "标题/作者模糊搜索，忽略大小写；不传则返回全部书籍（向后兼容）"
+            }
+          ]
+        },
+        "description": "迭代三新增：标题/作者关键字模糊搜索（后端 SQL LIKE，派生查询实现）。"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "bookId",
+      "value": "clean-code"
+    },
+    {
+      "key": "rnd",
+      "value": ""
+    }
+  ]
+}

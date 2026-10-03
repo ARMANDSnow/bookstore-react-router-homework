@@ -7,6 +7,10 @@ import {
   UserOutlined,
   BookOutlined,
   LogoutOutlined,
+  TeamOutlined,
+  DatabaseOutlined,
+  OrderedListOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 
 const { Header, Sider, Content } = AntLayout;
@@ -15,14 +19,22 @@ export default function Layout({ cartCount, children, user, onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
+  // 根据当前路由高亮菜单项。答辩时可说明：路由状态来自 React Router，不用手动维护 selectedKey。
   const getSelectedKey = () => {
     if (location.pathname.startsWith("/books")) return "books";
     if (location.pathname.startsWith("/cart")) return "cart";
+    if (location.pathname.startsWith("/orders")) return "orders";
+    if (location.pathname.startsWith("/stats")) return "stats";
+    if (location.pathname.startsWith("/admin/users")) return "admin-users";
+    if (location.pathname.startsWith("/admin/books")) return "admin-books";
     if (location.pathname.startsWith("/profile")) return "profile";
     return "books";
   };
 
+  const isAdmin = user?.role === "ADMIN";
+
   const menuItems = [
+    // Layout 是可复用框架组件：只关心导航、角标和登录展示，不关心书籍/订单业务细节。
     {
       key: "books",
       icon: <HomeOutlined />,
@@ -43,6 +55,30 @@ export default function Layout({ cartCount, children, user, onLogout }) {
         </Link>
       ),
     },
+    {
+      key: "orders",
+      icon: <OrderedListOutlined />,
+      label: <Link to="/orders">{isAdmin ? "订单管理" : "我的订单"}</Link>,
+    },
+    {
+      key: "stats",
+      icon: <BarChartOutlined />,
+      label: <Link to="/stats">统计分析</Link>,
+    },
+    ...(isAdmin
+      ? [
+          {
+            key: "admin-users",
+            icon: <TeamOutlined />,
+            label: <Link to="/admin/users">用户管理</Link>,
+          },
+          {
+            key: "admin-books",
+            icon: <DatabaseOutlined />,
+            label: <Link to="/admin/books">书籍管理</Link>,
+          },
+        ]
+      : []),
     {
       key: "profile",
       icon: <UserOutlined />,
@@ -101,6 +137,7 @@ export default function Layout({ cartCount, children, user, onLogout }) {
         >
           <Space size={16} align="center">
             {user ? (
+              // Header 的 user 来自 App.jsx 顶层状态；登录/退出后通过 CustomEvent 同步刷新。
               <>
                 <Avatar
                   size="small"
@@ -117,6 +154,7 @@ export default function Layout({ cartCount, children, user, onLogout }) {
                 </Button>
               </>
             ) : (
+              // 未登录时给出入口，真正的登录表单在 ProfilePage。
               <>
                 <span>未登录</span>
                 <Link to="/profile">

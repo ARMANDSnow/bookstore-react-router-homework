@@ -7,20 +7,45 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 
+/**
+ * 书籍实体：映射数据库 {@code books} 表。
+ *
+ * <h3>答辩重点：为什么 Book 的主键不是自增 Long？</h3>
+ * 其它实体（User / Order / CartItem / OrderItem）都使用数据库自增主键，
+ * 但书籍这里故意使用业务语义 ID，例如 {@code three-body}、{@code clean-code}。
+ * 这样前端路由 {@code /books/three-body} 更可读，种子数据也稳定；代价是新增书籍时
+ * 应用层必须保证 id 不重复，数据库不会替我们自动生成。
+ *
+ * <h3>字段设计</h3>
+ * 价格用 {@link java.math.BigDecimal}，对应数据库 DECIMAL，避免 double/float 存钱时的精度误差。
+ * 简短字段用 VARCHAR；summary/highlight/audience/review 较长，使用 {@code @Lob + TEXT}。
+ */
 @Entity
 @Table(name = "books")
 public class Book {
 
     @Id
     @Column(length = 80)
+    // 手动指定的业务主键，不加 @GeneratedValue；data.sql 中直接写入固定 id。
     private String id;
 
+    // 以下字段基本对应详情页/列表页展示所需信息；实体只描述"怎么入库"，不处理展示逻辑。
     @Column(nullable = false, length = 120)
     private String title;
 
     @Column(nullable = false, length = 120)
     private String author;
 
+    @Column(length = 40)
+    private String isbn;
+
+    @Column(length = 120)
+    private String publisher;
+
+    @Column
+    private Integer stock;
+
+    // 金额字段必须用 BigDecimal + DECIMAL(10,2)，避免浮点数精度问题。
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
@@ -48,6 +73,7 @@ public class Book {
     @Column(nullable = false, length = 255)
     private String description;
 
+    // @Lob 表示大字段；columnDefinition="TEXT" 明确告诉 Hibernate 使用 MySQL TEXT 类型。
     @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String summary;
@@ -86,6 +112,30 @@ public class Book {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
     public BigDecimal getPrice() {

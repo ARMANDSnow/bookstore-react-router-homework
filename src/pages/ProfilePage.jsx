@@ -36,6 +36,7 @@ function LoginPanel({ onSuccess }) {
   const handleLogin = async (values) => {
     setSubmitting(true);
     try {
+      // login() 属于 authService：内部先调后端登录接口，再把返回用户写入 localStorage。
       const user = await login(values);
       message.success(`登录成功，欢迎 ${user.username}`);
       form.resetFields();
@@ -98,6 +99,7 @@ function RegisterPanel() {
   const handleRegister = async (values) => {
     setSubmitting(true);
     try {
+      // 注册成功不自动登录，便于答辩时分别演示"注册"和"登录"两个接口。
       const user = await register(values);
       message.success(`注册成功：${user.username}，可前往「登录」标签登录`);
       form.resetFields();
@@ -120,6 +122,7 @@ function RegisterPanel() {
       <Form.Item
         label="密码"
         name="password"
+        dependencies={["confirmPassword"]}
         rules={[
           { required: true, message: "请输入密码" },
           { min: 6, message: "密码至少 6 位" },
@@ -129,6 +132,29 @@ function RegisterPanel() {
           prefix={<LockOutlined />}
           placeholder="密码至少 6 位"
           size="large"
+        />
+      </Form.Item>
+      <Form.Item
+        label="重复密码"
+        name="confirmPassword"
+        dependencies={["password"]}
+        rules={[
+          { required: true, message: "请再次输入密码" },
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!value || getFieldValue("password") === value) {
+                return Promise.resolve();
+              }
+              return Promise.reject(new Error("两次输入的密码不一致"));
+            },
+          }),
+        ]}
+      >
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder="请再次输入密码"
+          size="large"
+          autoComplete="new-password"
         />
       </Form.Item>
       <Form.Item
@@ -166,6 +192,8 @@ function OrderHistory({ userId }) {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
+      // 订单历史直接从后端读取：GET /api/v1/orders?userId=...
+      // 返回的 OrderDto 已经包含 items，前端不需要再逐条查订单明细。
       const data = await getOrders(userId);
       setOrders(data);
     } catch (err) {
@@ -239,6 +267,7 @@ function OrderHistory({ userId }) {
 
 export default function ProfilePage({ user, onLogout }) {
   if (user) {
+    // 已登录态：展示用户 DTO（不含 password）和订单历史。
     return (
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 0" }}>
         <Card
@@ -253,6 +282,16 @@ export default function ProfilePage({ user, onLogout }) {
         >
           <Descriptions column={1} bordered size="small">
             <Descriptions.Item label="用户名">{user.username}</Descriptions.Item>
+            <Descriptions.Item label="角色">
+              <Tag color={user.role === "ADMIN" ? "gold" : "blue"}>
+                {user.role === "ADMIN" ? "管理员" : "顾客"}
+              </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="账号状态">
+              <Tag color={user.enabled === false ? "red" : "green"}>
+                {user.enabled === false ? "已禁用" : "正常"}
+              </Tag>
+            </Descriptions.Item>
             <Descriptions.Item label="邮箱">{user.email || "—"}</Descriptions.Item>
             <Descriptions.Item label="手机号">{user.phone || "—"}</Descriptions.Item>
             <Descriptions.Item label="注册时间">
@@ -274,6 +313,7 @@ export default function ProfilePage({ user, onLogout }) {
     );
   }
 
+  // 未登录态：同一页面内用 Tabs 切换登录/注册，两个表单都走 Service 层而不是直接 fetch。
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: "24px 0" }}>
       <Card

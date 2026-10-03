@@ -1,0 +1,36 @@
+# ============================================================================
+#  测试专用配置（只对 mvn test 生效）
+#
+#  关键机制：Spring Boot 加载配置时，test classpath 下的 application.yml 会
+#  【整体遮蔽】main 下的同名文件（不是逐项合并！）——所以这里必须自成一套，
+#  也因此测试永远碰不到 main 配置里的 MySQL，跑测试不需要装/启动任何数据库。
+# ============================================================================
+spring:
+  datasource:
+    # H2 内存数据库 + MySQL 兼容模式：
+    #   - mem:            数据放内存，测试进程结束即销毁，天然隔离、可重复
+    #   - MODE=MySQL      让 H2 模拟 MySQL 方言（本项目实体里的 TEXT 列等写法已验证可跑，
+    #                     与开发用的 application-local.yml 是同款组合）
+    #   - DB_CLOSE_DELAY=-1  最后一个连接关闭后库不销毁，避免测试中途丢库
+    url: jdbc:h2:mem:bookstore-test;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      # create-drop：测试启动时按 @Entity 自动建表，结束时删掉——每次都是干净库
+      ddl-auto: create-drop
+    open-in-view: false
+  sql:
+    init:
+      # ★ 测试绝不执行 data.sql：
+      #   1) data.sql 里的 ON DUPLICATE KEY UPDATE 是 MySQL 方言，H2 兼容模式也可能翻车
+      #   2) 单元测试的数据应该由测试自己造（@BeforeEach 插入），不依赖种子数据——
+      #      否则种子一改测试就挂，违背"测试自包含"原则
+      mode: never
+
+logging:
+  level:
+    # 答辩演示点：开成 debug 后，mvn test 的输出里能直接看到
+    # Spring Data 派生方法 / JPQL 被 Hibernate 翻译出来的真实 SQL
+    org.hibernate.SQL: debug

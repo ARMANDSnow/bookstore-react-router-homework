@@ -43,6 +43,17 @@ async function request(path, options = {}) {
   return payload;
 }
 
+function buildQuery(params = {}) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.set(key, value);
+    }
+  });
+  const text = query.toString();
+  return text ? `?${text}` : "";
+}
+
 // ------------------------------ 书籍 ------------------------------
 export function fetchBooks() {
   return request("/books");
@@ -50,6 +61,30 @@ export function fetchBooks() {
 
 export function fetchBookById(id) {
   return request(`/book/${id}`);
+}
+
+// 迭代三新增：关键字搜索（后端 GET /api/v1/books?keyword=xxx，SQL LIKE 模糊匹配标题/作者）
+// encodeURIComponent：把中文、空格、& 等字符转义进 URL，防止 query string 被截断
+export function searchBooks(keyword) {
+  return request(`/books?keyword=${encodeURIComponent(keyword)}`);
+}
+
+export function createBook(book) {
+  return request("/books", {
+    method: "POST",
+    body: JSON.stringify(book),
+  });
+}
+
+export function updateBook(id, book) {
+  return request(`/book/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify(book),
+  });
+}
+
+export function deleteBook(id) {
+  return request(`/book/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 
 // ------------------------------ 用户 ------------------------------
@@ -64,6 +99,16 @@ export function loginUser({ username, password }) {
   return request("/users/login", {
     method: "POST",
     body: JSON.stringify({ username, password }),
+  });
+}
+
+export function listUsers() {
+  return request("/users");
+}
+
+export function setUserEnabled(userId, enabled) {
+  return request(`/users/${encodeURIComponent(userId)}/enabled?enabled=${enabled}`, {
+    method: "PUT",
   });
 }
 
@@ -103,10 +148,25 @@ export function placeOrder(userId) {
   });
 }
 
-export function getOrders(userId) {
-  return request(`/orders?userId=${encodeURIComponent(userId)}`);
+export function getOrders(params) {
+  if (typeof params === "number" || typeof params === "string") {
+    return request(`/orders?userId=${encodeURIComponent(params)}`);
+  }
+  return request(`/orders${buildQuery(params)}`);
 }
 
 export function getOrderById(orderId) {
   return request(`/orders/${orderId}`);
+}
+
+export function getSalesRank(params) {
+  return request(`/orders/sales-rank${buildQuery(params)}`);
+}
+
+export function getUserSpendRank(params) {
+  return request(`/orders/user-spending-rank${buildQuery(params)}`);
+}
+
+export function getCustomerStats(params) {
+  return request(`/orders/customer-stats${buildQuery(params)}`);
 }

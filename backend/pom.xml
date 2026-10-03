@@ -19,6 +19,11 @@
 
     <properties>
         <java.version>17</java.version>
+        <!-- 本机 JDK 26 与 Boot 3.3.5 默认管理的 Mockito 5.11 / ByteBuddy 1.14 不兼容
+             （Mockito 靠 ByteBuddy 在运行期生成 mock 子类字节码，老版本不认识新 JDK 的类文件版本）。
+             这两个属性名是 spring-boot-dependencies 的官方版本占位符，覆盖后全依赖树统一升级。 -->
+        <mockito.version>5.18.0</mockito.version>
+        <byte-buddy.version>1.17.5</byte-buddy.version>
     </properties>
 
     <dependencies>
@@ -33,6 +38,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 迭代三新增：Spring Security（密码 BCrypt 加密 + 安全过滤器链）。
+             版本由 spring-boot-starter-parent 统一管理（依赖管理 BOM），所以不写 <version>。
+             注意：引入本 starter 后，Spring Boot 默认会给"所有"HTTP 端点加认证（401），
+             必须配合 config/SecurityConfig 里自定义的 SecurityFilterChain 放行 API。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -56,6 +69,17 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- surefire 是 Maven 跑单测的插件（mvn test 背后就是它）。
+                 两个 JVM 参数都是为了 JDK 26 上 Mockito 能正常生成 mock：
+                 - EnableDynamicAgentLoading：允许 Mockito 的 inline agent 运行期动态挂载（JDK 21+ 默认告警/限制）
+                 - net.bytebuddy.experimental：ByteBuddy 对"比它发布时更新的 JDK"默认拒绝，此开关放行 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-XX:+EnableDynamicAgentLoading -Dnet.bytebuddy.experimental=true</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>

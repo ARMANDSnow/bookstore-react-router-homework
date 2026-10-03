@@ -1,13 +1,15 @@
-# 知页书城 · 迭代二
+# 知页书城 · 迭代三
 
 > 互联网应用开发技术课程作业
-> 技术栈：**React 19 + React Router 7 + Ant Design 6 + Vite 7**（前端） · **Spring Boot 3.3.5 + Spring Data JPA + MySQL 8**（后端） · **Fetch API**（前后端通信）
+> 技术栈：**React 19 + React Router 7 + Ant Design 6 + Vite 7**（前端） · **Spring Boot 3.3.5 + Spring Data JPA + Spring Security + MySQL 8**（后端） · **Fetch API**（前后端通信） · **JUnit 5 + Mockito**（测试）
+>
+> **答辩演示账号**：`demo` / `123456`　|　**一键跑测试**：`cd backend && mvn test`（19 用例）
 
 ---
 
 ## 目录
 
-- [一、迭代二要做的事](#一迭代二要做的事)
+- [一、迭代进展](#一迭代进展)
 - [二、目录结构与设计理由](#二目录结构与设计理由)
 - [三、快速开始](#三快速开始)
 - [四、数据库设计](#四数据库设计)
@@ -19,15 +21,23 @@
 
 ---
 
-## 一、迭代二要做的事
+## 一、迭代进展
+
+### 迭代二（前后端集成）
 
 > 在迭代一基础上，把"前端展示的所有数据都来自后端数据库、前端的所有操作都反映回数据库"这条主线打通。
 
-具体落地：
 1. **后端**：新增登录、购物车、订单 三个领域；表结构、实体、Repository、Service（接口 + 实现）、Controller 一应俱全。
 2. **前端**：登录态接入、购物车数据源切到后端、下单调真接口、订单历史页。
 3. **前后端通信**：使用 Fetch API；后端所有响应都用统一 `ApiResponse<T>` 包装；前端 `request()` 统一解包。
-4. **数据库**：所有持久化由 Spring Data JPA 负责，定制 SQL 用 `@Query` 写原生 SQL 展示。
+4. **数据库**：所有持久化由 Spring Data JPA 负责，定制 SQL 用 `@Query` 展示。
+
+### 迭代三（架构优化 + 答辩准备）
+
+1. **Spring Security + BCrypt**：密码不再明文——注册时 `encode()` 加盐哈希、登录时 `matches()` 比对；`SecurityConfig` 保守放行 `/api/**`，不影响既有功能。
+2. **图书搜索**：`GET /api/v1/books?keyword=` 按标题/作者模糊查询（派生查询 + JPQL 两种写法对照）；前端列表页新增搜索框，与分类过滤叠加。
+3. **JUnit 单元测试**：`backend/src/test/` 下 19 个用例（Service 层 Mockito + Repository 层 `@DataJpaTest`），`mvn test` 全绿，用 H2 内存库、不依赖 MySQL。
+4. **详情页接真接口**：`BookDetailPage` 改为 `useEffect` 调 `GET /api/v1/book/{id}`，优先展示数据库数据。
 
 ---
 
@@ -67,7 +77,7 @@
     ├── pom.xml
     ├── database/
     │   └── bookstore.sql    ← 完整 DDL + 种子数据
-    └── src/main/
+    ├── src/main/
         ├── java/com/homework/bookstore/
         │   ├── BookstoreBackendApplication.java
         │   ├── controller/             ← 控制层：HTTP 入口
@@ -109,11 +119,16 @@
         │   │   ├── OrderDto.java
         │   │   └── OrderItemDto.java
         │   └── config/
-        │       └── WebConfig.java      ← CORS 跨域配置
+        │       ├── WebConfig.java      ← CORS 跨域配置
+        │       └── SecurityConfig.java ← 迭代三：Spring Security 过滤器链 + BCrypt 编码器
         └── resources/
             ├── application.yml         ← 数据源 + JPA 配置
             ├── application-local.yml
-            └── data.sql                ← 启动时自动执行的种子数据
+            └── data.sql                ← 启动时自动执行的种子数据（demo 用户为 BCrypt 密文）
+    └── src/test/                       ← 迭代三新增：JUnit 单元测试
+        ├── java/com/homework/bookstore/service/impl/  ← 4 个 Service 测试类（Mockito 单测）
+        ├── java/com/homework/bookstore/repository/    ← BookRepositoryTest（@DataJpaTest 切片）
+        └── resources/application.yml                  ← 测试专用 H2 内存库配置
 ```
 
 ### 前端目录设计理由
@@ -139,58 +154,82 @@
 
 ---
 
-## 三、快速开始
+## 三、快速开始与操作说明
 
-### 0. 前置依赖
+### 0. 环境要求
 
-| 工具 | 版本 |
-|------|------|
-| Node.js | ≥ 18 |
-| JDK | 17 |
-| MySQL | 8.x |
-| Maven | 3.8+（或使用 IDE 内置） |
+| 工具 | 版本 | 验证命令 |
+|------|------|----------|
+| JDK | 17 及以上（编译目标为 17，实测 17–26 均可运行） | `java -version` |
+| Maven | 3.8+（或用 IDE 内置） | `mvn -version` |
+| Node.js | 18 及以上 | `node -version` |
+| MySQL | 8.x（服务需已启动） | `mysqladmin ping` |
 
-### 1. 准备数据库
+> **关于 JDK 版本**：`pom.xml` 编译目标是 Java 17。若你的机器是 JDK 21+，跑测试所需的 Mockito / ByteBuddy 版本已在 `pom.xml` 里处理好兼容，`mvn test` 可直接运行，无需切换 JDK。
 
-```bash
-# 启动 MySQL（按你的安装方式）；用 root/123456 或自行修改 application.yml
-mysql -uroot -p < backend/database/bookstore.sql
-```
+### 1. 准备数据库（先启动 MySQL）
 
-`bookstore.sql` 会：
-1. 创建 `bookstore` 数据库（utf8mb4）；
-2. 创建 `users / books / cart_items / orders / order_items` 五张表；
-3. 插入 6 本示例书籍与 1 个 demo 用户（用户名 `demo`、密码 `123456`）。
+后端默认连接 `localhost:3306/bookstore`，用户名 `root`，**密码默认留空**。若你的 MySQL root 设了密码，用环境变量覆盖（见第 2 步），**不必改任何代码**。启动顺序固定为：**MySQL → 后端 → 前端 → 浏览器操作**。
 
-> 第一次启动也可以**不导入 SQL**：JPA 的 `ddl-auto: update` 会根据实体类自动建表，`data.sql` 会自动 INSERT 种子数据。两者效果等价，区别只是是否手动跑一次 DDL。
+建库有两种等价方式，任选其一：
 
-### 2. 启动后端
+- **方式 A（推荐，零操作）**：什么都不用做。后端首次启动时 JPA 的 `ddl-auto: update` 会自动建库建表，`data.sql` 自动插入 6 本书 + demo 用户。连接串带了 `createDatabaseIfNotExist=true`，库不存在也会自动创建。
+- **方式 B（手动导入 DDL）**：
+  ```bash
+  mysql -uroot < backend/database/bookstore.sql          # root 无密码
+  mysql -uroot -p < backend/database/bookstore.sql       # root 有密码（回车后输入）
+  ```
+
+### 2. 启动后端（端口 8080，保持终端不要关闭）
 
 ```bash
 cd backend
-mvn spring-boot:run
+mvn spring-boot:run                        # ① root 无密码，直接启动
+MYSQL_PASSWORD=你的密码 mvn spring-boot:run   # ② root 有密码，用环境变量覆盖（不改文件）
 ```
 
-监听 `http://localhost:8080`。
+可覆盖的环境变量（均有默认值）：`MYSQL_HOST`(localhost)、`MYSQL_PORT`(3306)、`MYSQL_DATABASE`(bookstore)、`MYSQL_USER`(root)、`MYSQL_PASSWORD`(空)。
 
-### 3. 启动前端
+看到日志 `Started BookstoreBackendApplication` 即启动成功。这个终端需要一直开着，前端请求会通过 Vite 代理转到这里。快速自检：
 
 ```bash
-# 项目根目录
-npm install
+curl localhost:8080/api/v1/books                 # 应返回 6 本书的 JSON
+curl 'localhost:8080/api/v1/books?keyword=代码'  # 迭代三搜索：应只返回《代码整洁之道》
+```
+
+### 3. 启动前端（端口 5173，另开一个终端）
+
+```bash
+# 注意：在项目根目录执行，不是 backend/
+npm install       # 首次运行需要；已装过可跳过
 npm run dev
 ```
 
-打开 `http://127.0.0.1:5173`。
+浏览器打开 <http://localhost:5173>（或终端提示的实际地址）。Vite 已配代理，`/api` 请求自动转发到 8080，开发时无跨域问题。前端终端也需要保持运行。
 
-### 4. 体验
+### 4. 运行单元测试（迭代三）
 
-1. 访问主页 `/books`，看到来自数据库的 6 本书；
-2. 进 `/profile`，用 `demo / 123456` 登录，右上角出现欢迎语；
-3. 进任意书详情，点"加入购物车"；
-4. 进 `/cart`，看到购物车里有书，可改数量、删除；
-5. 点"提交订单"，自动跳回 `/profile` 看到刚生成的订单；
-6. **持久化校验**：退出登录再登录，订单仍在，购物车（若没下单）仍在。
+```bash
+cd backend
+mvn test          # 19 个用例：Service 层 Mockito 单测 + Repository 层 @DataJpaTest 切片
+```
+
+测试用 **H2 内存数据库**，不需要 MySQL、不污染开发库。控制台会打印 Hibernate 生成的真实 SQL（已开 `org.hibernate.SQL: debug`），可现场演示派生查询/JPQL 翻译结果。
+
+### 5. 打生产包（可选）
+
+```bash
+npm run build                        # 前端产物 → dist/
+cd backend && mvn clean package      # 后端产物 → backend/target/*.jar，可 java -jar 运行
+```
+
+### 6. 浏览器操作流程（验收演示推荐顺序）
+
+1. 主页 `/books`：来自数据库的 6 本书；顶部**搜索框**输入「代码」或「norman」（迭代三新增，作者名忽略大小写）→ 结果实时过滤，可与分类 Tab 叠加；
+2. `/profile`：用 `demo / 123456` 登录（密码在库中是 **BCrypt 密文**，登录时 `matches` 比对）；
+3. 进任意书详情页（数据来自 `GET /api/v1/book/{id}` 真实接口，F12 Network 可见）→「加入购物车」；
+4. `/cart`：改数量、删除；点「提交订单」→ 自动跳 `/profile` 看到新订单；
+5. **持久化校验**：退出登录再登录，订单仍在，购物车（若没下单）仍在。
 
 ---
 
@@ -211,7 +250,7 @@ users (1) ─── (N) orders     (1) ─── (N) order_items (N) ─── (
 |------|------|------|------|
 | id | BIGINT | PK, AUTO_INCREMENT | 主键 |
 | username | VARCHAR(60) | NOT NULL, UNIQUE | 登录名 |
-| password | VARCHAR(120) | NOT NULL | 密码（作业演示明文） |
+| password | VARCHAR(120) | NOT NULL | 密码（迭代三起为 BCrypt 加盐哈希，`$2a$10$...` 60 字符密文） |
 | email | VARCHAR(120) | NOT NULL, UNIQUE | 邮箱 |
 | phone | VARCHAR(30) | NULL | 手机号 |
 | created_at | DATETIME | NOT NULL | 注册时间 |
@@ -285,6 +324,7 @@ users (1) ─── (N) orders     (1) ─── (N) order_items (N) ─── (
 | 方法 | 路径 | 说明 |
 |------|------|------|
 | GET | `/api/v1/books` | 列出所有书籍 |
+| GET | `/api/v1/books?keyword={关键字}` | 按书名或作者模糊搜索，忽略大小写 |
 | GET | `/api/v1/book/{id}` | 获取书籍详情 |
 
 **示例**：
@@ -539,28 +579,28 @@ if (payload && Object.prototype.hasOwnProperty.call(payload, "code")) {
 
 ---
 
-## 八、评分标准自查表
+## 八、迭代三评分标准自查表
 
-| 评分项 | 分值 | 是否实现 | 关键文件 |
+本表按《课程大作业迭代3要求细则.pdf》的 30 分口径整理，方便验收前逐项核对。
+
+| 评分项 | 分值 | 实现情况 | 关键位置 |
 |--------|-----:|:--------:|----------|
-| **A. 数据库访问（5 分）** | | | |
-| A.i 正确连接并访问数据库，能讲清持久化过程 | 2 | ✅ | [application.yml](backend/src/main/resources/application.yml)、本 README 第 4.3 节 |
-| A.ii 正确使用 Repository 方法 / 定制持久化 | 2 | ✅ | 派生方法：[CartItemRepository](backend/src/main/java/com/homework/bookstore/repository/CartItemRepository.java) `findByUser_IdOrderByCreatedAtAsc`；定制 `@Query`：[OrderRepository](backend/src/main/java/com/homework/bookstore/repository/OrderRepository.java) `sumTotalAmountByUserId`、[CartItemRepository](backend/src/main/java/com/homework/bookstore/repository/CartItemRepository.java) `deleteByUserId` |
-| A.iii 数据抽象为实体类 | 1 | ✅ | [entity/](backend/src/main/java/com/homework/bookstore/entity/) 下 6 个 `@Entity` |
-| **B. 功能（5 分）** | | | |
-| B.i.1 登录（数据库中的用户名/密码） | 1 | ✅ | [POST /api/v1/users/login](backend/src/main/java/com/homework/bookstore/controller/UserController.java) + [ProfilePage LoginPanel](src/pages/ProfilePage.jsx) |
-| B.i.2 书籍列表主页 | 1 | ✅ | [GET /api/v1/books](backend/src/main/java/com/homework/bookstore/controller/BookController.java) + [BookListPage](src/pages/BookListPage.jsx) |
-| B.i.3 书籍详情 | 1 | ✅ | [GET /api/v1/book/{id}](backend/src/main/java/com/homework/bookstore/controller/BookController.java) + [BookDetailPage](src/pages/BookDetailPage.jsx) |
-| B.i.4 加入购物车 | 1 | ✅ | [POST /api/v1/cart/items](backend/src/main/java/com/homework/bookstore/controller/CartController.java)，**存数据库** |
-| B.i.5 下订单 | 1 | ✅ | [POST /api/v1/orders](backend/src/main/java/com/homework/bookstore/controller/OrderController.java) + 事务：[OrderServiceImpl](backend/src/main/java/com/homework/bookstore/service/impl/OrderServiceImpl.java) |
-| B.ii 页面联动、数据来自数据库 | — | ✅ | 加书 → 购物车列表立刻看到；下单 → 订单页立刻看到（详见第六章链路） |
-| **C. 前后端集成（5 分）** | | | |
-| C.i 异步 Fetch、JSON 格式合理 | 2 | ✅ | 统一外壳 `ApiResponse<T>`（[ApiResponse.java](backend/src/main/java/com/homework/bookstore/dto/ApiResponse.java)）；前端统一解包（[bookstoreApi.js](src/api/bookstoreApi.js) `request()`） |
-| C.ii 详述全链路 | 3 | ✅ | 本 README 第 6 章 |
-| **D. 系统架构（5 分）** | | | |
-| D.i 前端目录合理并解释 | 2 | ✅ | 第 2 节"前端目录设计理由" |
-| D.ii 后端分层架构 | 2 | ✅ | controller / service / repository / entity / dto / config 六层（第 2 节后端目录） |
-| D.iii 接口与实现分离 | 1 | ✅ | `UserService`+`UserServiceImpl`、`CartService`+`CartServiceImpl`、`OrderService`+`OrderServiceImpl` 三对 |
+| **A. 功能实现** | **10** | 已实现 | 登录 / 注册、书籍列表、书籍详情、搜索、购物车、下单、订单历史均走后端真实接口 |
+| 登录与注册 | — | 已实现 | [UserController](backend/src/main/java/com/homework/bookstore/controller/UserController.java)、[UserServiceImpl](backend/src/main/java/com/homework/bookstore/service/impl/UserServiceImpl.java)、[ProfilePage](src/pages/ProfilePage.jsx) |
+| 书籍列表、详情、搜索 | — | 已实现 | [BookController](backend/src/main/java/com/homework/bookstore/controller/BookController.java)、[BookServiceImpl](backend/src/main/java/com/homework/bookstore/service/impl/BookServiceImpl.java)、[BookListPage](src/pages/BookListPage.jsx)、[BookDetailPage](src/pages/BookDetailPage.jsx) |
+| 购物车与订单 | — | 已实现 | [CartController](backend/src/main/java/com/homework/bookstore/controller/CartController.java)、[OrderController](backend/src/main/java/com/homework/bookstore/controller/OrderController.java)、[CartPage](src/pages/CartPage.jsx) |
+| **B. 技术方案** | **10** | 已实现 | 前端组件化、后端分层、接口与实现分离、Spring JPA / ORM |
+| 前端组件化开发 | 4 | 已实现 | `components/`、`services/`、`pages/`、`utils/` 分包；HTTP 封装在 [bookstoreApi.js](src/api/bookstoreApi.js) |
+| 后端分层架构 | 4 | 已实现 | `controller/`、`service/`、`service/impl/`、`repository/`、`entity/`、`dto/`；详见第 2 节与第 7 节 |
+| 接口与实现分离 + 依赖注入 | — | 已实现 | `BookService` / `BookServiceImpl`、`UserService` / `UserServiceImpl`、`CartService` / `CartServiceImpl`、`OrderService` / `OrderServiceImpl`，通过构造器注入 Repository |
+| ORM / Spring JPA | 2 | 已实现 | [entity/](backend/src/main/java/com/homework/bookstore/entity/) 与 [repository/](backend/src/main/java/com/homework/bookstore/repository/)；`Order` 到 `OrderItem` 使用级联保存 |
+| **C. 代码质量** | **5** | 已实现 | 命名、分层、封装、测试与必要注释 |
+| 项目结构、命名、封装、测试 | 3 | 已实现 | 前后端目录清晰；后端 [src/test](backend/src/test/) 含 19 个 JUnit / Mockito / DataJpaTest 用例 |
+| 必要注释 | 2 | 已实现 | `pom.xml`、配置类、关键业务方法、README 与架构文档补充了答辩说明 |
+| **D. 界面友好** | **5** | 已实现 | Ant Design 页面、电子商务常见操作路径、响应式布局 |
+| 操作习惯 | 2 | 已实现 | 书籍浏览 → 详情 → 加购 → 购物车 → 下单 → 个人中心订单历史 |
+| 界面美观 | 2 | 已实现 | 统一布局、分类筛选、图书卡片、详情页、购物车表格、订单卡片 |
+| 体验完整度 | 1 | 已实现 | 登录态持久化、后端不可达时图书列表降级展示、操作反馈使用 Ant Design message |
 
 ---
 
@@ -613,11 +653,26 @@ SELECT * FROM order_items;    -- 至少 2 行
 
 ---
 
-## 附录：提交清单
+## 附录：提交清单与 zip 打包
 
-按课程要求提交以下内容：
+按迭代三细则第 2 节要求，提交内容如下（**前端不含 `node_modules`，后端不含 `lib`/`target`**）：
 
-- ✅ React 工程源代码（**不要打包 `node_modules`**，可执行 `rm -rf node_modules`）
-- ✅ Spring Boot 工程源代码（**不要打包 `target`、`lib`**，可执行 `rm -rf backend/target`）
-- ✅ 数据库 SQL 脚本：`backend/database/bookstore.sql`
-- ✅ 本 README
+**前端**：`src/`、`public/`（含书籍封面图）、`index.html`、`package.json`、`package-lock.json`、`vite.config.js`
+**后端**：`backend/src/`（含 `main` 与 `test`）、`backend/pom.xml`、`backend/database/bookstore.sql`、`backend/postman/`
+**文档**：本 `README.md`、`backend/ARCHITECTURE.md`
+
+一键打包为 zip（在项目根目录执行，只挑该交的文件，天然排除依赖与构建产物）：
+
+```bash
+zip -r 524031910745-作业5.zip \
+  src public index.html package.json package-lock.json vite.config.js \
+  README.md \
+  backend/src backend/pom.xml backend/database backend/postman backend/README.md backend/ARCHITECTURE.md \
+  -x '*/node_modules/*' '*/target/*' '*/dist/*' '*/.DS_Store'
+```
+
+打包后可用下面命令检查压缩包内容，确认没有 `node_modules/`、`backend/target/`、`dist/`：
+
+```bash
+unzip -l 524031910745-作业5.zip | grep -E 'node_modules|backend/target|(^|/)dist/' || echo "OK: 未包含依赖和构建产物"
+```
