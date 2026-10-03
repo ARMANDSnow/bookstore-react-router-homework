@@ -3,7 +3,7 @@
 > 这是一份"打开 IDE 对着讲"的速查手册。每一节都直接对应代码里的 package 和类。
 > 配套：每个 package 下都有 `package-info.java`，鼠标悬停可看包级文档。
 >
-> 迭代三新增：Spring Security + BCrypt、图书搜索接口、`src/test` 下 19 个单元测试。
+> 迭代三新增：Spring Security + BCrypt、图书搜索接口、`src/test` 下 26 个单元测试。
 
 ---
 
@@ -149,6 +149,7 @@ backend/
    │  6.2  cartItemRepository.findByUser_IdOrder...│  ← SELECT cart_items
    │  6.3  空购物车？抛 BusinessException(40001)    │
    │  6.4  new Order(), 遍历购物车 new OrderItem    │  ← 携带书名/单价快照
+   │       累加商品小计，加一次运费得到订单总额     │  ← 大于0且不足99收12，满99免运费
    │  6.5  orderRepository.save(order)             │  ← INSERT orders
    │                                               │      + 级联 INSERT order_items
    │  6.6  cartItemRepository.deleteByUserId(...)  │  ← DELETE cart_items

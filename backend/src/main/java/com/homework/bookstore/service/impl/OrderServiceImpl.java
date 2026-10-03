@@ -59,6 +59,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service  // 标记为 Spring 容器管理的 Bean，启动时自动实例化
 public class OrderServiceImpl implements OrderService {
 
+    private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("99.00");
+    private static final BigDecimal SHIPPING_FEE = new BigDecimal("12.00");
+
     // 三个依赖都用 final，由构造器一次性注入，之后不可变
     private final OrderRepository orderRepository;       // 操作 orders 表
     private final CartItemRepository cartItemRepository; // 操作 cart_items 表（下单要清空）
@@ -92,6 +95,8 @@ public class OrderServiceImpl implements OrderService {
      *
      * <h3>关键设计</h3>
      * <ul>
+     *   <li><b>订单金额：</b>商品小计大于零且不足 99 元时加 12 元运费，满 99 元或零元免运费；
+     *       商品单价快照不包含运费，历史订单按已保存的总额读取</li>
      *   <li><b>价格快照：</b>{@code OrderItem} 单独存 {@code bookTitle / bookImage / unitPrice}，
      *       即便日后书改名/改价，历史订单不受影响</li>
      *   <li><b>级联：</b>{@code Order.items} 上 {@code Cascade.ALL}，
@@ -124,8 +129,8 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setStatus(OrderStatus.PAID);  // 简化：下单即支付完成
 
-        // 【步骤 4】遍历购物车，把每一项"翻译"成订单明细，并累加总额
-        BigDecimal total = BigDecimal.ZERO;
+        // 【步骤 4】遍历购物车，把每一项"翻译"成订单明细，并累加商品小计
+        BigDecimal subtotal = BigDecimal.ZERO;
         for (CartItem cartItem : cartItems) {
             Book book = cartItem.getBook();
             ensureEnoughStock(book, cartItem.getQuantity());
@@ -147,10 +152,14 @@ public class OrderServiceImpl implements OrderService {
             order.addItem(oi);
 
             // 累加：单价 × 数量，BigDecimal 不能用 + 号
-            total = total.add(book.getPrice()
+            subtotal = subtotal.add(book.getPrice()
                     .multiply(BigDecimal.valueOf(cartItem.getQuantity())));
         }
-        order.setTotalAmount(total);
+        // 按整单商品小计计算一次运费，订单总额包含运费。
+        BigDecimal shipping = subtotal.signum() > 0
+                && subtotal.compareTo(FREE_SHIPPING_THRESHOLD) < 0
+                ? SHIPPING_FEE : BigDecimal.ZERO;
+        order.setTotalAmount(subtotal.add(shipping));
 
         // 【步骤 5】保存订单 —— 一句 save 触发 N+1 条 INSERT
         // 因为 Order.items 上配了 Cascade.ALL，所有 OrderItem 会被级联 INSERT

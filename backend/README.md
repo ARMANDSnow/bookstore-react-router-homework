@@ -30,7 +30,7 @@ mvn spring-boot:run
 ## 测试
 
 ```bash
-mvn test   # 19 个单元测试（Service 层 Mockito + Repository 层 @DataJpaTest，用 H2 内存库，无需 MySQL）
+mvn test   # 26 个单元测试（Service 层 Mockito + Repository 层 @DataJpaTest，用 H2 内存库，无需 MySQL）
 ```
 
 ## API
@@ -41,7 +41,9 @@ mvn test   # 19 个单元测试（Service 层 Mockito + Repository 层 @DataJpaT
 - `GET /api/v1/books?keyword=xxx`：按标题/作者关键字模糊搜索（迭代三新增）。
 - `GET /api/v1/book/{id}`：查询单本书籍详情。
 - `GET/POST/PUT/DELETE /api/v1/cart*`：购物车查询/加购/改数量/删除/清空。
-- `POST /api/v1/orders?userId=`：下单（事务 + 价格快照 + 级联写明细 + 清空购物车）。
+- `POST /api/v1/orders?userId=`：下单（商品小计 + 运费、事务、价格快照、级联写明细、清空购物车）。
 - `GET /api/v1/orders?userId=` / `GET /api/v1/orders/{id}`：订单列表 / 详情。
+
+下单金额由后端计算：商品小计大于零且不足 99 元时收 12 元运费，满 99 元或零元免运费。历史订单保持已保存的金额；消费汇总包含订单运费，图书销售额按明细价格快照计算、不含运费。
 
 更多：架构走查见 [ARCHITECTURE.md](ARCHITECTURE.md)。

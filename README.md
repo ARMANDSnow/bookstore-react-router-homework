@@ -3,7 +3,7 @@
 > 互联网应用开发技术课程作业
 > 技术栈：**React 19 + React Router 7 + Ant Design 6 + Vite 7**（前端） · **Spring Boot 3.3.5 + Spring Data JPA + Spring Security + MySQL 8**（后端） · **Fetch API**（前后端通信） · **JUnit 5 + Mockito**（测试）
 >
-> **答辩演示账号**：`demo` / `123456`　|　**一键跑测试**：`cd backend && mvn test`（19 用例）
+> **答辩演示账号**：`demo` / `123456`　|　**一键跑测试**：`cd backend && mvn test`（26 用例）
 
 ---
 
@@ -36,7 +36,7 @@
 
 1. **Spring Security + BCrypt**：密码不再明文——注册时 `encode()` 加盐哈希、登录时 `matches()` 比对；`SecurityConfig` 保守放行 `/api/**`，不影响既有功能。
 2. **图书搜索**：`GET /api/v1/books?keyword=` 按标题/作者模糊查询（派生查询 + JPQL 两种写法对照）；前端列表页新增搜索框，与分类过滤叠加。
-3. **JUnit 单元测试**：`backend/src/test/` 下 19 个用例（Service 层 Mockito + Repository 层 `@DataJpaTest`），`mvn test` 全绿，用 H2 内存库、不依赖 MySQL。
+3. **JUnit 单元测试**：`backend/src/test/` 下 26 个用例（Service 层 Mockito + Repository 层 `@DataJpaTest`），`mvn test` 全绿，用 H2 内存库、不依赖 MySQL。
 4. **详情页接真接口**：`BookDetailPage` 改为 `useEffect` 调 `GET /api/v1/book/{id}`，优先展示数据库数据。
 
 ---
@@ -211,7 +211,7 @@ npm run dev
 
 ```bash
 cd backend
-mvn test          # 19 个用例：Service 层 Mockito 单测 + Repository 层 @DataJpaTest 切片
+mvn test          # 26 个用例：Service 层 Mockito 单测 + Repository 层 @DataJpaTest 切片
 ```
 
 测试用 **H2 内存数据库**，不需要 MySQL、不污染开发库。控制台会打印 Hibernate 生成的真实 SQL（已开 `org.hibernate.SQL: debug`），可现场演示派生查询/JPQL 翻译结果。
@@ -485,6 +485,9 @@ Controller 只做一件事：把 HTTP 参数交给 Service，并用 `ApiResponse
 [OrderServiceImpl.placeOrder](backend/src/main/java/com/homework/bookstore/service/impl/OrderServiceImpl.java)：
 
 ```java
+private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("99.00");
+private static final BigDecimal SHIPPING_FEE = new BigDecimal("12.00");
+
 @Override
 @Transactional                       // 整体事务
 public OrderDto placeOrder(Long userId) {
@@ -501,8 +504,8 @@ public OrderDto placeOrder(Long userId) {
     order.setUser(user);
     order.setStatus(OrderStatus.PAID);
 
-    BigDecimal total = BigDecimal.ZERO;
-    for (CartItem cartItem : cartItems) {                  // ② 构建明细 + 累计总价
+    BigDecimal subtotal = BigDecimal.ZERO;
+    for (CartItem cartItem : cartItems) {                  // ② 构建明细 + 累计商品小计
         OrderItem oi = new OrderItem();
         oi.setBook(cartItem.getBook());
         oi.setBookTitle(cartItem.getBook().getTitle());    // 价格、书名快照
@@ -510,10 +513,13 @@ public OrderDto placeOrder(Long userId) {
         oi.setUnitPrice(cartItem.getBook().getPrice());
         oi.setQuantity(cartItem.getQuantity());
         order.addItem(oi);
-        total = total.add(cartItem.getBook().getPrice()
+        subtotal = subtotal.add(cartItem.getBook().getPrice()
                 .multiply(BigDecimal.valueOf(cartItem.getQuantity())));
     }
-    order.setTotalAmount(total);
+    BigDecimal shipping = subtotal.signum() > 0
+            && subtotal.compareTo(FREE_SHIPPING_THRESHOLD) < 0
+            ? SHIPPING_FEE : BigDecimal.ZERO;
+    order.setTotalAmount(subtotal.add(shipping));
 
     Order saved = orderRepository.save(order);             // ③ 落库（含级联保存 items）
     cartItemRepository.deleteByUserId(userId);             // ④ 清空购物车
@@ -522,6 +528,8 @@ public OrderDto placeOrder(Long userId) {
 ```
 
 事务保证：①~④ 任何一步失败，整个事务回滚，不会出现"订单已建但购物车没清"或"购物车清了但订单丢失"。
+
+订单应付总额为商品小计加运费：商品小计大于零且不足 99 元时收 12 元，满 99 元或零元免运费。例如三体 49 元 × 2 本，商品小计 98 元，应付并保存 110 元。规则由后端在下单事务中计算，不接受前端传入的金额。历史订单保留已保存的总额；个人总金额与用户消费榜按订单总额汇总，图书销售额和购书明细金额按商品价格快照汇总，不含运费。
 
 ### Step 4 · Repository 实际访问数据库
 
@@ -595,7 +603,7 @@ if (payload && Object.prototype.hasOwnProperty.call(payload, "code")) {
 | 接口与实现分离 + 依赖注入 | — | 已实现 | `BookService` / `BookServiceImpl`、`UserService` / `UserServiceImpl`、`CartService` / `CartServiceImpl`、`OrderService` / `OrderServiceImpl`，通过构造器注入 Repository |
 | ORM / Spring JPA | 2 | 已实现 | [entity/](backend/src/main/java/com/homework/bookstore/entity/) 与 [repository/](backend/src/main/java/com/homework/bookstore/repository/)；`Order` 到 `OrderItem` 使用级联保存 |
 | **C. 代码质量** | **5** | 已实现 | 命名、分层、封装、测试与必要注释 |
-| 项目结构、命名、封装、测试 | 3 | 已实现 | 前后端目录清晰；后端 [src/test](backend/src/test/) 含 19 个 JUnit / Mockito / DataJpaTest 用例 |
+| 项目结构、命名、封装、测试 | 3 | 已实现 | 前后端目录清晰；后端 [src/test](backend/src/test/) 含 26 个 JUnit / Mockito / DataJpaTest 用例 |
 | 必要注释 | 2 | 已实现 | `pom.xml`、配置类、关键业务方法、README 与架构文档补充了答辩说明 |
 | **D. 界面友好** | **5** | 已实现 | Ant Design 页面、电子商务常见操作路径、响应式布局 |
 | 操作习惯 | 2 | 已实现 | 书籍浏览 → 详情 → 加购 → 购物车 → 下单 → 个人中心订单历史 |
