@@ -60,6 +60,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
+    public BookDto updateInventory(String id, int stock) {
+        if (stock < 0) throw new BusinessException(40000, "库存不能为负数");
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(40404, "书籍不存在"));
+        book.setStock(stock);
+        return BookDto.from(bookRepository.save(book));
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<BookDto> listBooks() {
         // SQL: select * from books —— JpaRepository.findAll()

@@ -4,6 +4,7 @@ import com.homework.bookstore.dto.ApiResponse;
 import com.homework.bookstore.dto.BookPageDto;
 import com.homework.bookstore.dto.BookDto;
 import com.homework.bookstore.dto.BookRequest;
+import com.homework.bookstore.dto.InventoryUpdateRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +38,11 @@ public class CatalogController {
         BookDto book = bookService.createBook(request);
         var location = UriComponentsBuilder.fromPath("/api/books/{id}").buildAndExpand(book.getId()).encode().toUri();
         return ResponseEntity.created(location).body(ApiResponse.success("书籍已新增", book));
+    }
+
+    @PatchMapping("/{id}/inventory")
+    public ApiResponse<BookDto> updateInventory(@PathVariable String id, @Valid @RequestBody InventoryUpdateRequest request) {
+        return ApiResponse.success("库存已更新", bookService.updateInventory(id, request.stock()));
     }
 
     @GetMapping

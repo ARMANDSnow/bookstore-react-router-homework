@@ -90,6 +90,10 @@ export function updateBook(id, book) {
   });
 }
 
+export function updateInventory(id, stock) {
+  return request(`/books/${encodeURIComponent(id)}/inventory`, { method: "PATCH", body: JSON.stringify({ stock }) }, "/api");
+}
+
 export function deleteBook(id) {
   return request(`/book/${encodeURIComponent(id)}`, { method: "DELETE" });
 }

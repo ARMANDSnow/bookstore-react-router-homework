@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /** 新增/修改书籍的请求体。 */
 public class BookRequest {
@@ -31,6 +32,7 @@ public class BookRequest {
 
     @NotNull(message = "库存不能为空")
     @Min(value = 0, message = "库存不能为负数")
+    @JsonDeserialize(using = StrictIntegerDeserializer.class)
     private Integer stock;
 
     @NotNull(message = "售价不能为空")

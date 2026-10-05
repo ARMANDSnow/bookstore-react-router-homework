@@ -1,0 +1,47 @@
+[
+  {
+    "stock": null,
+    "status": 400,
+    "response": {
+      "code": 40000,
+      "message": "库存不能为空",
+      "data": null
+    }
+  },
+  {
+    "stock": -1,
+    "status": 400,
+    "response": {
+      "code": 40000,
+      "message": "库存不能为负数",
+      "data": null
+    }
+  },
+  {
+    "stock": 1.5,
+    "status": 400,
+    "response": {
+      "code": 40000,
+      "message": "请求 JSON 的格式或字段类型不正确",
+      "data": null
+    }
+  },
+  {
+    "stock": "3",
+    "status": 400,
+    "response": {
+      "code": 40000,
+      "message": "请求 JSON 的格式或字段类型不正确",
+      "data": null
+    }
+  },
+  {
+    "stock": 2147483648,
+    "status": 400,
+    "response": {
+      "code": 40000,
+      "message": "请求 JSON 的格式或字段类型不正确",
+      "data": null
+    }
+  }
+]

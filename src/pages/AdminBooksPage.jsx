@@ -14,7 +14,7 @@ import {
   Tag,
 } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { createBook, deleteBook, updateBook } from "../api/bookstoreApi.js";
+import { createBook, deleteBook, updateBook, updateInventory } from "../api/bookstoreApi.js";
 import { formatPrice } from "../utils/formatter.js";
 
 const { TextArea } = Input;
@@ -48,6 +48,10 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
   const [submitting, setSubmitting] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [form] = Form.useForm();
+  const [inventoryBook, setInventoryBook] = useState(null);
+  const [inventorySaving, setInventorySaving] = useState(false);
+  const [inventoryError, setInventoryError] = useState(null);
+  const [inventoryForm] = Form.useForm();
 
   const isAdmin = user?.role === "ADMIN";
 
@@ -107,6 +111,28 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
     }
   }
 
+  function openInventory(record) {
+    inventoryForm.setFieldsValue({ stock: record.stock ?? 0 });
+    setInventoryError(null);
+    setInventoryBook(record);
+  }
+
+  async function saveInventory({ stock }) {
+    if (inventorySaving) return;
+    setInventorySaving(true);
+    setInventoryError(null);
+    try {
+      await updateInventory(inventoryBook.id, stock);
+      await onBooksChanged?.();
+      setInventoryBook(null);
+      message.success("库存已更新");
+    } catch (error) {
+      setInventoryError(error.message || "库存更新失败，请重试");
+    } finally {
+      setInventorySaving(false);
+    }
+  }
+
   if (!isAdmin) {
     return <div className="state-panel"><Alert type="warning" showIcon message="只有管理员可以访问书籍管理" /></div>;
   }
@@ -147,9 +173,10 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
       title: "操作",
       key: "action",
       fixed: "right",
-      width: 160,
+      width: 230,
       render: (_, record) => (
         <Space className="admin-row-actions">
+          <Button onClick={() => openInventory(record)} aria-label={`调整 ${record.title} 的库存`}>调库存</Button>
           <Button icon={<EditOutlined />} onClick={() => openEdit(record)}>
             编辑
           </Button>
@@ -326,6 +353,19 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
               <TextArea rows={2} />
             </Form.Item>
           </div>
+        </Form>
+      </Modal>
+      <Modal title="调整库存" open={!!inventoryBook} width={440}
+        onCancel={() => { if (!inventorySaving) setInventoryBook(null); }}
+        onOk={() => inventoryForm.submit()} confirmLoading={inventorySaving}
+        closable={!inventorySaving} maskClosable={!inventorySaving} cancelButtonProps={{ disabled: inventorySaving }}
+        okText="保存库存" cancelText="取消">
+        <p className="page-description">《{inventoryBook?.title}》当前有 {inventoryBook?.stock ?? 0} 本，设置新的可售库存。</p>
+        {inventoryError && <Alert type="error" showIcon title={inventoryError} />}
+        <Form name="inventory" form={inventoryForm} layout="vertical" onFinish={saveInventory}>
+          <Form.Item label="库存数量" name="stock" rules={[{ required: true, message: "请输入库存数量" }, { type: "integer", min: 0, max: 2147483647, message: "请输入非负整数" }]}>
+            <InputNumber min={0} max={2147483647} precision={0} style={{ width: "100%" }} />
+          </Form.Item>
         </Form>
       </Modal>
     </section>

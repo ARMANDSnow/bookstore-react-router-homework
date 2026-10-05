@@ -16,6 +16,8 @@ public interface BookService {
 
     BookPageDto listCatalog(int page, int size, String category, String keyword, String sort);
 
+    BookDto updateInventory(String id, int stock);
+
     /** 查询全部书籍。 */
     List<BookDto> listBooks();
 

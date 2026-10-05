@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(properties = {
@@ -127,5 +128,23 @@ class CatalogControllerTest {
     @Test void preventsUnaddressableResourceId() throws Exception {
         mvc.perform(post("/api/books").contentType("application/json").content(newBookJson("path/book")))
             .andExpect(status().isBadRequest());
+    }
+    @Test void inventoryUpdatePreservesOtherFieldsAndSupportsZero() throws Exception {
+        mvc.perform(patch("/api/books/a/inventory").contentType("application/json").content("{\"stock\":0}"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.stock").value(0))
+            .andExpect(jsonPath("$.data.title").value("微服务入门")).andExpect(jsonPath("$.data.price").value(50));
+        mvc.perform(get("/api/books/a")).andExpect(jsonPath("$.data.stock").value(0));
+    }
+    @Test void inventoryRejectsInvalidTypesAndFields() throws Exception {
+        for (String json : new String[]{"{}", "{\"stock\":null}", "{\"stock\":-1}", "{\"stock\":1.5}",
+                "{\"stock\":\"3\"}", "{\"stock\":2147483648}", "{\"stock\":3,\"title\":\"覆盖\"}"}) {
+            mvc.perform(patch("/api/books/a/inventory").contentType("application/json").content(json))
+                .andExpect(status().isBadRequest());
+        }
+        mvc.perform(get("/api/books/a")).andExpect(jsonPath("$.data.stock").value(10));
+    }
+    @Test void inventoryMissingBookIs404() throws Exception {
+        mvc.perform(patch("/api/books/missing/inventory").contentType("application/json").content("{\"stock\":5}"))
+            .andExpect(status().isNotFound());
     }
 }
