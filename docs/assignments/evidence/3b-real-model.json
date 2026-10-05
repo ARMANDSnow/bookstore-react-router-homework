@@ -1,0 +1,507 @@
+{
+  "testedAt": "2026-10-05T22:37:21.337Z",
+  "environment": "真实DeepSeek、MySQL与本地中文Embedding，所有工具只读",
+  "results": [
+    {
+      "name": "catalog-only",
+      "question": "请推荐一本学习微服务架构的本店图书",
+      "tools": [
+        "search_book_catalog"
+      ],
+      "http": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "本店有一本很合适的微服务入门书：\n\n《微服务设计（第2版）》，作者 Sam Newman，ISBN 9787115638762，价格 128 元，当前库存 24 本。\n\n它围绕服务边界、通信、部署、测试与监控展开，既讲微服务什么时候适用，也讲如何从单体系统逐步演进，适合系统学习微服务架构。\n\n需要的话，我也可以帮你查一下这本书的退换货政策。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "thought": "查找本店微服务架构相关书目",
+              "action": "search_book_catalog",
+              "arguments": {
+                "query": "微服务",
+                "purpose": "查找本店微服务架构相关书目"
+              },
+              "observation": {
+                "ok": true,
+                "query": "微服务",
+                "hasMatches": true,
+                "source": "本店课程MySQL书目",
+                "message": "以下为本店当前匹配书目，价格库存均为课程演示值",
+                "books": [
+                  {
+                    "id": "building-microservices",
+                    "title": "微服务设计（第2版）",
+                    "author": "Sam Newman",
+                    "isbn": "9787115638762",
+                    "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+                    "price": 128,
+                    "stock": 24
+                  }
+                ]
+              },
+              "durationMillis": 9
+            }
+          ],
+          "books": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            }
+          ],
+          "policyChunks": [],
+          "modelRequestIds": [
+            "8496c169-e5ee-45d2-ba5c-a44867c235cf",
+            "1f2edcf8-1eca-480f-8fa4-11f9ae546d2e"
+          ]
+        }
+      }
+    },
+    {
+      "name": "policy-only",
+      "question": "会员积分怎么积累，有效期多久？",
+      "tools": [
+        "query_store_policy"
+      ],
+      "policy": "policy-5",
+      "http": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "关于会员积分，本店政策（policy-5）是这样规定的：\n\n积累方式：会员注册免费，不设付费会员或自动续费。按实际支付的图书金额每满1元积1分，运费不积分；如果发生退款，对应金额的积分会被撤回。\n\n有效期：积分自获得之日起12个月。\n\n另外补充两点：每100积分可抵扣1元，单笔抵扣最多为图书价款的10%，积分不能兑现或转让；会员与普通读者适用相同的退换货规则。\n\n需要提醒的是，积分账户与抵扣功能目前尚未实现，以上为课程政策原文，实际以人工客服确认为准。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "thought": "查询本店会员积分积累方式与有效期政策",
+              "action": "query_store_policy",
+              "arguments": {
+                "query": "会员积分如何积累，积分有效期多久",
+                "purpose": "查询本店会员积分积累方式与有效期政策"
+              },
+              "observation": {
+                "ok": true,
+                "query": "会员积分如何积累，积分有效期多久",
+                "matched": true,
+                "chunks": [
+                  {
+                    "id": "policy-5",
+                    "title": "会员积分与权益",
+                    "text": "会员注册免费，不设付费会员或自动续费。课程政策按实际支付图书金额每满1元积1分，运费不积分；退款对应金额的积分会撤回。每100积分可抵扣1元，单笔抵扣最多为图书价款的10%，不能兑现或转让。积分有效期为获得日起12个月。会员与普通读者适用相同退换货规则，会员身份不使已拆封非质量退货自动成立。积分账户与抵扣功能尚未实现。",
+                    "source": "store-policy.txt",
+                    "version": "course-2026-10-06",
+                    "score": 0.709651274911983
+                  }
+                ],
+                "status": "ready",
+                "model": "Xenova/bge-small-zh-v1.5",
+                "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+                "dimension": 512,
+                "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+                "chunkCount": 6,
+                "cacheHit": true,
+                "threshold": 0.62,
+                "simulatedPolicy": true,
+                "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+              },
+              "durationMillis": 15
+            }
+          ],
+          "books": [],
+          "policyChunks": [
+            {
+              "id": "policy-5",
+              "title": "会员积分与权益",
+              "text": "会员注册免费，不设付费会员或自动续费。课程政策按实际支付图书金额每满1元积1分，运费不积分；退款对应金额的积分会撤回。每100积分可抵扣1元，单笔抵扣最多为图书价款的10%，不能兑现或转让。积分有效期为获得日起12个月。会员与普通读者适用相同退换货规则，会员身份不使已拆封非质量退货自动成立。积分账户与抵扣功能尚未实现。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.709651274911983
+            }
+          ],
+          "modelRequestIds": [
+            "7b619917-f4b4-408a-ad4d-80b1400d5968",
+            "9d101db9-93e6-4d91-9794-e133310b9a80"
+          ]
+        }
+      }
+    },
+    {
+      "name": "complex-microservices-opened",
+      "question": "推荐一本学习微服务的书，拆了塑封不喜欢还能退吗？",
+      "tools": [
+        "search_book_catalog",
+        "query_store_policy"
+      ],
+      "policy": "policy-2",
+      "http": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "推荐这本：《微服务设计（第2版）》，作者 Sam Newman，ISBN 9787115638762，本店价格 128 元，库存 24 册。它围绕服务边界、通信、部署、测试与监控，讲清微服务何时适用、如何从单体逐步演进，适合入门到进阶。\n\n关于退货：拆了塑封、仅因不喜欢，是不能退的。依据 policy-2，已拆塑封、已阅读或有个人标记的纸质图书，若只是不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。另外按 policy-1，未拆封的非质量退货需在签收后 7 天内、书籍包装完整并有订单凭证，寄回运费由读者承担，超期不受理。\n\n不过有个例外：如果经核实是质量问题（缺页、倒页、明显印刷错误）或配送破损，按 policy-3，签收后 15 天内可凭订单和清晰照片申请换货或退货，拆过塑封也能处理，寄回运费由本店承担；库存不足无法换货时可退还书款。\n\n所以建议你先确认是否属于质量问题。若只是内容不合口味，拆封后无法退。价格与库存为课程演示数据，会员积分与退款功能尚未实现，具体办理请联系人工客服。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "thought": "查找本店微服务主题书目",
+              "action": "search_book_catalog",
+              "arguments": {
+                "query": "微服务",
+                "purpose": "查找本店微服务主题书目"
+              },
+              "observation": {
+                "ok": true,
+                "query": "微服务",
+                "hasMatches": true,
+                "source": "本店课程MySQL书目",
+                "message": "以下为本店当前匹配书目，价格库存均为课程演示值",
+                "books": [
+                  {
+                    "id": "building-microservices",
+                    "title": "微服务设计（第2版）",
+                    "author": "Sam Newman",
+                    "isbn": "9787115638762",
+                    "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+                    "price": 128,
+                    "stock": 24
+                  }
+                ]
+              },
+              "durationMillis": 6
+            },
+            {
+              "index": 2,
+              "thought": "查询拆封图书的退换货政策",
+              "action": "query_store_policy",
+              "arguments": {
+                "query": "图书已拆塑封，不喜欢，能否退货",
+                "purpose": "查询拆封图书的退换货政策"
+              },
+              "observation": {
+                "ok": true,
+                "query": "图书已拆塑封，不喜欢，能否退货",
+                "matched": true,
+                "chunks": [
+                  {
+                    "id": "policy-2",
+                    "title": "已拆塑封或使用的图书",
+                    "text": "已拆塑封、已阅读或有个人标记的纸质图书，如仅因不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。拆封限制不适用于经核实的质量问题；遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款申请处理，不能仅因拆封而拒绝。",
+                    "source": "store-policy.txt",
+                    "version": "course-2026-10-06",
+                    "score": 0.8169780428299405
+                  },
+                  {
+                    "id": "policy-1",
+                    "title": "未拆封的非质量退货",
+                    "text": "签收后7天内，纸质图书未拆塑封、未使用，书籍及包装完整、无污损，并有本店订单凭证，可以申请非质量原因退货。退款范围为已支付的图书价款，非质量退货的寄回运费由读者承担。超过7天的非质量退货不受理。",
+                    "source": "store-policy.txt",
+                    "version": "course-2026-10-06",
+                    "score": 0.773793020985715
+                  },
+                  {
+                    "id": "policy-3",
+                    "title": "质量问题与配送破损",
+                    "text": "签收后15天内发现缺页、倒页、明显印刷错误或配送破损，可凭订单和清晰照片申请换货或退货。经核实属于质量或配送问题，拆过塑封也可处理，寄回运费由本店承担。库存不足无法换货时，可选择退还已支付的图书价款。超出期限的情况需人工核实，不自动承诺退换。",
+                    "source": "store-policy.txt",
+                    "version": "course-2026-10-06",
+                    "score": 0.6627904049187596
+                  }
+                ],
+                "status": "ready",
+                "model": "Xenova/bge-small-zh-v1.5",
+                "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+                "dimension": 512,
+                "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+                "chunkCount": 6,
+                "cacheHit": true,
+                "threshold": 0.62,
+                "simulatedPolicy": true,
+                "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+              },
+              "durationMillis": 10
+            }
+          ],
+          "books": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            }
+          ],
+          "policyChunks": [
+            {
+              "id": "policy-2",
+              "title": "已拆塑封或使用的图书",
+              "text": "已拆塑封、已阅读或有个人标记的纸质图书，如仅因不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。拆封限制不适用于经核实的质量问题；遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款申请处理，不能仅因拆封而拒绝。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.8169780428299405
+            },
+            {
+              "id": "policy-1",
+              "title": "未拆封的非质量退货",
+              "text": "签收后7天内，纸质图书未拆塑封、未使用，书籍及包装完整、无污损，并有本店订单凭证，可以申请非质量原因退货。退款范围为已支付的图书价款，非质量退货的寄回运费由读者承担。超过7天的非质量退货不受理。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.773793020985715
+            },
+            {
+              "id": "policy-3",
+              "title": "质量问题与配送破损",
+              "text": "签收后15天内发现缺页、倒页、明显印刷错误或配送破损，可凭订单和清晰照片申请换货或退货。经核实属于质量或配送问题，拆过塑封也可处理，寄回运费由本店承担。库存不足无法换货时，可选择退还已支付的图书价款。超出期限的情况需人工核实，不自动承诺退换。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.6627904049187596
+            }
+          ],
+          "modelRequestIds": [
+            "7abbf63a-6eeb-4ccb-b62b-82b6990dbc2f",
+            "3501e595-a485-4f6c-8b58-e47f8c5e2785",
+            "ddaef22a-39e4-4be7-bf4b-278a279f983f"
+          ]
+        }
+      }
+    },
+    {
+      "name": "opened-quality-exception",
+      "question": "图书已经拆过塑封，发现缺页了，可以退换吗？请说明期限和依据。",
+      "tools": [
+        "query_store_policy"
+      ],
+      "policy": "policy-3",
+      "http": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "可以退换。缺页属于质量问题，拆过塑封不影响处理。\n\n依据 policy-2：已拆塑封的图书，仅因不喜欢、内容不符或买错版本不接受非质量退货；但拆封限制不适用于经核实的质量问题，遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款处理，不能仅因拆封而拒绝。\n\n依据 policy-3：签收后15天内发现缺页，可凭订单和清晰照片申请换货或退货。经核实属于质量问题，拆过塑封也可处理，寄回运费由本店承担；若库存不足无法换货，可选择退还已支付的图书价款。超出15天的情况需人工核实，不自动承诺退换。\n\n建议您尽快在签收后15天内，准备好订单凭证和缺页处的清晰照片提交申请。如需进一步协助，可联系人工客服。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "thought": "查询拆封图书缺页的退换货政策与期限",
+              "action": "query_store_policy",
+              "arguments": {
+                "query": "图书已拆塑封，发现缺页，可以退换吗？期限和依据",
+                "purpose": "查询拆封图书缺页的退换货政策与期限"
+              },
+              "observation": {
+                "ok": true,
+                "query": "图书已拆塑封，发现缺页，可以退换吗？期限和依据",
+                "matched": true,
+                "chunks": [
+                  {
+                    "id": "policy-2",
+                    "title": "已拆塑封或使用的图书",
+                    "text": "已拆塑封、已阅读或有个人标记的纸质图书，如仅因不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。拆封限制不适用于经核实的质量问题；遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款申请处理，不能仅因拆封而拒绝。",
+                    "source": "store-policy.txt",
+                    "version": "course-2026-10-06",
+                    "score": 0.791143563637628
+                  },
+                  {
+                    "id": "policy-1",
+                    "title": "未拆封的非质量退货",
+                    "text": "签收后7天内，纸质图书未拆塑封、未使用，书籍及包装完整、无污损，并有本店订单凭证，可以申请非质量原因退货。退款范围为已支付的图书价款，非质量退货的寄回运费由读者承担。超过7天的非质量退货不受理。",
+                    "source": "store-policy.txt",
+                    "version": "course-2026-10-06",
+                    "score": 0.7388938002412717
+                  },
+                  {
+                    "id": "policy-3",
+                    "title": "质量问题与配送破损",
+                    "text": "签收后15天内发现缺页、倒页、明显印刷错误或配送破损，可凭订单和清晰照片申请换货或退货。经核实属于质量或配送问题，拆过塑封也可处理，寄回运费由本店承担。库存不足无法换货时，可选择退还已支付的图书价款。超出期限的情况需人工核实，不自动承诺退换。",
+                    "source": "store-policy.txt",
+                    "version": "course-2026-10-06",
+                    "score": 0.7154071883564327
+                  }
+                ],
+                "status": "ready",
+                "model": "Xenova/bge-small-zh-v1.5",
+                "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+                "dimension": 512,
+                "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+                "chunkCount": 6,
+                "cacheHit": true,
+                "threshold": 0.62,
+                "simulatedPolicy": true,
+                "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+              },
+              "durationMillis": 5
+            }
+          ],
+          "books": [],
+          "policyChunks": [
+            {
+              "id": "policy-2",
+              "title": "已拆塑封或使用的图书",
+              "text": "已拆塑封、已阅读或有个人标记的纸质图书，如仅因不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。拆封限制不适用于经核实的质量问题；遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款申请处理，不能仅因拆封而拒绝。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.791143563637628
+            },
+            {
+              "id": "policy-1",
+              "title": "未拆封的非质量退货",
+              "text": "签收后7天内，纸质图书未拆塑封、未使用，书籍及包装完整、无污损，并有本店订单凭证，可以申请非质量原因退货。退款范围为已支付的图书价款，非质量退货的寄回运费由读者承担。超过7天的非质量退货不受理。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.7388938002412717
+            },
+            {
+              "id": "policy-3",
+              "title": "质量问题与配送破损",
+              "text": "签收后15天内发现缺页、倒页、明显印刷错误或配送破损，可凭订单和清晰照片申请换货或退货。经核实属于质量或配送问题，拆过塑封也可处理，寄回运费由本店承担。库存不足无法换货时，可选择退还已支付的图书价款。超出期限的情况需人工核实，不自动承诺退换。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.7154071883564327
+            }
+          ],
+          "modelRequestIds": [
+            "17275b4c-d5a1-457d-bffd-4aaf953f7773",
+            "9079c075-35b4-42e2-94f5-f45002d866ec"
+          ]
+        }
+      }
+    },
+    {
+      "name": "unknown-catalog",
+      "question": "请推荐本店关于量子引力专论的图书",
+      "tools": [
+        "search_book_catalog"
+      ],
+      "emptyBooks": true,
+      "http": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "抱歉，本店目前没有匹配“量子引力专论”的书目，检索结果为空。\n\n建议您换个相关主题或书名关键词再试，比如“引力”“相对论”“宇宙学”等；如果仍找不到，可以联系人工客服进一步确认。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "thought": "查找本店量子引力专论书目",
+              "action": "search_book_catalog",
+              "arguments": {
+                "query": "量子引力",
+                "purpose": "查找本店量子引力专论书目"
+              },
+              "observation": {
+                "ok": true,
+                "query": "量子引力",
+                "hasMatches": false,
+                "source": "本店课程MySQL书目",
+                "message": "本店暂无匹配书目，请调整主题；不要编造其他图书",
+                "books": []
+              },
+              "durationMillis": 6
+            }
+          ],
+          "books": [],
+          "policyChunks": [],
+          "modelRequestIds": [
+            "30cfb0a5-09d2-4fd2-b206-a816791de4e8",
+            "682d21c9-3e3e-4359-8861-d9edb55c5050"
+          ]
+        }
+      }
+    },
+    {
+      "name": "uncovered-policy",
+      "question": "本店政策对月球天气预报服务有什么规定？",
+      "tools": [
+        "query_store_policy"
+      ],
+      "emptyPolicy": true,
+      "http": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "本店政策中没有检索到与“月球天气预报服务”相关的任何条款，我无法据此给出规定，也不便凭常识推测。\n\n如果你实际想问的是购书、退换货、会员或积分方面的政策，可以告诉我具体情形（比如书籍状态、购买时间、退换原因），我再帮你查。其他问题建议直接联系人工客服确认。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "thought": "查找本店政策中关于月球天气预报服务的条款",
+              "action": "query_store_policy",
+              "arguments": {
+                "query": "月球天气预报服务 规定",
+                "purpose": "查找本店政策中关于月球天气预报服务的条款"
+              },
+              "observation": {
+                "ok": true,
+                "query": "月球天气预报服务 规定",
+                "matched": false,
+                "chunks": [],
+                "status": "ready",
+                "model": "Xenova/bge-small-zh-v1.5",
+                "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+                "dimension": 512,
+                "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+                "chunkCount": 6,
+                "cacheHit": true,
+                "threshold": 0.62,
+                "simulatedPolicy": true,
+                "message": "未找到足够相关的政策依据，请咨询人工客服。"
+              },
+              "durationMillis": 3
+            }
+          ],
+          "books": [],
+          "policyChunks": [],
+          "modelRequestIds": [
+            "5b5fa5d2-806b-4f25-a89d-5108f9083d21",
+            "3ffc4842-b767-49aa-be86-6b1edcf7114f"
+          ]
+        }
+      }
+    }
+  ],
+  "checks": [
+    "两工具按意图路由",
+    "复杂问题先书目后政策",
+    "政策结论引用真实片段",
+    "质量问题例外",
+    "空书目与政策未知",
+    "非法历史拒绝",
+    "书目库存价格全量未变"
+  ],
+  "complete": true
+}

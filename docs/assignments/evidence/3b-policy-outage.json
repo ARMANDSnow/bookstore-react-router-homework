@@ -1,0 +1,38 @@
+{
+  "testedAt": "2026-10-05T22:38:27.635Z",
+  "environment": "主动停止本任务Embedding伴随服务，真实DeepSeek继续运行",
+  "question": "课程会员积分有效期多久？",
+  "http": 200,
+  "response": {
+    "code": 0,
+    "message": "ok",
+    "data": {
+      "answer": "抱歉，会员积分有效期目前无法确认——政策服务暂时不可用，我没有查到相关条款，不能凭常识给你答复。\n\n建议稍后重试，或直接联系人工客服确认。另外提醒一下：本店的会员积分与退款功能尚未实现，具体规则请以人工客服的说明为准。",
+      "model": "deepseek-flash",
+      "steps": [
+        {
+          "index": 1,
+          "thought": "查询本店会员积分有效期政策",
+          "action": "query_store_policy",
+          "arguments": {
+            "query": "会员积分有效期",
+            "purpose": "查询本店会员积分有效期政策"
+          },
+          "observation": {
+            "ok": false,
+            "errorCode": "POLICY_UNAVAILABLE",
+            "message": "政策服务暂时不可用，无法确认退换或会员规则，请稍后重试或咨询人工客服"
+          },
+          "durationMillis": 8
+        }
+      ],
+      "books": [],
+      "policyChunks": [],
+      "modelRequestIds": [
+        "641f7833-4a6c-440a-8dde-ce2a03639f5e",
+        "a60f4945-5ea8-4248-9dee-9bba7762bb06"
+      ]
+    }
+  },
+  "complete": true
+}
