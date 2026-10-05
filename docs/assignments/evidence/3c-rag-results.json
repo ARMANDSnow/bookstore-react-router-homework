@@ -1,0 +1,219 @@
+{
+  "testedAt": "2026-10-05T22:45:49.450Z",
+  "environment": "真实本机q8中文模型、512维向量及Spring HTTP，无模拟向量",
+  "diagnostics": {
+    "status": "ready",
+    "model": "Xenova/bge-small-zh-v1.5",
+    "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "dimension": 512,
+    "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+    "chunkCount": 6,
+    "cacheHit": false,
+    "threshold": 0.62,
+    "simulatedPolicy": true,
+    "vectorCount": 6,
+    "norms": [
+      1.0000000056978346,
+      1.0000000898623242,
+      1.0000000354912126,
+      0.9999999461379708,
+      1.0000000698379996,
+      1.0000000023789195
+    ],
+    "vectorsSha256": "9dc82337a8517b734c97cf3479f165906c0b077952532ebf93a46d6a80f2c2a9"
+  },
+  "results": [
+    {
+      "query": "包装膜拆开后，因为不好看想退书",
+      "expected": 2,
+      "response": {
+        "ok": true,
+        "query": "包装膜拆开后，因为不好看想退书",
+        "matched": true,
+        "chunks": [
+          {
+            "id": "policy-2",
+            "title": "已拆塑封或使用的图书",
+            "text": "已拆塑封、已阅读或有个人标记的纸质图书，如仅因不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。拆封限制不适用于经核实的质量问题；遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款申请处理，不能仅因拆封而拒绝。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.7033968000405804
+          },
+          {
+            "id": "policy-1",
+            "title": "未拆封的非质量退货",
+            "text": "签收后7天内，纸质图书未拆塑封、未使用，书籍及包装完整、无污损，并有本店订单凭证，可以申请非质量原因退货。退款范围为已支付的图书价款，非质量退货的寄回运费由读者承担。超过7天的非质量退货不受理。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.685060391555161
+          }
+        ],
+        "status": "ready",
+        "model": "Xenova/bge-small-zh-v1.5",
+        "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+        "dimension": 512,
+        "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+        "chunkCount": 6,
+        "cacheHit": false,
+        "threshold": 0.62,
+        "simulatedPolicy": true,
+        "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+      }
+    },
+    {
+      "query": "到货发现缺了几页，但我已经打开包装了",
+      "expected": 3,
+      "response": {
+        "ok": true,
+        "query": "到货发现缺了几页，但我已经打开包装了",
+        "matched": true,
+        "chunks": [
+          {
+            "id": "policy-3",
+            "title": "质量问题与配送破损",
+            "text": "签收后15天内发现缺页、倒页、明显印刷错误或配送破损，可凭订单和清晰照片申请换货或退货。经核实属于质量或配送问题，拆过塑封也可处理，寄回运费由本店承担。库存不足无法换货时，可选择退还已支付的图书价款。超出期限的情况需人工核实，不自动承诺退换。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.6651118439641903
+          }
+        ],
+        "status": "ready",
+        "model": "Xenova/bge-small-zh-v1.5",
+        "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+        "dimension": 512,
+        "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+        "chunkCount": 6,
+        "cacheHit": false,
+        "threshold": 0.62,
+        "simulatedPolicy": true,
+        "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+      }
+    },
+    {
+      "query": "积分有效期多久，消费怎么攒积分",
+      "expected": 5,
+      "response": {
+        "ok": true,
+        "query": "积分有效期多久，消费怎么攒积分",
+        "matched": true,
+        "chunks": [
+          {
+            "id": "policy-5",
+            "title": "会员积分与权益",
+            "text": "会员注册免费，不设付费会员或自动续费。课程政策按实际支付图书金额每满1元积1分，运费不积分；退款对应金额的积分会撤回。每100积分可抵扣1元，单笔抵扣最多为图书价款的10%，不能兑现或转让。积分有效期为获得日起12个月。会员与普通读者适用相同退换货规则，会员身份不使已拆封非质量退货自动成立。积分账户与抵扣功能尚未实现。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.6741232903079709
+          }
+        ],
+        "status": "ready",
+        "model": "Xenova/bge-small-zh-v1.5",
+        "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+        "dimension": 512,
+        "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+        "chunkCount": 6,
+        "cacheHit": false,
+        "threshold": 0.62,
+        "simulatedPolicy": true,
+        "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+      }
+    },
+    {
+      "query": "收到书四天，保持包装完好，买重了能退吗",
+      "expected": 1,
+      "response": {
+        "ok": true,
+        "query": "收到书四天，保持包装完好，买重了能退吗",
+        "matched": true,
+        "chunks": [
+          {
+            "id": "policy-1",
+            "title": "未拆封的非质量退货",
+            "text": "签收后7天内，纸质图书未拆塑封、未使用，书籍及包装完整、无污损，并有本店订单凭证，可以申请非质量原因退货。退款范围为已支付的图书价款，非质量退货的寄回运费由读者承担。超过7天的非质量退货不受理。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.7019271272142625
+          },
+          {
+            "id": "policy-3",
+            "title": "质量问题与配送破损",
+            "text": "签收后15天内发现缺页、倒页、明显印刷错误或配送破损，可凭订单和清晰照片申请换货或退货。经核实属于质量或配送问题，拆过塑封也可处理，寄回运费由本店承担。库存不足无法换货时，可选择退还已支付的图书价款。超出期限的情况需人工核实，不自动承诺退换。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.6825951065302619
+          },
+          {
+            "id": "policy-2",
+            "title": "已拆塑封或使用的图书",
+            "text": "已拆塑封、已阅读或有个人标记的纸质图书，如仅因不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。拆封限制不适用于经核实的质量问题；遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款申请处理，不能仅因拆封而拒绝。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.6366508055633221
+          }
+        ],
+        "status": "ready",
+        "model": "Xenova/bge-small-zh-v1.5",
+        "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+        "dimension": 512,
+        "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+        "chunkCount": 6,
+        "cacheHit": false,
+        "threshold": 0.62,
+        "simulatedPolicy": true,
+        "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+      }
+    },
+    {
+      "query": "审核通过寄回之后钱什么时候退",
+      "expected": 4,
+      "response": {
+        "ok": true,
+        "query": "审核通过寄回之后钱什么时候退",
+        "matched": true,
+        "chunks": [
+          {
+            "id": "policy-4",
+            "title": "申请步骤与退款时间",
+            "text": "请准备订单号、图书名称、问题说明和照片，通过课程演示中的人工客服流程申请；审批后再按客服提供的地址寄回，勿自行寄送。收到并核验退回图书后，预计3至5个工作日按原支付方式退还图书价款。系统目前仅提供政策咨询，不代替客服审批，不执行退款或退货申请。",
+            "source": "store-policy.txt",
+            "version": "course-2026-10-06",
+            "score": 0.6325902173779014
+          }
+        ],
+        "status": "ready",
+        "model": "Xenova/bge-small-zh-v1.5",
+        "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+        "dimension": 512,
+        "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+        "chunkCount": 6,
+        "cacheHit": false,
+        "threshold": 0.62,
+        "simulatedPolicy": true,
+        "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+      }
+    },
+    {
+      "query": "今天月球天气如何",
+      "expected": null,
+      "response": {
+        "ok": true,
+        "query": "今天月球天气如何",
+        "matched": false,
+        "chunks": [],
+        "status": "ready",
+        "model": "Xenova/bge-small-zh-v1.5",
+        "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+        "dimension": 512,
+        "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+        "chunkCount": 6,
+        "cacheHit": false,
+        "threshold": 0.62,
+        "simulatedPolicy": true,
+        "message": "未找到足够相关的政策依据，请咨询人工客服。"
+      }
+    }
+  ],
+  "complete": true,
+  "apiBase": "http://127.0.0.1:8082",
+  "embeddingBase": "http://127.0.0.1:8094"
+}

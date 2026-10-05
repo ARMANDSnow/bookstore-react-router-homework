@@ -1,0 +1,588 @@
+{
+  "testedAt": "2026-10-05T22:51:01.620115+00:00",
+  "directory": "/private/tmp/bookstore-submission-3",
+  "environment": {
+    "frontend": "http://127.0.0.1:5182",
+    "backend": "http://127.0.0.1:8082",
+    "embedding": "http://127.0.0.1:8094",
+    "database": "bookstore_assignment3_qa_20261006",
+    "credentials": "仅通过子进程环境使用，不写入解压源码或归档",
+    "isolatedProcesses": true
+  },
+  "checks": {
+    "frontendNpmCi": true,
+    "embeddingNpmCi": true,
+    "freshModelDownload": {
+      "model": "Xenova/bge-small-zh-v1.5",
+      "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+      "bytes": 24010842,
+      "sha256": "15b717c382bcb518ba457b93ea6850ede7f4f1cd8937454aa06972366cd19bcc",
+      "verified": true
+    },
+    "coldCacheHit": false,
+    "backendTests": {
+      "run": 76,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "frontendBuild": true,
+    "bookCount": 16,
+    "microservicesBook": {
+      "id": "building-microservices",
+      "isbn": "9787115638762",
+      "price": "128.00",
+      "stock": 24
+    },
+    "orderCountAfterQueries": 0,
+    "semanticCases": 6,
+    "realModelCases": 6,
+    "policyBrowser": true,
+    "guideBrowser": true,
+    "actualPortIsolation": true,
+    "sourceHashesMatchTestedCopy": true,
+    "mobileTested": false
+  },
+  "evidence": [
+    "3c-real-model.json",
+    "3c-rag-results.json",
+    "3c-independent-routing.json",
+    "3c-browser-policy.json",
+    "3c-browser-guide.json"
+  ],
+  "validatedSourceFiles": [
+    {
+      "path": "backend/.env.example",
+      "sha256": "70d0099d67b7a160837fdd0a5f0cfc03e139815349e3618edbbf7c5d9e6d1207"
+    },
+    {
+      "path": "backend/database/bookstore.sql",
+      "sha256": "79e1d7cb2594c9e227633261bc91de407061808192ea6a1f5bd7d6ef6d67ca50"
+    },
+    {
+      "path": "backend/pom.xml",
+      "sha256": "287f967a9ecfd432c1304309110b8f4bfe8d2993e782ff3a95133d0bc66157d3"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/BookstoreBackendApplication.java",
+      "sha256": "623cab9b5f2a90322f3a956185c516ac6aedf775ec1ebde1bc9af7fe10b95c03"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/config/SecurityConfig.java",
+      "sha256": "d2cc715f7a270ab20df9044b1fa5f5f06b60a2b8b286396cc1b35d58291a17c0"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/config/WebConfig.java",
+      "sha256": "12a81e6f2326f2662f7d8d032da91975f2b64259c76382e11e3642c15fc25de8"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/config/package-info.java",
+      "sha256": "b26add141e15b41a482acccf231e0b5b4cababa65eaf44c2be661f35c6b5fe72"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/AssistantController.java",
+      "sha256": "9c6f06726c16af261391ee765be3971780ab2bf62570a82ece7266d9cae2a609"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/BookController.java",
+      "sha256": "9e552bc8743f728d547beabbe19b4715c7c9a60f5045f25bd7902d2b0afaa5e1"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/CartController.java",
+      "sha256": "a0299f9f5460d931bdc56063b127bb5047c40a672fee0d8e1d1e1e470ff8e1f5"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/CatalogController.java",
+      "sha256": "c714ce03ec6abc90b308a0d62908e79aa78b7ba043007312928f9a94516a08ee"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/GlobalExceptionHandler.java",
+      "sha256": "b8b930418853678d31873e268d4a714f57b0a808e7de064ab7453c2362035f35"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/GuideController.java",
+      "sha256": "32390f8552bb7f48cae107022c7b2e798ef711b94101cb4781eea6db27f2b564"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/OrderController.java",
+      "sha256": "ccf797bd1b2b2202909be9cfd6a467b33f739458f4b1431256e67abfb2900b78"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/PolicyController.java",
+      "sha256": "81e3a5d70f19a53407567277ac3260ae07d420097867c235375778293f6a0a20"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/UserController.java",
+      "sha256": "28d8f6f5fafb8167f7c2d88f4b514c84fdfd3a6a40851bc251df53154f600a8d"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/controller/package-info.java",
+      "sha256": "483cafbf99d0a2bacbbc77bf34400105dd5e5713c3cbe216da858047197ff400"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/AddToCartRequest.java",
+      "sha256": "7b90e86fd44ce59a50a47a3490caa5ba31bb81066f7a1db997404b7cf4555c26"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/ApiResponse.java",
+      "sha256": "73ab9d080b9b97aeee4b9f0ba93ef846035cd73ab86b5f44c06f69268a86149b"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/AssistantReply.java",
+      "sha256": "6aa223a1ac0ebd9453740128e7112c6b64136ed038f07235db10c97a7231df05"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/AssistantRequest.java",
+      "sha256": "92ad6cb7ab630b7b12e22b263fddac349c906da776848e7a8e27c85ef94dece0"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/BookDto.java",
+      "sha256": "71996aac9cd8de753fb9c8d5fe80524a9c5b464e76c9ed0923e6df24df99fd0d"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/BookPageDto.java",
+      "sha256": "7c48ad6e6ca97ae30d9f7c2aae5334d43ddbacd7b7f2a86355bb8176ec67963e"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/BookRequest.java",
+      "sha256": "3d1c2cafe08fd6a199f97711f021fcc5f9a0e834b804632bff7ac973df9fe021"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/CartItemDto.java",
+      "sha256": "755290cf00989e3836e76f02707f27be9a71f51d760fd013f18ad6098bfd238e"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/CustomerBookStatDto.java",
+      "sha256": "b3acb4d084042b28f07447f37547864a1f69a0c844222c234e3143a40fb1cdb0"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/CustomerStatsDto.java",
+      "sha256": "d9939071c43f82dfcf0d50e98e7ca98f2a1f0c7ed86618e17901549b8ee2e591"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/GuideReply.java",
+      "sha256": "e0715a3bb261f62b1e762106553e9874ee8f54c6ffc0a3e977e7ba732a584071"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/GuideRequest.java",
+      "sha256": "442e84a639b6c4044bc3e864489edc3e5f4c1702b5c582e1a5b6ef869af0bda0"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/InventoryUpdateRequest.java",
+      "sha256": "143c12fba223b89385eaaa1aa2c89912a80a447a0c17ae7a67c0157bef1bacfd"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/LoginRequest.java",
+      "sha256": "df628f832146bded6ef573062bb25bfaf03b1295c26efbb831b631a4502ee892"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/OrderDto.java",
+      "sha256": "58caf8832aea7b2d1ed63ca85b1deb01c537fe003e68a4841a50a7d891e82acb"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/OrderItemDto.java",
+      "sha256": "b7465ab51bf436f1ae9e7979ce1f5cfae7de8048f0b14f12fd50bb88cb3ab66f"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/PolicySearchRequest.java",
+      "sha256": "cb18abf0590c18ea1b31232ac6be3bfe95a9181ffaddf34386d7f91c30d67825"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/RegisterRequest.java",
+      "sha256": "59caee60c7432d0dffecc951a8ba1ebe70033fb6d87b0bf1530e301768559010"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/SalesRankDto.java",
+      "sha256": "100191e77b599bda5b54b3feeaa3adee4bad358f9c62b7df614d6eda608f000a"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/StrictIntegerDeserializer.java",
+      "sha256": "dfbdcd742c8aef24fa57493ccf096798ad0142bbedb84ce76de5ab1501928369"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/UpdateCartItemRequest.java",
+      "sha256": "65cf0fead0a8132cfff19ce71d87cf517501f090e53da042764904dd74810983"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/UserResponse.java",
+      "sha256": "506f819436f5e612ab0a432a1d323970477ea723ecbe8681964b8d9556414036"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/UserSpendRankDto.java",
+      "sha256": "24978379184707fabe7fdf83c328245e242b4c1478bb0aeb5749e2bb6f37ac87"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/dto/package-info.java",
+      "sha256": "ce2507d5d1b89f367781e299b02d7fd083de6520b1a8d81a0bf2c7bea6173854"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/Book.java",
+      "sha256": "08ec632fcb947dbbe8145569be952763772f09d669be3a6dcb071e4677055ffc"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/CartItem.java",
+      "sha256": "4fa42769ccafa7107a866c739c72a810fc01ffcdf0d55e880606d098c3e6fbff"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/Order.java",
+      "sha256": "0df2391cdd530e2f9f63641175becbe6eeef3630ab5eeba6366c2917312a14d1"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/OrderItem.java",
+      "sha256": "ec9c7177a6b069529694a97078f632643fe84ce75b5943869b1b7b3d3f78e095"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/OrderStatus.java",
+      "sha256": "dd16fc7e23a03f1a547a9b69d5fc1564bc5a5979b0409214697564af3b0060f1"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/User.java",
+      "sha256": "79c5b7d9f9bfcac7371ea054b45abf1218e75112f6758f9094ccaf1e735c1ef1"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/UserRole.java",
+      "sha256": "530cd47532b3cc7fe8fb80a67068286aa0f884dfd34832b23ec400296701e7df"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/entity/package-info.java",
+      "sha256": "ff1460d5a84c752222dde1ac59056afbffdd1f2f4724bddba9b7aa0eb164e840"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/package-info.java",
+      "sha256": "97d044e62cec3c337e797fdf2d4c2039f9253d28d109af912e6e4b0892b41d1b"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/repository/BookRepository.java",
+      "sha256": "8db172732a454a1c8186a52666fe1d7b55d4fa18053d40beb74e572109d9de3d"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/repository/CartItemRepository.java",
+      "sha256": "6ee44a0e1e1544c252a81a036c072e86f9a65b37026654644e78e7d7266a14ad"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/repository/OrderItemRepository.java",
+      "sha256": "6193ae79de7f65b589aa2011f99f9224db7237b794966aedbcd94a74e7cce7e6"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/repository/OrderRepository.java",
+      "sha256": "c107cd1b55d85f1398cef642201c0469148672d65012da54836ac06f2c497e20"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/repository/UserRepository.java",
+      "sha256": "a7d3b32f8317d7e599aa6079586ee5c8807d3905d7b269fdead739362a00a0e0"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/repository/package-info.java",
+      "sha256": "ee19f6c5e68a475cbbff7709abb101a777d7b1a87b4e85de565cc6387bd68816"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/AssistantService.java",
+      "sha256": "c54303b093caf558faa8fdcea11df2a1b6c538f6de6c3b2209cefdd491ac0dbd"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/BookService.java",
+      "sha256": "42e4cd2ff39eb60bcc65daa5ad05c60aa927df6f8f1ded40cf7fd7623a440234"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/BookTools.java",
+      "sha256": "36a7908d652030f62e74f279e96c9ff085cd191053e928516acd56c4f34db073"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/CartService.java",
+      "sha256": "fe8d7e914bd175fbba8ff48d299ee0e48c69d4a041db8e6fa475a4a27c44a599"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/DeepSeekClient.java",
+      "sha256": "60be65a343df4a422bcf2cba431e026ae233ff31ee5a8b6a183b1fd86af0ef0b"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/GuideAgentService.java",
+      "sha256": "c3b64f864a3da0a8858ff0e8c8b2f18c461764a12af9d33a6da9b72bf2dc9756"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/OrderService.java",
+      "sha256": "c789b9e683a0981c0445595ade5bf1c8bb73417186e9edbc39741a7e02c4046e"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/PolicyRagClient.java",
+      "sha256": "49383e9ecc8a66d669584e23f63000fe3345dc494b1595cd3a3f240c212d5165"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/UserService.java",
+      "sha256": "26f7a8eb7c8cebcff068cc97f5e2f79928ec491f66c019319036c400f6e7b195"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/exception/BusinessException.java",
+      "sha256": "ee59fbaed1f2d682ca209bcbe0ac04f445735eff316fea6ddd5f8d44e9453a69"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/impl/BookServiceImpl.java",
+      "sha256": "518796a82ed99cde98c4ed4ca4d13eb0e800e9b3b22c95e3ce781a03c0534a78"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/impl/CartServiceImpl.java",
+      "sha256": "aa0e63fc301f29de449730c7de89af8f00b2be0e50ada2683696f9d3ad5b3071"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/impl/OrderServiceImpl.java",
+      "sha256": "80385c70b11cfabb8a9e49b55b28d1907787ce52d2e9298363e8c2720a4d47ab"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/impl/UserServiceImpl.java",
+      "sha256": "7a008ee2c4e83620a7fe6ab9e36e0c3d717a44b4b3f3790f77ccf1021b1e55fc"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/impl/package-info.java",
+      "sha256": "4eec3fe58a5f0f7174e142d570d439fb02a62b2a08290fd98c3b411a26cd10f5"
+    },
+    {
+      "path": "backend/src/main/java/com/homework/bookstore/service/package-info.java",
+      "sha256": "75e866991c5e96889b9a85d647dbbd98191743db1914a1c3958cc43339373e79"
+    },
+    {
+      "path": "backend/src/main/resources/application-local.yml",
+      "sha256": "1b059e252d9eb444c480984aa8abdb7a5c1581a06a4f99e7450442e5831c1701"
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "c1c19d1e209c61683318f94d4a48714fcec7d8d36302cb7ae21e7f9c63357b97"
+    },
+    {
+      "path": "backend/src/main/resources/data.sql",
+      "sha256": "d7607c58856fda5f1f6d7965bcf303720e77935fc2d4179f40078c0480bf0909"
+    },
+    {
+      "path": "backend/src/main/resources/static/api/v1/openapi.json",
+      "sha256": "a2a034c1cecb8111a09da5d9b6197f3e82498091f91ad07c39f5cede6e564a67"
+    },
+    {
+      "path": "backend/src/main/resources/store-policy.txt",
+      "sha256": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/controller/AssistantControllerTest.java",
+      "sha256": "94d66abd1f10ea140538f8e2a1a55cf790d8a4d01b1a6a63033a1b0859f0e201"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/controller/CatalogControllerTest.java",
+      "sha256": "975ecf177b0b1af93c3f73409a17f2f9915805614aba501fb71f381f95fee437"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/controller/GuideControllerTest.java",
+      "sha256": "aaf4eadc44a16d8e4866969e2aa2e858029c909e3690a5c0e9a1486b22e56815"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/controller/PolicyControllerTest.java",
+      "sha256": "23cdfbd3d4a14b9823f0fae6ef7a48f143b28aac6ef4ece7796066236ea47f55"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/repository/BookRepositoryTest.java",
+      "sha256": "a88a2feadf6e47ed3743cdb94ad293a88926a3bbef630fb9f649fdeef3fef256"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/service/AssistantServiceTest.java",
+      "sha256": "a8555d147c473d557e6c263e78d40362475219033c153e02e99075b75f65d78f"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/service/GuideAgentServiceTest.java",
+      "sha256": "dca656caae0bd6207e686301d2d6d4b57d86876daeff09eb31b8536925b6743d"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/service/impl/BookServiceImplTest.java",
+      "sha256": "7d14e6338142c33f03370d470a277e6faba372fb6db55c3d9c50b5f80e316837"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/service/impl/CartServiceImplTest.java",
+      "sha256": "950e857f2c1fac9bea8db743bbf4723cfa0d276f32d66c763058bb319d69956f"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/service/impl/OrderServiceImplTest.java",
+      "sha256": "488abf975185e1a73f6a11606e29207b5ce1237991a20e8252e77d365022b60e"
+    },
+    {
+      "path": "backend/src/test/java/com/homework/bookstore/service/impl/UserServiceImplTest.java",
+      "sha256": "d1b93024574bbf6dd718d9fbf242a475a91c95d43c26b54772292eda3e281910"
+    },
+    {
+      "path": "backend/src/test/resources/application.yml",
+      "sha256": "5925455430383795f8fbf7919c956891d754edb27a696d6c259e96de7627d272"
+    },
+    {
+      "path": "backend/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker",
+      "sha256": "8eca853a5a457f17e0479b71dfbe95f2a13aff9eeff250261ecdc8ca9b847a6a"
+    },
+    {
+      "path": "embedding-service/chunks.mjs",
+      "sha256": "d2ab56edc526f907e927e5eec40be6289ef27166d8bdbbd7abd5fb7b442e46d3"
+    },
+    {
+      "path": "embedding-service/download-model.mjs",
+      "sha256": "1178884a9f23c17232af10bf25937460e822aae70c93658dd46338a8b569bd4c"
+    },
+    {
+      "path": "embedding-service/package-lock.json",
+      "sha256": "ccc967eac0c50ad29ff2a32284ecb4e204c32e1c10017343be4a0d496add8be5"
+    },
+    {
+      "path": "embedding-service/package.json",
+      "sha256": "70801a98908e94ce42a5c7ce43fc5c40e7063b1a53805b1a94928035796e505e"
+    },
+    {
+      "path": "embedding-service/server.mjs",
+      "sha256": "7dd706322ef709651aabef957f69307c2ec1a1f34c0b4d264c682c231bceea74"
+    },
+    {
+      "path": "index.html",
+      "sha256": "661afe5a65bed91822dbc9b806355d684b92da663fea42d33cb317c625f5d8a7"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "0fce48d9d4f1222c60b16715cac0c6b04742df5728d48ead80b06882902403f9"
+    },
+    {
+      "path": "package.json",
+      "sha256": "89eb9258c6710a0ad3a830717b58b4081f973174bbb00cd3cde1cb88a5393d07"
+    },
+    {
+      "path": "scripts/assignments/verify_guide_outage.mjs",
+      "sha256": "0eb0ad2add340bed0e93c795a62ae873cfa7808d7ab4824cc91d6cbb13793146"
+    },
+    {
+      "path": "scripts/assignments/verify_policy.mjs",
+      "sha256": "04a66e61bbb6528016d6f9cee9c81b871b823082f22ce688292c30235eed328b"
+    },
+    {
+      "path": "scripts/assignments/verify_policy_browser.mjs",
+      "sha256": "6f36cdacaf757c8dd7b30bdaff8b3916604fcdaa86759b073de24993b094982f"
+    },
+    {
+      "path": "scripts/assignments/verify_policy_cache.mjs",
+      "sha256": "45d4c4a956c0d7addceaf58c43a79498dd02ca19e0577d22bcff00dde742b0ec"
+    },
+    {
+      "path": "scripts/assignments/verify_shopping.mjs",
+      "sha256": "26b99d38f9738c0ff3b6326eec5d392303d2d2c06393a9a13f18c21e4a6b9c67"
+    },
+    {
+      "path": "scripts/assignments/verify_shopping_browser.mjs",
+      "sha256": "147c5c6368a02650f5a3b59277dfe8c434dfc6971e732511582fe45d5a5723cc"
+    },
+    {
+      "path": "src/App.jsx",
+      "sha256": "8be10043cfa584d2fc6bc1ce0379c8d65cede5f55e7fad244433c92997c41e88"
+    },
+    {
+      "path": "src/api/bookstoreApi.js",
+      "sha256": "4b3b06b00f56a305168a29c63d3b9f88256a7ee5acf4bd3be32e1177d36d6cdc"
+    },
+    {
+      "path": "src/components/BookCard.jsx",
+      "sha256": "4549b7584c9062807e239f04a5cb4d8f8ed3308d2643a1b2c65e8c2271c97439"
+    },
+    {
+      "path": "src/components/CategoryFilter.jsx",
+      "sha256": "1d9b4b912639578916d795bf058e6ecf7d9a9b7d256930265c64abea6cfa7075"
+    },
+    {
+      "path": "src/components/HeroBanner.jsx",
+      "sha256": "d91fd94eb7288b0648e6e8a785aec82d0d30b779c406776245b5ae124067c2fa"
+    },
+    {
+      "path": "src/components/Layout.jsx",
+      "sha256": "3f37c9290321c7b0f47a811e97cc91aca68fc7931e33b6dd50c5f8d5fb54f727"
+    },
+    {
+      "path": "src/data/Data.json",
+      "sha256": "5c5eaf2f0f16096870641faf06c2962b5352a1e86107d76e2c81006b8798f7b2"
+    },
+    {
+      "path": "src/data/bookSources.json",
+      "sha256": "6182cb06efefd98c0074a60e74dfb67f3e65e8a88405f1327258ce9ee4a4dc6c"
+    },
+    {
+      "path": "src/main.jsx",
+      "sha256": "5406cd111efe903e0d4bf7695c11746321ea5f445a05d98e3ccddd48865bffaf"
+    },
+    {
+      "path": "src/pages/AdminBooksPage.jsx",
+      "sha256": "a56aa899629ca93797f7b2b8d38abf96d4627d048bdf9d88921dca78348510e6"
+    },
+    {
+      "path": "src/pages/AdminUsersPage.jsx",
+      "sha256": "bdf598734e90d9548f0cc495eff095c9013a54e6ddcb6226d59e8e1016505713"
+    },
+    {
+      "path": "src/pages/AssistantPage.jsx",
+      "sha256": "66364a8790ee75da48312fdd46f5d8c011fda11f60c948be05497db0213ca814"
+    },
+    {
+      "path": "src/pages/BookDetailPage.jsx",
+      "sha256": "807ac8a97c0cef57b5133887480e4e1116a8010e54151565808a313128d119e5"
+    },
+    {
+      "path": "src/pages/BookListPage.jsx",
+      "sha256": "5db36eca3a0faaf975a56d6ddc6602ec2aba600a91857b9465d0a5a281a2a472"
+    },
+    {
+      "path": "src/pages/CartPage.jsx",
+      "sha256": "b91de2e495d25694f471e0b2d5eeff8a4763af8b6233cd216fbc7d3b2ee3be15"
+    },
+    {
+      "path": "src/pages/GuidePage.jsx",
+      "sha256": "2ac2337c99b2c4efb9bd2f266215a643ddc8c12a0e78b81846d4754d81df6f1a"
+    },
+    {
+      "path": "src/pages/OrdersPage.jsx",
+      "sha256": "661c8092e7f6c4ceb6c1b9ea62bc9c039fcc7920d8261d26b6f71d2f927d4e73"
+    },
+    {
+      "path": "src/pages/PolicyPage.jsx",
+      "sha256": "4302212def70e196a9092a96b42c85b7bbe79a76d98f9026927cc7da379fbd7a"
+    },
+    {
+      "path": "src/pages/ProfilePage.jsx",
+      "sha256": "50ac2ba7447bb4060d36adae33cfb7c3a07419b377bf8159a36bdc25a7393b12"
+    },
+    {
+      "path": "src/pages/StatsPage.jsx",
+      "sha256": "3505456dd308dc3df3ccc67398e6211e8393286dbaa911613e8d14dff8e3489e"
+    },
+    {
+      "path": "src/pages/assistant.css",
+      "sha256": "bf8b3b832530b74a97c8bfc288fd9951164ffe5a41efa3939baa5229548d2b4f"
+    },
+    {
+      "path": "src/pages/guide.css",
+      "sha256": "cdb80019f06f33d00e1b389b6ab470105e1aeabb676e3e0c591e7f1d423d9f8a"
+    },
+    {
+      "path": "src/pages/policy.css",
+      "sha256": "a72eb1c8f98055653ae3f3156750baa67741c601a21f12c77f0c69e630d1a339"
+    },
+    {
+      "path": "src/services/authService.js",
+      "sha256": "bbbfd0938aeb69433a9bd091f0d695423b5ec21d06cdbd89df807667443c1c92"
+    },
+    {
+      "path": "src/services/cartService.js",
+      "sha256": "86b6c6302ffa08e0a48bf878e804ed097a52c8b3ff48120df5b3e7be3ecca810"
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "95e629d01777929f211f9f67fd4a2418578a46e8564dabc0339dc3280ad42259"
+    },
+    {
+      "path": "src/utils/auth.js",
+      "sha256": "a89eb0c6d15d6c41e26bbf90faa47364a11bf3cbaaca008ec7be3878b0fd0ab7"
+    },
+    {
+      "path": "src/utils/formatter.js",
+      "sha256": "075d184640f670d3e373ebc1ddc06f2c43b90247ad6dfc995f2ff8d73596a059"
+    },
+    {
+      "path": "vite.config.js",
+      "sha256": "6ae66935cec43b418f066da7ecabcd6329ee39ce826cae428b45dea2b5430d9e"
+    }
+  ],
+  "complete": true
+}

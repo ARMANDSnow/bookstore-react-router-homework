@@ -1,9 +1,12 @@
-# 知页书城 · 迭代三
+# 知页书城 · 应用系统体系架构作业1～3
 
 > 互联网应用开发技术课程作业
 > 技术栈：**React 19 + React Router 7 + Ant Design 6 + Vite 7**（前端） · **Spring Boot 3.3.5 + Spring Data JPA + Spring Security + MySQL 8**（后端） · **Fetch API**（前后端通信） · **JUnit 5 + Mockito**（测试）
 >
-> **答辩演示账号**：`demo` / `123456`　|　**一键跑测试**：`cd backend && mvn test`（26 用例）
+> **答辩演示账号**：`demo` / `123456`　|　**一键跑测试**：`cd backend && mvn test`（76 用例）
+
+
+当前新增REST分页/新增/库存接口、OpenAPI 3.0规范、真实DeepSeek库存与模拟竞价助手、真实中文向量政策检索、双工具购书向导；新数据库种子16本书。按作业要求分功能完成本地前后端验收并提交推送。入口、证据与提交文件见 [作业1～3验收记录](docs/assignments/README.md)；精简源码包见 `docs/assignments/提交/`。本轮仅验收桌面，未检测手机比例。
 
 ---
 
@@ -36,8 +39,8 @@
 
 1. **Spring Security + BCrypt**：密码不再明文——注册时 `encode()` 加盐哈希、登录时 `matches()` 比对；`SecurityConfig` 保守放行 `/api/**`，不影响既有功能。
 2. **图书搜索**：`GET /api/v1/books?keyword=` 按标题/作者模糊查询（派生查询 + JPQL 两种写法对照）；前端列表页新增搜索框，与分类过滤叠加。
-3. **JUnit 单元测试**：`backend/src/test/` 下 26 个用例（Service 层 Mockito + Repository 层 `@DataJpaTest`），`mvn test` 全绿，用 H2 内存库、不依赖 MySQL。
-4. **详情页接真接口**：`BookDetailPage` 改为 `useEffect` 调 `GET /api/v1/book/{id}`，优先展示数据库数据。
+3. **原迭代三阶段JUnit测试**：当时`backend/src/test/`下26个用例（当前为76项）（Service 层 Mockito + Repository 层 `@DataJpaTest`），`mvn test` 全绿，用 H2 内存库、不依赖 MySQL。
+4. **详情页接真接口**：`BookDetailPage` 改为 `useEffect` 调 `GET /api/books/{id}`，优先展示数据库数据。
 
 ### 界面改造（温暖纸感）
 
@@ -57,6 +60,7 @@
 ├── README.md                ← 本文档
 ├── package.json             ← 前端依赖与脚本
 ├── vite.config.js           ← Vite 代理 /api → :8080
+├── embedding-service/       ← 中文BGE模型、分块、向量检索与版本缓存
 ├── index.html               ← Vite 入口
 ├── public/                  ← 静态资源
 ├── src/                     ← 前端源代码
@@ -75,6 +79,9 @@
 │   ├── pages/               ← 路由级页面
 │   │   ├── BookListPage.jsx
 │   │   ├── BookDetailPage.jsx
+│   │   ├── AssistantPage.jsx ← ISBN库存与模拟竞价
+│   │   ├── PolicyPage.jsx    ← 完整条款与中文向量检索
+│   │   ├── GuidePage.jsx     ← 书目＋政策双工具导购
 │   │   ├── CartPage.jsx
 │   │   └── ProfilePage.jsx  ← 登录 / 注册 / 订单历史
 │   ├── utils/               ← 纯函数工具
@@ -173,16 +180,17 @@
 | Maven | 3.8+（或用 IDE 内置） | `mvn -version` |
 | Node.js | 20.19+（20.x）或 22.12+ | `node --version` |
 | MySQL | 8.x（服务需已启动） | `mysqladmin ping` |
+| curl / Python | 模型下载 / 精简打包需要 | `curl --version` / `python3 --version` |
 
 > **关于 JDK 版本**：`pom.xml` 编译目标是 Java 17。若你的机器是 JDK 21+，跑测试所需的 Mockito / ByteBuddy 版本已在 `pom.xml` 里处理好兼容，`mvn test` 可直接运行，无需切换 JDK。
 
 ### 1. 准备数据库（先启动 MySQL）
 
-后端默认连接 `localhost:3306/bookstore`，用户名 `root`，**密码默认留空**。若你的 MySQL root 设了密码，用环境变量覆盖（见第 2 步），**不必改任何代码**。启动顺序固定为：**MySQL → 后端 → 前端 → 浏览器操作**。
+后端默认连接 `localhost:3306/bookstore`，用户名 `root`，**密码默认留空**。若你的 MySQL root 设了密码，用环境变量覆盖（见第 2 步），**不必改任何代码**。启动顺序固定为：**MySQL → Embedding服务 → 后端 → 前端 → 浏览器操作**。
 
 建库有两种等价方式，任选其一：
 
-- **方式 A（推荐，零操作）**：什么都不用做。后端首次启动时 JPA 的 `ddl-auto: update` 会自动建库建表，`data.sql` 自动插入 6 本书 + demo 用户。连接串带了 `createDatabaseIfNotExist=true`，库不存在也会自动创建。
+- **方式 A（推荐，零操作）**：什么都不用做。后端首次启动时 JPA 的 `ddl-auto: update` 会自动建库建表，`data.sql` 自动插入 16 本书 + demo 用户。连接串带了 `createDatabaseIfNotExist=true`，库不存在也会自动创建。
 - **方式 B（手动导入 DDL）**：
   ```bash
   mysql -uroot < backend/database/bookstore.sql          # root 无密码
@@ -190,6 +198,8 @@
   ```
 
 ### 2. 启动后端（端口 8080，保持终端不要关闭）
+
+若使用政策检索与购书向导，先在 `embedding-service` 执行 `npm ci`、`npm run download-model`、`npm start`；等待 `http://127.0.0.1:8091/status` 为ready。复制 `backend/.env.example` 为忽略的 `.env`，配置DeepSeek密钥与MySQL。完整三服务说明见 [作业3运行说明](docs/assignments/作业3-运行说明.md)。
 
 ```bash
 cd backend
@@ -202,7 +212,7 @@ MYSQL_PASSWORD=你的密码 mvn spring-boot:run   # ② root 有密码，用环�
 看到日志 `Started BookstoreBackendApplication` 即启动成功。这个终端需要一直开着，前端请求会通过 Vite 代理转到这里。快速自检：
 
 ```bash
-curl localhost:8080/api/v1/books                 # 应返回 6 本书的 JSON
+curl localhost:8080/api/v1/books                 # 应返回 16 本书的 JSON
 curl 'localhost:8080/api/v1/books?keyword=代码'  # 迭代三搜索：应只返回《代码整洁之道》
 ```
 
@@ -220,7 +230,7 @@ npm run dev
 
 ```bash
 cd backend
-mvn test          # 26 个用例：Service 层 Mockito 单测 + Repository 层 @DataJpaTest 切片
+mvn test          # 当前76项：Service Mockito + Repository H2 + Controller契约测试
 ```
 
 测试用 **H2 内存数据库**，不需要 MySQL、不污染开发库。控制台会打印 Hibernate 生成的真实 SQL（已开 `org.hibernate.SQL: debug`），可现场演示派生查询/JPQL 翻译结果。
@@ -234,9 +244,9 @@ cd backend && mvn clean package      # 后端产物 → backend/target/*.jar，�
 
 ### 6. 浏览器操作流程（验收演示推荐顺序）
 
-1. 主页 `/books`：来自数据库的 6 本书；顶部**搜索框**输入「代码」或「norman」（迭代三新增，作者名忽略大小写）→ 结果实时过滤，可与分类 Tab 叠加；
+1. 主页 `/books`：来自数据库的 16 本书；顶部**搜索框**输入「代码」或「norman」（迭代三新增，作者名忽略大小写）→ 结果实时过滤，可与分类 Tab 叠加；
 2. `/profile`：用 `demo / 123456` 登录（密码在库中是 **BCrypt 密文**，登录时 `matches` 比对）；
-3. 进任意书详情页（数据来自 `GET /api/v1/book/{id}` 真实接口，F12 Network 可见）→「加入购物车」；
+3. 进任意书详情页（数据来自 `GET /api/books/{id}` 真实接口，F12 Network 可见）→「加入购物车」；
 4. `/cart`：改数量、删除；点「提交订单」→ 自动跳 `/profile` 看到新订单；
 5. **持久化校验**：退出登录再登录，订单仍在，购物车（若没下单）仍在。
 
@@ -334,7 +344,7 @@ users (1) ─── (N) orders     (1) ─── (N) order_items (N) ─── (
 |------|------|------|
 | GET | `/api/v1/books` | 列出所有书籍 |
 | GET | `/api/v1/books?keyword={关键字}` | 按书名或作者模糊搜索，忽略大小写 |
-| GET | `/api/v1/book/{id}` | 获取书籍详情 |
+| GET | `/api/books/{id}` | 获取书籍详情 |
 
 **示例**：
 
@@ -612,7 +622,7 @@ if (payload && Object.prototype.hasOwnProperty.call(payload, "code")) {
 | 接口与实现分离 + 依赖注入 | — | 已实现 | `BookService` / `BookServiceImpl`、`UserService` / `UserServiceImpl`、`CartService` / `CartServiceImpl`、`OrderService` / `OrderServiceImpl`，通过构造器注入 Repository |
 | ORM / Spring JPA | 2 | 已实现 | [entity/](backend/src/main/java/com/homework/bookstore/entity/) 与 [repository/](backend/src/main/java/com/homework/bookstore/repository/)；`Order` 到 `OrderItem` 使用级联保存 |
 | **C. 代码质量** | **5** | 已实现 | 命名、分层、封装、测试与必要注释 |
-| 项目结构、命名、封装、测试 | 3 | 已实现 | 前后端目录清晰；后端 [src/test](backend/src/test/) 含 26 个 JUnit / Mockito / DataJpaTest 用例 |
+| 项目结构、命名、封装、测试 | 3 | 已实现 | 前后端目录清晰；后端 [src/test](backend/src/test/) 含76个JUnit / Mockito / DataJpaTest用例 |
 | 必要注释 | 2 | 已实现 | `pom.xml`、配置类、关键业务方法、README 与架构文档补充了答辩说明 |
 | **D. 界面友好** | **5** | 已实现 | Ant Design 页面、电子商务常见操作路径、响应式布局 |
 | 操作习惯 | 2 | 已实现 | 书籍浏览 → 详情 → 加购 → 购物车 → 下单 → 个人中心订单历史 |
@@ -670,26 +680,8 @@ SELECT * FROM order_items;    -- 至少 2 行
 
 ---
 
-## 附录：提交清单与 zip 打包
+## 附录：作业1～3提交文件
 
-按迭代三细则第 2 节要求，提交内容如下（**前端不含 `node_modules`，后端不含 `lib`/`target`**）：
+当前提交材料位于 `docs/assignments/提交/`：作业1模板报告、作业2精简源码包、作业3精简源码包。完整验收记录及运行说明见 [作业1～3](docs/assignments/README.md)。
 
-**前端**：`src/`、`public/`（含书籍封面图）、`index.html`、`package.json`、`package-lock.json`、`vite.config.js`
-**后端**：`backend/src/`（含 `main` 与 `test`）、`backend/pom.xml`、`backend/database/bookstore.sql`、`backend/postman/`
-**文档**：本 `README.md`、`backend/ARCHITECTURE.md`
-
-一键打包为 zip（在项目根目录执行，只挑该交的文件，天然排除依赖与构建产物）：
-
-```bash
-zip -r 524031910745-作业5.zip \
-  src public index.html package.json package-lock.json vite.config.js \
-  README.md \
-  backend/src backend/pom.xml backend/database backend/postman backend/README.md backend/ARCHITECTURE.md \
-  -x '*/node_modules/*' '*/target/*' '*/dist/*' '*/.DS_Store'
-```
-
-打包后可用下面命令检查压缩包内容，确认没有 `node_modules/`、`backend/target/`、`dist/`：
-
-```bash
-unzip -l 524031910745-作业5.zip | grep -E 'node_modules|backend/target|(^|/)dist/' || echo "OK: 未包含依赖和构建产物"
-```
+作业2和3分别执行 `python3 scripts/assignments/build_submission.py 2` 或 `3` 生成对应源码包。脚本使用明确清单，排除密钥、依赖目录、编译产物和模型缓存；核验ZIP CRC与逐文件SHA256。作业3包含真实复杂案例与公开行动链，运行前需按README准备Embedding模型。已有验收包应先保留，再有意重建。

@@ -1,0 +1,49 @@
+{
+  "testedAt": "2026-10-05T22:47:54.817Z",
+  "check": "原工程8091服务停止时，解压8082仍使用独立8094正常检索，原8080如实503",
+  "results": [
+    {
+      "base": "http://127.0.0.1:8082",
+      "http": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "ok": true,
+          "query": "会员积分有效期",
+          "matched": true,
+          "chunks": [
+            {
+              "id": "policy-5",
+              "title": "会员积分与权益",
+              "text": "会员注册免费，不设付费会员或自动续费。课程政策按实际支付图书金额每满1元积1分，运费不积分；退款对应金额的积分会撤回。每100积分可抵扣1元，单笔抵扣最多为图书价款的10%，不能兑现或转让。积分有效期为获得日起12个月。会员与普通读者适用相同退换货规则，会员身份不使已拆封非质量退货自动成立。积分账户与抵扣功能尚未实现。",
+              "source": "store-policy.txt",
+              "version": "course-2026-10-06",
+              "score": 0.6759641057864803
+            }
+          ],
+          "status": "ready",
+          "model": "Xenova/bge-small-zh-v1.5",
+          "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+          "dimension": 512,
+          "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+          "chunkCount": 6,
+          "cacheHit": false,
+          "threshold": 0.62,
+          "simulatedPolicy": true,
+          "message": "以下为检索到的课程政策原文，请结合条件阅读。"
+        }
+      }
+    },
+    {
+      "base": "http://127.0.0.1:8080",
+      "http": 503,
+      "body": {
+        "code": 50330,
+        "message": "政策检索暂时不可用，请稍后重试。",
+        "data": null
+      }
+    }
+  ],
+  "complete": true
+}

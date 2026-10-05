@@ -9,12 +9,14 @@ for folder in ['src','backend/src','public/images']:
 for path in ['package.json','package-lock.json','index.html','vite.config.js','backend/pom.xml','backend/.env.example','backend/database/bookstore.sql','docs/assignments/书目来源.md','scripts/assignments/build_submission.py']:
  files.add(root/path)
 patterns=['2a-*','2b-*','catalog-*'] if assignment=='2' else ['3a-*','3b-*','3c-*']
-for pattern in patterns:files.update((root/'docs/assignments/evidence').glob(pattern))
-for pattern in ['verify_assistant*.mjs','verify_catalog*.mjs','verify_seed_mysql.py'] if assignment=='2' else ['verify_policy*.mjs','verify_shopping*.mjs']:
+for pattern in patterns:files.update(p for p in (root/'docs/assignments/evidence').glob(pattern) if p.name not in {'2c-package.json','3c-package.json'})
+for pattern in ['verify_assistant*.mjs','verify_catalog*.mjs','verify_seed_mysql.py'] if assignment=='2' else ['verify_policy*.mjs','verify_shopping*.mjs','verify_guide*.mjs']:
  files.update((root/'scripts/assignments').glob(pattern))
 if assignment=='3':
  files.update(p for p in (root/'embedding-service').rglob('*') if p.is_file() and not set(p.parts)&{'node_modules','.cache','models'})
+ for name in ['作业3-向量检索.md','作业3-导购流程.md','作业3-复杂案例.md']:files.add(root/'docs/assignments'/name)
 readme=root/f'docs/assignments/作业{assignment}-运行说明.md'
+files.add(readme)
 entries={str(p.relative_to(root)):p.read_bytes() for p in sorted(files)}
 entries['README.md']=readme.read_bytes()
 for path,data in entries.items():
@@ -27,6 +29,7 @@ revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root).decode().s
 manifest={'assignment':assignment,'student':'524031910745 丁宇轩','sourceRevision':revision,'files':[{ 'path':p,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()} for p,data in entries.items()]}
 entries['MANIFEST.json']=(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n').encode()
 out=root/f'docs/assignments/提交/524031910745-作业{assignment}-源码.zip'
+out.parent.mkdir(parents=True,exist_ok=True)
 with zipfile.ZipFile(out,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as archive:
  for path,data in entries.items():
   info=zipfile.ZipInfo(path,(1980,1,1,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o100644<<16;archive.writestr(info,data)

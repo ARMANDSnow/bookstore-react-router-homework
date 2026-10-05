@@ -1,0 +1,65 @@
+{
+  "testedAt": "2026-10-05T22:48:16.275Z",
+  "cases": [
+    {
+      "case": "welcome",
+      "overflow": false,
+      "disabled": true,
+      "nav": "page"
+    },
+    {
+      "case": "two-offline-errors",
+      "errors": [
+        "咨询暂时无法完成连接暂时中断，请确认网络和书城服务可用后重试。重试这个问题编辑问题",
+        "咨询暂时无法完成连接暂时中断，请确认网络和书城服务可用后重试。重试这个问题编辑问题"
+      ]
+    },
+    {
+      "case": "retry-earlier-complex-preserves-later",
+      "questions": [
+        "推荐一本学习微服务的书，拆了塑封不喜欢还能退吗？",
+        "会员积分有效期多久？"
+      ],
+      "earlierReplied": true,
+      "laterError": "咨询暂时无法完成连接暂时中断，请确认网络和书城服务可用后重试。重试这个问题编辑问题",
+      "answer": "推荐这本：《微服务设计（第2版）》，作者 Sam Newman，ISBN 9787115638762，价格 128 元，本店库存 24 册。它围绕服务边界、通信、部署、测试与监控，讲清微服务何时适用、如何从单体逐步演进，适合入门到进阶。\n\n关于拆封后退货：按本店政策，已拆塑封的纸质图书，如果只是因为不喜欢、内容不符合预期或买错版本，不接受非质量原因退货（policy-2）。也就是说，拆了塑封再以\"不喜欢\"为由退，是不行的。\n\n不过有两点例外值得注意：\n- 未拆封的情况：签收后 7 天内、未拆塑封未使用、书籍包装完整并有订单凭证，可以申请非质量退货，退款为图书价款，寄回运费由你承担；超过 7 天不受理（policy-1）。\n- 质量问题：签收后 15 天内若发现缺页、倒页、明显印刷错误或配送破损，凭订单和清晰照片可申请换货或退货，此时即使拆过塑封也能处理，寄回运费由本店承担；库存不足无法换货时可退还图书价款（policy-3）。\n\n所以如果你还没拆塑封，7 天内可以退；已经拆了且只是不喜欢，则无法按非质量原因退。若书本身有质量或配送问题，拆封也不影响申请。\n\n以上价格与库存为课程演示数据，会员积分与退款功能尚未实现，具体退换请以人工客服核实为准。",
+      "books": [
+        "微服务设计（第2版）"
+      ],
+      "inputDisabled": false,
+      "composerHeight": 183.0902862548828,
+      "overflow": false
+    },
+    {
+      "case": "trace-and-sources",
+      "steps": 2,
+      "text": "查看行动记录 · 2 个步骤Thought 为公开行动目的，依据来自实际查询结果。Thought · 行动目的查找本店微服务主题书目Action · 调用工具search_book_catalog({\"query\":\"微服务\"})Observation · 查询结果本店匹配 1 本：微服务设计（第2版）Thought · 行动目的查询拆封图书的退换货政策Action · 调用工具query_store_policy({\"query\":\"图书已拆塑封，不喜欢想退货，能否退换\"})Observation · 查询结果政策依据：已拆塑封或使用的图书（policy-2）、未拆封的非质量退货（policy-1）、质量问题与配送破损（policy-3）",
+      "source": "查看政策依据 · 3 条已拆塑封或使用的图书 · policy-2已拆塑封、已阅读或有个人标记的纸质图书，如仅因不喜欢、内容不符合预期或买错版本，不接受非质量原因退货。拆封限制不适用于经核实的质量问题；遇到缺页、倒页、明显印刷错误或配送破损，应按质量问题条款申请处理，不能仅因拆封而拒绝。store-policy.txt · course-2026-10-06未拆封的非质量退货 · policy-1签收后7天内，纸质图书未拆塑封、未使用，书籍及包装完整、无污损，并有本店订单凭证，可以申请非质量原因退货。退款范围为已支付的图书价款，非质量退货的寄回运费由读者承担。超过7天的非质量退货不受理。store-policy.txt · course-2026-10-06质量问题与配送破损 · policy-3签收后15天内发现缺页、倒页、明显印刷错误或配送破损，可凭订单和清晰照片申请换货或退货。经核实属于质量或配送问题，拆过塑封也可处理，寄回运费由本店承担。库存不足无法换货时，可选择退还已支付的图书价款。超出期限的情况需人工核实，不自动承诺退换。store-policy.txt · course-2026-10-06"
+    },
+    {
+      "case": "multiline-does-not-send",
+      "value": "第一行\n第二行"
+    },
+    {
+      "case": "recommended-book-detail",
+      "url": "http://127.0.0.1:5182/books/building-microservices"
+    },
+    {
+      "case": "new-conversation",
+      "questions": 0,
+      "welcome": true,
+      "value": ""
+    }
+  ],
+  "functionalComplete": true,
+  "visualReview": {
+    "complete": true,
+    "screenshots": [
+      "3c-desktop-guide.png"
+    ],
+    "observed": "独立5182实例的真实结果经原始桌面画面核对，正文与交互区可读，无横向溢出。",
+    "mobileTested": false
+  },
+  "complete": true,
+  "webBase": "http://127.0.0.1:5182"
+}
