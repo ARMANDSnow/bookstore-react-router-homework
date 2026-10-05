@@ -80,7 +80,7 @@ export function createBook(book) {
   return request("/books", {
     method: "POST",
     body: JSON.stringify(book),
-  });
+  }, "/api");
 }
 
 export function updateBook(id, book) {

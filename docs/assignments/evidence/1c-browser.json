@@ -1,0 +1,13 @@
+{
+  "duplicateRetained": {
+    "id": "clean-code",
+    "title": "重复 ID 测试",
+    "error": "未能保存这本书书籍 ID 已存在"
+  },
+  "adminRow": "封面书名作者ISBN出版社库存售价操作微服务设计（第2版）Sam Newman9787115638762人民邮电出版社24¥128.00编辑",
+  "detail": {
+    "title": "微服务设计（第2版）",
+    "stock": "库存 24 本",
+    "coverLoaded": true
+  }
+}

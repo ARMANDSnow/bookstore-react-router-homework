@@ -5,12 +5,14 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
 
 /** 新增/修改书籍的请求体。 */
 public class BookRequest {
 
     @Size(max = 80, message = "书籍 ID 不能超过 80 个字符")
+    @Pattern(regexp = "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$", message = "书籍 ID 需以字母或数字开头，仅含字母、数字、点、横线和下划线")
     private String id;
 
     @NotBlank(message = "书名不能为空")

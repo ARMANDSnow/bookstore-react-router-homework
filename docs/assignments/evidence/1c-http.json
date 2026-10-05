@@ -1,0 +1,42 @@
+{
+  "database": "MySQL",
+  "errors": [
+    {
+      "status": 400,
+      "response": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "status": 409,
+      "response": {
+        "code": 40903,
+        "message": "书籍 ID 已存在",
+        "data": null
+      }
+    }
+  ],
+  "createdBook": {
+    "id": "building-microservices",
+    "title": "微服务设计（第2版）",
+    "author": "Sam Newman",
+    "isbn": "9787115638762",
+    "publisher": "人民邮电出版社",
+    "stock": 24,
+    "price": 128.0,
+    "originalPrice": 158.0,
+    "category": "tech",
+    "categoryName": "计算机与技术",
+    "categoryLabel": "软件架构",
+    "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+    "rating": "暂无评分",
+    "badge": "架构进阶",
+    "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+    "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+    "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+    "audience": "希望理解微服务的软件工程师与架构学习者。",
+    "review": "暂无读者评价。"
+  }
+}

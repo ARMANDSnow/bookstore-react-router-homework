@@ -46,6 +46,7 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
   const [modalOpen, setModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [saveError, setSaveError] = useState(null);
   const [form] = Form.useForm();
 
   const isAdmin = user?.role === "ADMIN";
@@ -61,18 +62,22 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
   }, [books, keyword]);
 
   function openCreate() {
+    setSaveError(null);
     setEditingBook(null);
     form.setFieldsValue(defaultBookValues);
     setModalOpen(true);
   }
 
   function openEdit(record) {
+    setSaveError(null);
     setEditingBook(record);
     form.setFieldsValue({ ...defaultBookValues, ...record });
     setModalOpen(true);
   }
 
   async function handleSubmit(values) {
+    if (submitting) return;
+    setSaveError(null);
     setSubmitting(true);
     try {
       if (editingBook) {
@@ -85,6 +90,7 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
       setModalOpen(false);
       await onBooksChanged?.();
     } catch (err) {
+      setSaveError(err.message || "保存失败，请重试");
       message.error(err.message || "保存失败");
     } finally {
       setSubmitting(false);
@@ -200,13 +206,17 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
         className="book-editor-modal"
         title={editingBook ? "编辑书籍" : "添加新书"}
         open={modalOpen}
-        onCancel={() => setModalOpen(false)}
+        onCancel={() => { if (!submitting) setModalOpen(false); }}
+        closable={!submitting}
+        maskClosable={!submitting}
+        cancelButtonProps={{ disabled: submitting }}
         onOk={() => form.submit()}
         confirmLoading={submitting}
         width={760}
         okText="保存"
         cancelText="取消"
       >
+        {saveError && <Alert type="error" showIcon title="未能保存这本书" description={saveError} style={{ marginBottom: 16 }} />}
         <Form
           form={form}
           layout="vertical"
@@ -218,7 +228,7 @@ export default function AdminBooksPage({ user, books, loading, onBooksChanged })
             <Form.Item
               label="书籍 ID"
               name="id"
-              rules={[{ required: !editingBook, message: "请输入书籍 ID" }]}
+              rules={[{ required: !editingBook, message: "请输入书籍 ID" }, { pattern: /^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/, message: "使用字母、数字、点、横线或下划线（以字母或数字开头）" }]}
             >
               <Input disabled={!!editingBook} placeholder="例如：new-book" />
             </Form.Item>

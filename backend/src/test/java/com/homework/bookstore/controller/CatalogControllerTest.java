@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(properties = {
@@ -97,5 +98,34 @@ class CatalogControllerTest {
     @Test void missingBookReturns404() throws Exception {
         mvc.perform(get("/api/books/missing")).andExpect(status().isNotFound())
             .andExpect(jsonPath("$.code").value(40404));
+    }
+    private String newBookJson(String id) {
+        return "{\"id\":\"" + id + "\",\"title\":\"新书\",\"author\":\"作者\",\"stock\":5,\"price\":12.50,\"image\":\"/cover.jpg\"}";
+    }
+    @Test void createsBookWith201LocationAndPersistentDetail() throws Exception {
+        mvc.perform(post("/api/books").contentType("application/json").content(newBookJson("new-book")))
+            .andExpect(status().isCreated()).andExpect(header().string("Location", "/api/books/new-book"));
+        mvc.perform(get("/api/books/new-book")).andExpect(status().isOk()).andExpect(jsonPath("$.data.title").value("新书"));
+    }
+    @Test void duplicateIdReturnsConflict() throws Exception {
+        mvc.perform(post("/api/books").contentType("application/json").content(newBookJson("a")))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value(40903));
+    }
+    @Test void rejectsMissingFields() throws Exception {
+        mvc.perform(post("/api/books").contentType("application/json").content("{\"id\":\"new-book\"}"))
+            .andExpect(status().isBadRequest());
+    }
+    @Test void rejectsNegativePriceAndStock() throws Exception {
+        for (String json : new String[]{newBookJson("new").replace("12.50", "-1"), newBookJson("new").replace("\"stock\":5", "\"stock\":-1")}) {
+            mvc.perform(post("/api/books").contentType("application/json").content(json)).andExpect(status().isBadRequest());
+        }
+    }
+    @Test void malformedJsonIs400() throws Exception {
+        mvc.perform(post("/api/books").contentType("application/json").content("{bad-json}"))
+            .andExpect(status().isBadRequest());
+    }
+    @Test void preventsUnaddressableResourceId() throws Exception {
+        mvc.perform(post("/api/books").contentType("application/json").content(newBookJson("path/book")))
+            .andExpect(status().isBadRequest());
     }
 }

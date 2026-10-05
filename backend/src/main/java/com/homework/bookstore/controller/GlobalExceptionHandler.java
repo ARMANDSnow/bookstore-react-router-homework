@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * <h2>全局异常 → ApiResponse 翻译层</h2>
@@ -35,6 +37,16 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleJson(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(ApiResponse.error(40000, "请求 JSON 的格式或字段类型不正确"));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleConflict(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(40900, "数据冲突，请检查重复数据或关联记录"));
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<Void>> handleQueryType(MethodArgumentTypeMismatchException ex) {
         return ResponseEntity.badRequest().body(ApiResponse.error(40000, "参数 " + ex.getName() + " 的格式不正确"));
@@ -47,7 +59,7 @@ public class GlobalExceptionHandler {
                 ? HttpStatus.UNAUTHORIZED
                 : (family == 403
                 ? HttpStatus.FORBIDDEN
-                : (family == 404 ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST));
+                : (family == 404 ? HttpStatus.NOT_FOUND : (family == 409 ? HttpStatus.CONFLICT : HttpStatus.BAD_REQUEST)));
         return ResponseEntity.status(status).body(ApiResponse.error(ex.getCode(), ex.getMessage()));
     }
 
@@ -63,6 +75,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleOther(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(50000, "服务器内部错误：" + ex.getMessage()));
+                .body(ApiResponse.error(50000, "服务器内部错误，请稍后重试"));
     }
 }
