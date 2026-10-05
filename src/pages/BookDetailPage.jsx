@@ -95,6 +95,7 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
             <div><dt>配送服务</dt><dd>满 99 元包邮</dd></div>
           </dl>
           <div className="page-actions detail-actions">
+            <Link className="commerce-secondary-link" to={`/assistant?book=${encodeURIComponent(book.id)}`}>问问阅读助手</Link>
             <Button type="primary" size="large" icon={<ShoppingCartOutlined />} onClick={() => onAddToCart(book)} disabled={soldOut || !currentRemote} loading={detailLoading}>{soldOut ? "暂时缺货" : "加入购物车"}</Button>
             <Button size="large" onClick={() => navigate("/cart")}>立即结算</Button>
             <Button type="link" icon={<LeftOutlined />} onClick={() => navigate("/books")}>返回图书目录</Button>

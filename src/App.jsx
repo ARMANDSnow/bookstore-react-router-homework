@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { message } from "antd";
 
 import booksData from "./data/Data.json";
@@ -22,6 +22,7 @@ import {
   removeItem,
 } from "./services/cartService.js";
 import { currentUser, logout } from "./services/authService.js";
+const AssistantPage = lazy(() => import("./pages/AssistantPage.jsx"));
 
 export default function App() {
   // -------------------------- books --------------------------
@@ -224,6 +225,7 @@ export default function App() {
         />
         <Route path="/orders" element={<OrdersPage user={user} />} />
         <Route path="/stats" element={<StatsPage user={user} />} />
+        <Route path="/assistant" element={<Suspense fallback={<div className="assistant-route-loading" role="status">正在打开阅读助手…</div>}><AssistantPage books={books} /></Suspense>} />
         <Route
           path="/admin/users"
           element={<AdminUsersPage user={user} />}

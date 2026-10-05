@@ -1,0 +1,453 @@
+{
+  "at": "2026-10-05T20:03:35.873Z",
+  "desktopOnly": true,
+  "realModel": true,
+  "cases": {
+    "emptyQuestionDisabled": true,
+    "chineseCompositionDoesNotSubmit": true,
+    "inventoryAndPrice": {
+      "steps": 2,
+      "simulatedDisclosed": true,
+      "waitingDisabled": true
+    },
+    "changedBookUsesCurrentSelection": true,
+    "followupFreshInventory": true,
+    "networkFailureEditRetry": {
+      "recovered": true,
+      "noDuplicateQuestion": true,
+      "editPreservesOriginalText": true,
+      "focusRestored": true
+    },
+    "newConversation": true,
+    "detailEntrySelectsBook": true
+  },
+  "requests": [
+    {
+      "input": {
+        "message": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：请查询库存，并比较本店售价和竞价。",
+        "history": []
+      },
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《微服务设计（第2版）》ISBN 9787115638762 查询结果如下：\n\n库存：有货，24 册（本店课程演示数据库值）。\n\n价格比较：\n本店售价 128.00 元（课程演示数据库值）。\n课程模拟竞价 117.76 元，来自“课程模拟竞价商店”。\n\n说明：以上本店售价与库存均为课程演示数据库值；竞价数据为课程模拟报价，不是外部真实行情，仅供参考。\n\n如需继续查询其他图书，请提供 ISBN 或书名。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-05T20:03:37.613203Z",
+                "stock": 24,
+                "availability": "有货"
+              },
+              "durationMillis": 3
+            },
+            {
+              "index": 2,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "price": 117.76,
+                "currency": "CNY",
+                "store": "课程模拟竞价商店",
+                "simulated": true,
+                "source": "课程模拟数据，非外部实时报价"
+              },
+              "durationMillis": 2
+            }
+          ],
+          "books": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            }
+          ],
+          "modelRequestIds": [
+            "46060198-cb73-471a-bbe3-04164420e87a",
+            "a380a05c-2435-4597-99ef-af34cf1db7f9"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "message": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：还有多少库存？",
+        "history": [
+          {
+            "role": "user",
+            "content": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：请查询库存，并比较本店售价和竞价。"
+          },
+          {
+            "role": "assistant",
+            "content": "《微服务设计（第2版）》ISBN 9787115638762 查询结果如下：\n\n库存：有货，24 册（本店课程演示数据库值）。\n\n价格比较：\n本店售价 128.00 元（课程演示数据库值）。\n课程模拟竞价 117.76 元，来自“课程模拟竞价商店”。\n\n说明：以上本店售价与库存均为课程演示数据库值；竞价数据为课程模拟报价，不是外部真实行情，仅供参考。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《代码整洁之道》ISBN 9787115216878 库存查询结果：\n\n库存：有货，32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115216878"
+              },
+              "observation": {
+                "ok": true,
+                "id": "clean-code",
+                "isbn": "9787115216878",
+                "title": "代码整洁之道",
+                "ourPrice": 79,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-05T20:03:40.129217Z",
+                "stock": 32,
+                "availability": "有货"
+              },
+              "durationMillis": 3
+            }
+          ],
+          "books": [
+            {
+              "id": "clean-code",
+              "title": "代码整洁之道",
+              "author": "Robert C. Martin",
+              "isbn": "9787115216878",
+              "publisher": "人民邮电出版社",
+              "stock": 32,
+              "price": 79,
+              "originalPrice": 99,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / 软件工程",
+              "image": "/images/代码整洁之道.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "限时 8 折",
+              "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+              "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+              "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+              "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+              "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+            }
+          ],
+          "modelRequestIds": [
+            "881a2634-1b6c-424f-a2a9-fedca9aba8c3",
+            "8cb8ce38-2ae7-4ecf-b263-633c5a950fbb"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "message": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：这本书现在还有货吗？",
+        "history": [
+          {
+            "role": "user",
+            "content": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：请查询库存，并比较本店售价和竞价。"
+          },
+          {
+            "role": "assistant",
+            "content": "《微服务设计（第2版）》ISBN 9787115638762 查询结果如下：\n\n库存：有货，24 册（本店课程演示数据库值）。\n\n价格比较：\n本店售价 128.00 元（课程演示数据库值）。\n课程模拟竞价 117.76 元，来自“课程模拟竞价商店”。\n\n说明：以上本店售价与库存均为课程演示数据库值；竞价数据为课程模拟报价，不是外部真实行情，仅供参考。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          },
+          {
+            "role": "user",
+            "content": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：还有多少库存？"
+          },
+          {
+            "role": "assistant",
+            "content": "《代码整洁之道》ISBN 9787115216878 库存查询结果：\n\n库存：有货，32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《代码整洁之道》ISBN 9787115216878 最新查询结果：\n\n有货，库存 32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115216878"
+              },
+              "observation": {
+                "ok": true,
+                "id": "clean-code",
+                "isbn": "9787115216878",
+                "title": "代码整洁之道",
+                "ourPrice": 79,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-05T20:03:41.990144Z",
+                "stock": 32,
+                "availability": "有货"
+              },
+              "durationMillis": 5
+            }
+          ],
+          "books": [
+            {
+              "id": "clean-code",
+              "title": "代码整洁之道",
+              "author": "Robert C. Martin",
+              "isbn": "9787115216878",
+              "publisher": "人民邮电出版社",
+              "stock": 32,
+              "price": 79,
+              "originalPrice": 99,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / 软件工程",
+              "image": "/images/代码整洁之道.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "限时 8 折",
+              "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+              "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+              "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+              "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+              "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+            }
+          ],
+          "modelRequestIds": [
+            "f583002e-c866-4bd3-82e2-f113f29a7bd6",
+            "62b22438-874a-4f0d-863a-3a675353b7ff"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "message": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：请再查一次库存",
+        "history": [
+          {
+            "role": "user",
+            "content": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：请查询库存，并比较本店售价和竞价。"
+          },
+          {
+            "role": "assistant",
+            "content": "《微服务设计（第2版）》ISBN 9787115638762 查询结果如下：\n\n库存：有货，24 册（本店课程演示数据库值）。\n\n价格比较：\n本店售价 128.00 元（课程演示数据库值）。\n课程模拟竞价 117.76 元，来自“课程模拟竞价商店”。\n\n说明：以上本店售价与库存均为课程演示数据库值；竞价数据为课程模拟报价，不是外部真实行情，仅供参考。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          },
+          {
+            "role": "user",
+            "content": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：还有多少库存？"
+          },
+          {
+            "role": "assistant",
+            "content": "《代码整洁之道》ISBN 9787115216878 库存查询结果：\n\n库存：有货，32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          },
+          {
+            "role": "user",
+            "content": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：这本书现在还有货吗？"
+          },
+          {
+            "role": "assistant",
+            "content": "《代码整洁之道》ISBN 9787115216878 最新查询结果：\n\n有货，库存 32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          }
+        ]
+      },
+      "networkError": true
+    },
+    {
+      "input": {
+        "message": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：请再查一次库存",
+        "history": [
+          {
+            "role": "user",
+            "content": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：请查询库存，并比较本店售价和竞价。"
+          },
+          {
+            "role": "assistant",
+            "content": "《微服务设计（第2版）》ISBN 9787115638762 查询结果如下：\n\n库存：有货，24 册（本店课程演示数据库值）。\n\n价格比较：\n本店售价 128.00 元（课程演示数据库值）。\n课程模拟竞价 117.76 元，来自“课程模拟竞价商店”。\n\n说明：以上本店售价与库存均为课程演示数据库值；竞价数据为课程模拟报价，不是外部真实行情，仅供参考。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          },
+          {
+            "role": "user",
+            "content": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：还有多少库存？"
+          },
+          {
+            "role": "assistant",
+            "content": "《代码整洁之道》ISBN 9787115216878 库存查询结果：\n\n库存：有货，32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          },
+          {
+            "role": "user",
+            "content": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：这本书现在还有货吗？"
+          },
+          {
+            "role": "assistant",
+            "content": "《代码整洁之道》ISBN 9787115216878 最新查询结果：\n\n有货，库存 32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          }
+        ]
+      },
+      "networkError": true
+    },
+    {
+      "input": {
+        "message": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：请再查一次库存",
+        "history": [
+          {
+            "role": "user",
+            "content": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：请查询库存，并比较本店售价和竞价。"
+          },
+          {
+            "role": "assistant",
+            "content": "《微服务设计（第2版）》ISBN 9787115638762 查询结果如下：\n\n库存：有货，24 册（本店课程演示数据库值）。\n\n价格比较：\n本店售价 128.00 元（课程演示数据库值）。\n课程模拟竞价 117.76 元，来自“课程模拟竞价商店”。\n\n说明：以上本店售价与库存均为课程演示数据库值；竞价数据为课程模拟报价，不是外部真实行情，仅供参考。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          },
+          {
+            "role": "user",
+            "content": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：还有多少库存？"
+          },
+          {
+            "role": "assistant",
+            "content": "《代码整洁之道》ISBN 9787115216878 库存查询结果：\n\n库存：有货，32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          },
+          {
+            "role": "user",
+            "content": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：这本书现在还有货吗？"
+          },
+          {
+            "role": "assistant",
+            "content": "《代码整洁之道》ISBN 9787115216878 最新查询结果：\n\n有货，库存 32 册（本店课程演示数据库值）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。"
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《代码整洁之道》ISBN 9787115216878 重新查询结果：\n\n有货，库存 32 册（本店课程演示数据库值，查询时间 2026-10-05）。\n\n如需继续查询其他图书，请提供 ISBN 或书名。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115216878"
+              },
+              "observation": {
+                "ok": true,
+                "id": "clean-code",
+                "isbn": "9787115216878",
+                "title": "代码整洁之道",
+                "ourPrice": 79,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-05T20:03:44.653777Z",
+                "stock": 32,
+                "availability": "有货"
+              },
+              "durationMillis": 5
+            }
+          ],
+          "books": [
+            {
+              "id": "clean-code",
+              "title": "代码整洁之道",
+              "author": "Robert C. Martin",
+              "isbn": "9787115216878",
+              "publisher": "人民邮电出版社",
+              "stock": 32,
+              "price": 79,
+              "originalPrice": 99,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / 软件工程",
+              "image": "/images/代码整洁之道.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "限时 8 折",
+              "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+              "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+              "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+              "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+              "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+            }
+          ],
+          "modelRequestIds": [
+            "83d55bfe-288e-4873-aa34-f8e0319e361d",
+            "af6d579f-3fb9-4766-8a39-6760be7daa01"
+          ]
+        }
+      }
+    }
+  ],
+  "visualReview": {
+    "at": "2026-10-05T21:24:15.012Z",
+    "result": "pass",
+    "method": "解锁后的真实Ego原生窗口截图逐张检查",
+    "viewportCss": [
+      1450,
+      750
+    ],
+    "screenshots": [
+      "2a-desktop-welcome.png",
+      "2a-desktop-reply.png",
+      "2a-desktop-tools.png",
+      "2a-desktop-error.png"
+    ],
+    "checks": [
+      "欢迎、真实回复、工具展开、断网错误均已查看",
+      "文字可读、封面正常、无横向溢出",
+      "聊天内滚动正常，输入区高度固定",
+      "截图保留Ego控制提示；未修改截图"
+    ]
+  },
+  "complete": true,
+  "functionalComplete": true,
+  "prior": {
+    "at": "2026-10-05T20:01:56.158Z",
+    "desktopOnly": true,
+    "realModel": true,
+    "cases": {
+      "emptyQuestionDisabled": true,
+      "chineseCompositionDoesNotSubmit": true,
+      "inventoryAndPrice": {
+        "steps": 2,
+        "simulatedDisclosed": true,
+        "waitingDisabled": true
+      }
+    },
+    "requests": [],
+    "visualReview": "等待解锁后完成",
+    "complete": false
+  }
+}

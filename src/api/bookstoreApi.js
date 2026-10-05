@@ -98,6 +98,11 @@ export function deleteBook(id) {
   return request(`/book/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 
+export function askAssistant(message, history, signal) {
+  return request("/assistant/chat", { method: "POST", body: JSON.stringify({ message, history }), signal }, "/api");
+}
+export function assistantStatus(signal) { return request("/assistant/status", { signal }, "/api"); }
+
 // ------------------------------ 用户 ------------------------------
 export function registerUser(user) {
   return request("/users/register", {

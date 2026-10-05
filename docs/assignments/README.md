@@ -11,7 +11,7 @@
 | 1C REST 新增图书 | 已实现、已通过本地前后端验收 |
 | 1D 独立库存更新 | 已实现、已通过本地前后端验收 |
 | 1E OpenAPI 3.0 JSON、完整 Prompt、Few-Shot、多轮记录和模板报告 | 已实现、已通过本地前后端验收 |
-| 2A 真实模型库存与模拟竞价工具、前端助手 | 待开始 |
+| 2A 真实模型库存与模拟竞价工具、前端助手 | 已实现、已通过本地前后端验收 |
 | 2B 错误 ISBN、超时与自纠正 | 待开始 |
 | 2C 精简源码提交包 | 待开始 |
 | 3A 政策加载、分块、向量化与 RAG | 待开始 |
@@ -77,3 +77,18 @@
 - 模板报告：`提交/524031910745-作业1.docx`，保留模板身份区、样式、编号、页脚与页系统，15页全部渲染检查通过；原模板哈希不变，未修改部件逐字节一致。
 - 重跑校验：`node scripts/assignments/verify_openapi.mjs`（需后端启动）；重新真实生成：`node scripts/assignments/generate_openapi.mjs`，从忽略的`backend/.env`读取密钥，已有完整记录时不重复请求。
 - 模型配置依据：[DeepSeek官方文档](https://api-docs.deepseek.com/zh-cn/)；格式依据：[OpenAPI3.0.3](https://spec.openapis.org/oas/v3.0.3.html)。
+
+## 2A 验收 2026-10-06
+
+`POST /api/assistant/chat` 接收问题和至多20条用户/助手文本历史。服务器提供 `check_inventory(isbn)`、`get_competitor_price(isbn)` 两种 JSON Schema；真实 DeepSeek 返回 `tool_calls` 后，按白名单调用本地函数，将每一个结果以原始 `tool_call_id` 回传，等待模型生成自然语言答案。一次最多4次模型请求、6个工具步骤，同时最多2个请求，防止无限循环。库存读取真实本机 MySQL；竞价按本店价格乘0.92模拟，工具结果与回答均明确标记模拟。
+
+新页面 `/assistant` 可选书、输入问题、查看结果卡片和公开查询记录；详情页可带图书进入助手。选书信息在手输问题中明确展示，连续库存追问必须重新查库。聊天区域保持固定高度，加载期间禁止重复发送；失败保留问题，可重试或恢复原始文字修改。按用户要求只进行桌面验收。
+
+- 后端56个测试通过、前端构建通过。隔离测试涵盖工具消息与ID配对、非法参数、同ISBN多记录、未知库存、循环上限及两种ISBN历史的刷新；这些是测试替身证据。
+- `evidence/2a-real-model.json` 记录真实服务商响应ID、双工具调用与自然回复，库存与本机数据库一致；带连字符ISBN的历史错误库存99本也重新查库得到当前24本。真实HTTP拒绝空内容、系统角色、null历史项、超过20条历史、超过1200字问题。
+- `evidence/2a-browser.json` 的 `functionalComplete: true` 记录真实桌面页面的空问题禁用、中文输入法保护、双工具查询、A→B选书切换、追问重新查库、断网修改和恢复重试、新对话、详情入口。网络记录来自真实fetch观察，没有替换响应。
+- 解锁后使用真实窗口检查欢迎、双工具答复、查询记录展开和断网错误四个版面，保存四张 `2a-desktop-*.png`，浏览器证据整体 `complete: true`。先前测试画布比原生窗口大，视觉检查时匹配真实桌面窗口到1450×750 CSS视口；按用户要求未测试手机比例。
+
+启动模型配置：仅在忽略的 `backend/.env` 写入 `DEEPSEEK_API_KEY`，Spring Boot 会从该文件加载；URL默认 `https://api.deepseek.com`，模型默认 `deepseek-flash`。密钥不进入前端、Git、截图或报告。服务商配置遵循[DeepSeek工具调用文档](https://api-docs.deepseek.com/zh-cn/guides/tool_calls/)。状态接口只说明服务器已配置，不代表探测成功；页面在首次真实答复后才显示已连接。
+
+复测真实接口：`node scripts/assignments/verify_assistant.mjs`。桌面复测使用已存在的Ego TaskSpace 11，通过 `ego-browser nodejs` 的heredoc入口导入 `scripts/assignments/verify_assistant_browser.mjs`；保存部分失败证据并在退出时恢复页面联网。

@@ -28,6 +28,8 @@ import org.springframework.data.domain.Pageable;
  * </ol>
  */
 public interface BookRepository extends JpaRepository<Book, String> {
+    @Query("select b from Book b where replace(replace(b.isbn, '-', ''), ' ', '') = :isbn order by b.id")
+    List<Book> findByNormalizedIsbn(@Param("isbn") String isbn);
 
     @Query("select b from Book b where (:category is null or b.category = :category)"
             + " and (:keyword is null or lower(b.title) like lower(concat('%', :keyword, '%')) escape '!'"
