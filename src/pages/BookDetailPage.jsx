@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { Breadcrumb, Button, Image, Skeleton, Tag } from "antd";
+import { Alert, Breadcrumb, Button, Image, Skeleton, Tag } from "antd";
 import { LeftOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import BookCard from "../components/BookCard.jsx";
 import { fetchBookById } from "../api/bookstoreApi.js";
@@ -12,18 +12,21 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
   const navigate = useNavigate();
   const [remoteBook, setRemoteBook] = useState(null);
   const [detailLoading, setDetailLoading] = useState(true);
+  const [detailError, setDetailError] = useState(null);
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
     // 路由切换后忽略旧请求，避免较晚返回的数据覆盖当前书籍。
     let ignore = false;
     setRemoteBook(null);
+    setDetailError(null);
     setDetailLoading(true);
     (async () => {
       try {
         const data = await fetchBookById(bookId);
         if (!ignore) setRemoteBook(data);
-      } catch {
-        // 离线时继续使用路由、选中书籍和列表的数据；列表请求统一提示接口错误。
+      } catch (error) {
+        if (!ignore) setDetailError({ bookId, message: error.message, status: error.status });
       } finally {
         if (!ignore) setDetailLoading(false);
       }
@@ -31,13 +34,15 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
     return () => {
       ignore = true;
     };
-  }, [bookId]);
+  }, [bookId, retry]);
 
   const localBook =
-    state?.book ||
+    (state?.book?.id === bookId ? state.book : null) ||
     (selectedBook?.id === bookId ? selectedBook : null) ||
     books.find((item) => item.id === bookId);
-  const book = remoteBook || localBook;
+  const error = detailError?.bookId === bookId ? detailError : null;
+  const currentRemote = remoteBook?.id === bookId ? remoteBook : null;
+  const book = error?.status === 404 ? null : currentRemote || localBook;
 
   if (loading || (detailLoading && !book)) {
     return <div className="state-panel" role="status" aria-label="正在加载图书详情"><Skeleton active paragraph={{ rows: 10 }} /></div>;
@@ -46,8 +51,9 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
   if (!book) {
     return (
       <section className="state-panel">
-        <h1>没有找到这本书</h1>
-        <p className="page-description">回到书架，看看其他值得阅读的书。</p>
+        <h1>{error && error.status !== 404 ? "图书详情暂时无法加载" : "没有找到这本书"}</h1>
+        <p className="page-description">{error && error.status !== 404 ? "请稍后重试，或回到书架继续选书。" : "回到书架，看看其他值得阅读的书。"}</p>
+        {error && error.status !== 404 && <Button onClick={() => setRetry((value) => value + 1)}>重新加载</Button>}
         <Button type="primary" onClick={() => navigate("/books")}>返回图书目录</Button>
       </section>
     );
@@ -64,6 +70,7 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
         { title: "书籍详情" },
         { title: book.title },
       ]} />
+      {error && <Alert showIcon type="warning" title="当前展示上次加载的信息，库存暂未更新" description="连接恢复后重新加载，再加入购物车。" action={<Button onClick={() => setRetry((value) => value + 1)}>重新加载</Button>} />}
       <section className="detail-layout" aria-labelledby="detail-title">
         <div className="detail-cover">
           <Image className="detail-cover-image" src={book.image} alt={`《${book.title}》完整书封`} />
@@ -88,7 +95,7 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
             <div><dt>配送服务</dt><dd>满 99 元包邮</dd></div>
           </dl>
           <div className="page-actions detail-actions">
-            <Button type="primary" size="large" icon={<ShoppingCartOutlined />} onClick={() => onAddToCart(book)} disabled={soldOut}>{soldOut ? "暂时缺货" : "加入购物车"}</Button>
+            <Button type="primary" size="large" icon={<ShoppingCartOutlined />} onClick={() => onAddToCart(book)} disabled={soldOut || !currentRemote} loading={detailLoading}>{soldOut ? "暂时缺货" : "加入购物车"}</Button>
             <Button size="large" onClick={() => navigate("/cart")}>立即结算</Button>
             <Button type="link" icon={<LeftOutlined />} onClick={() => navigate("/books")}>返回图书目录</Button>
           </div>

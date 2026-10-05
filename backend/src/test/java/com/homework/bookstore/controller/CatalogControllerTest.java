@@ -89,4 +89,13 @@ class CatalogControllerTest {
         mvc.perform(get("/api/books").param("page", "2147483647").param("size", "100"))
             .andExpect(status().isBadRequest());
     }
+    @Test void returnsSingleBookAtRestResourcePath() throws Exception {
+        mvc.perform(get("/api/books/a")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.title").value("微服务入门"))
+            .andExpect(jsonPath("$.data.stock").value(10));
+    }
+    @Test void missingBookReturns404() throws Exception {
+        mvc.perform(get("/api/books/missing")).andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value(40404));
+    }
 }

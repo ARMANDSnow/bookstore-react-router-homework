@@ -2,8 +2,10 @@ package com.homework.bookstore.controller;
 
 import com.homework.bookstore.dto.ApiResponse;
 import com.homework.bookstore.dto.BookPageDto;
+import com.homework.bookstore.dto.BookDto;
 import com.homework.bookstore.service.BookService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,11 @@ public class CatalogController {
 
     public CatalogController(BookService bookService) {
         this.bookService = bookService;
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<BookDto> get(@PathVariable String id) {
+        return ApiResponse.success(bookService.getBook(id));
     }
 
     @GetMapping

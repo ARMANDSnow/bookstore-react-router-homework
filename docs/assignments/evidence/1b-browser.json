@@ -1,0 +1,31 @@
+[
+  {
+    "case": "direct detail route",
+    "title": "代码整洁之道",
+    "requests": [
+      "http://127.0.0.1:5173/api/books/clean-code",
+      "http://127.0.0.1:5173/api/books/clean-code"
+    ]
+  },
+  {
+    "case": "refresh",
+    "passed": true
+  },
+  {
+    "case": "cached information warning",
+    "addDisabled": true,
+    "passed": true
+  },
+  {
+    "case": "retry refreshes live information",
+    "passed": true
+  },
+  {
+    "case": "404",
+    "passed": true
+  },
+  {
+    "case": "return to catalog",
+    "passed": true
+  }
+]

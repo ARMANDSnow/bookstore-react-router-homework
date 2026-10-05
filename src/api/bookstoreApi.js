@@ -29,7 +29,10 @@ async function request(path, options = {}, baseUrl = API_BASE_URL) {
 
   if (!response.ok) {
     const msg = (payload && payload.message) || `请求失败：${response.status}`;
-    throw new Error(msg);
+    const error = new Error(msg);
+    error.status = response.status;
+    error.code = payload?.code;
+    throw error;
   }
 
   // 统一 ApiResponse 解包：{ code, message, data }
@@ -64,7 +67,7 @@ export function fetchCatalog(params, signal) {
 }
 
 export function fetchBookById(id) {
-  return request(`/book/${id}`);
+  return request(`/books/${encodeURIComponent(id)}`, {}, "/api");
 }
 
 // 迭代三新增：关键字搜索（后端 GET /api/v1/books?keyword=xxx，SQL LIKE 模糊匹配标题/作者）
