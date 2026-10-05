@@ -1,0 +1,217 @@
+{
+  "testedAt": "2026-10-05T22:05:07.618Z",
+  "cases": [
+    {
+      "case": "catalog-page-1",
+      "cards": [
+        {
+          "id": "building-microservices",
+          "title": "微服务设计（第2版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "clean-code",
+          "title": "代码整洁之道",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "data-intensive-applications",
+          "title": "数据密集型应用系统设计（第二版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "deep-work",
+          "title": "深度工作：如何有效使用每一点脑力",
+          "coverLoaded": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "case": "catalog-page-2",
+      "cards": [
+        {
+          "id": "design",
+          "title": "设计心理学1（增订版）：日常的设计",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "dont-make-me-think",
+          "title": "Don't Make Me Think, Revisited（英文原版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "great-gatsby",
+          "title": "The Great Gatsby（英文原版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "head-first-python",
+          "title": "Head First Python实战（第三版）",
+          "coverLoaded": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "case": "catalog-page-3",
+      "cards": [
+        {
+          "id": "js-advanced",
+          "title": "JavaScript高级程序设计（第4版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "naked-economics",
+          "title": "Naked Economics（英文原版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "nineteen-eighty-four",
+          "title": "1984（英文原版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "psychology-of-money",
+          "title": "The Psychology of Money（英文原版）",
+          "coverLoaded": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "case": "catalog-page-4",
+      "cards": [
+        {
+          "id": "sapiens",
+          "title": "人类简史",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "thinking-fast-slow",
+          "title": "Thinking, Fast and Slow（英文原版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "thinking-with-type",
+          "title": "Thinking with Type（英文原版·第三版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "three-body",
+          "title": "三体",
+          "coverLoaded": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "case": "design-filter",
+      "cards": [
+        {
+          "id": "design",
+          "title": "设计心理学1（增订版）：日常的设计",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "dont-make-me-think",
+          "title": "Don't Make Me Think, Revisited（英文原版）",
+          "coverLoaded": true,
+          "overflow": false
+        },
+        {
+          "id": "thinking-with-type",
+          "title": "Thinking with Type（英文原版·第三版）",
+          "coverLoaded": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "case": "author-search",
+      "cards": [
+        {
+          "id": "data-intensive-applications",
+          "title": "数据密集型应用系统设计（第二版）",
+          "coverLoaded": true,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "case": "detail-js-advanced",
+      "title": "JavaScript高级程序设计（第4版）",
+      "body": "计算机与技术JavaScript高级程序设计（第4版）Matt Frisbie 著¥88.00参考原价 ¥108.00前端进阶售价与库存为课程演示数据，供体验选书流程使用。系统讲解 JavaScript 核心概念、执行机制和常见 API，适合作为前端课程、项目开发与面试准备的长期参考书。分类计算机与技术 / JavaScriptISBN9787115545381出版社人民邮电出版社书目来源图灵教育书目 ↗库存状态库存 26 本配送服务满 99 元包邮问问阅读助手加入购物车立即结算返回图书目录",
+      "source": [
+        {
+          "href": "https://www.ituring.com.cn/book/2472",
+          "target": "_blank",
+          "rel": "noopener noreferrer"
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "case": "detail-design",
+      "title": "设计心理学1（增订版）：日常的设计",
+      "body": "设计创意设计心理学1（增订版）：日常的设计Donald A. Norman 著¥65.00参考原价 ¥82.00设计经典售价与库存为课程演示数据，供体验选书流程使用。从可见性、反馈、映射和容错等角度解释为什么有些产品天然顺手，有些产品却让人困惑，非常适合界面设计与交互设计入门。分类设计创意 / 用户体验ISBN9787508648330出版社中信出版社书目来源新华书店书目 ↗库存状态库存 25 本配送服务满 99 元包邮问问阅读助手加入购物车立即结算返回图书目录",
+      "source": [
+        {
+          "href": "https://item.xhsd.com/items/1010000102909074",
+          "target": "_blank",
+          "rel": "noopener noreferrer"
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "case": "detail-thinking-with-type",
+      "title": "Thinking with Type（英文原版·第三版）",
+      "body": "设计创意Thinking with Type（英文原版·第三版）Ellen Lupton 著¥118.00参考原价 ¥148.00英文原版售价与库存为课程演示数据，供体验选书流程使用。结合案例、图解和练习，讲解字体选择、排版结构、视觉平衡与可读性，适合从事界面、出版或平面设计的读者。分类设计创意 / 英文原版ISBN9781797226828出版社Chronicle Books书目来源出版方书目 ↗库存状态库存 12 本配送服务满 99 元包邮问问阅读助手加入购物车立即结算返回图书目录",
+      "source": [
+        {
+          "href": "https://www.chroniclebooks.com/products/thinking-with-type-1",
+          "target": "_blank",
+          "rel": "noopener noreferrer"
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "case": "new-book-assistant-context",
+      "selected": "thinking-with-type",
+      "count": 16,
+      "text": "Thinking with Type（英文原版·第三版）Ellen LuptonISBN 9781797226828查看图书详情 ↗"
+    }
+  ],
+  "functionalComplete": true,
+  "visualReview": {
+    "complete": true,
+    "desktopOnly": true,
+    "screenshots": [
+      "catalog-desktop.png",
+      "catalog-desktop-detail.png"
+    ],
+    "checks": [
+      "16张真实书封均加载",
+      "长标题自然换行且按钮对齐",
+      "英文版次封面对应ISBN",
+      "书目来源与演示价格库存说明可读",
+      "无横向溢出"
+    ]
+  },
+  "complete": true
+}

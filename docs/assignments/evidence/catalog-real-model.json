@@ -1,0 +1,83 @@
+{
+  "testedAt": "2026-10-05T22:03:45.164Z",
+  "book": {
+    "id": "design",
+    "title": "设计心理学1（增订版）：日常的设计",
+    "author": "Donald A. Norman",
+    "isbn": "9787508648330",
+    "publisher": "中信出版社",
+    "stock": 25,
+    "price": 65,
+    "originalPrice": 82,
+    "category": "design",
+    "categoryName": "设计创意",
+    "categoryLabel": "设计创意 / 用户体验",
+    "image": "https://img4.xinhuashudian.com/bookbasepic/C/02005/3077626-fm.jpg",
+    "rating": "4.7 / 5.0",
+    "badge": "设计经典",
+    "description": "理解用户、界面与行为之间关系的入门经典。",
+    "summary": "从可见性、反馈、映射和容错等角度解释为什么有些产品天然顺手，有些产品却让人困惑，非常适合界面设计与交互设计入门。",
+    "highlight": "用大量生活化案例解释好设计如何降低理解成本并提升使用效率。",
+    "audience": "适合产品、设计、前端开发以及任何对用户体验有兴趣的学习者。",
+    "review": "读完之后会重新审视按钮、门把手和页面布局背后的设计逻辑。"
+  },
+  "message": "请查询《设计心理学1（增订版）：日常的设计》（ISBN 9787508648330）的库存。",
+  "response": {
+    "code": 0,
+    "message": "ok",
+    "data": {
+      "answer": "《设计心理学1（增订版）：日常的设计》（ISBN 9787508648330）查询结果如下：\n\n库存：25 册，状态为有货\n本店售价：65.00 元\n\n说明：以上库存与售价来自本店课程演示数据库，为演示数值，非外部真实行情。\n\n如需继续查询，可提供该 ISBN 或其他图书的 ISBN。",
+      "model": "deepseek-flash",
+      "steps": [
+        {
+          "index": 1,
+          "name": "check_inventory",
+          "arguments": {
+            "isbn": "9787508648330"
+          },
+          "observation": {
+            "ok": true,
+            "id": "design",
+            "isbn": "9787508648330",
+            "title": "设计心理学1（增订版）：日常的设计",
+            "ourPrice": 65,
+            "source": "本店数据库",
+            "checkedAt": "2026-10-05T22:03:44.283625Z",
+            "stock": 25,
+            "availability": "有货",
+            "attempt": 1
+          },
+          "durationMillis": 15
+        }
+      ],
+      "books": [
+        {
+          "id": "design",
+          "title": "设计心理学1（增订版）：日常的设计",
+          "author": "Donald A. Norman",
+          "isbn": "9787508648330",
+          "publisher": "中信出版社",
+          "stock": 25,
+          "price": 65,
+          "originalPrice": 82,
+          "category": "design",
+          "categoryName": "设计创意",
+          "categoryLabel": "设计创意 / 用户体验",
+          "image": "https://img4.xinhuashudian.com/bookbasepic/C/02005/3077626-fm.jpg",
+          "rating": "4.7 / 5.0",
+          "badge": "设计经典",
+          "description": "理解用户、界面与行为之间关系的入门经典。",
+          "summary": "从可见性、反馈、映射和容错等角度解释为什么有些产品天然顺手，有些产品却让人困惑，非常适合界面设计与交互设计入门。",
+          "highlight": "用大量生活化案例解释好设计如何降低理解成本并提升使用效率。",
+          "audience": "适合产品、设计、前端开发以及任何对用户体验有兴趣的学习者。",
+          "review": "读完之后会重新审视按钮、门把手和页面布局背后的设计逻辑。"
+        }
+      ],
+      "modelRequestIds": [
+        "5571bdc6-6c15-4a81-ba05-2fda7dbf4ecb",
+        "d96f7ec9-867b-4bd2-9cf3-bb95e9decab1"
+      ]
+    }
+  },
+  "complete": true
+}

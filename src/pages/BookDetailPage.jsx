@@ -5,6 +5,7 @@ import { LeftOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import BookCard from "../components/BookCard.jsx";
 import { fetchBookById } from "../api/bookstoreApi.js";
 import { formatPrice } from "../utils/formatter.js";
+import bookSources from "../data/bookSources.json";
 
 export default function BookDetailPage({ books, loading, selectedBook, onBookSelect, onAddToCart }) {
   const { bookId } = useParams();
@@ -62,6 +63,7 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
   const relatedBooks = books.filter((item) => item.category === book.category && item.id !== book.id).slice(0, 4);
   const stock = book.stock;
   const soldOut = stock !== undefined && stock !== null && stock <= 0;
+  const source = bookSources[book.id]?.isbn === book.isbn ? bookSources[book.id] : null;
 
   return (
     <div className="page detail-page">
@@ -73,7 +75,7 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
       {error && <Alert showIcon type="warning" title="当前展示上次加载的信息，库存暂未更新" description="连接恢复后重新加载，再加入购物车。" action={<Button onClick={() => setRetry((value) => value + 1)}>重新加载</Button>} />}
       <section className="detail-layout" aria-labelledby="detail-title">
         <div className="detail-cover">
-          <Image className="detail-cover-image" src={book.image} alt={`《${book.title}》完整书封`} />
+          <Image referrerPolicy="no-referrer" className="detail-cover-image" src={book.image} alt={`《${book.title}》完整书封`} />
           <p>{book.publisher || "精选图书"}</p>
         </div>
         <div className="detail-info">
@@ -82,15 +84,16 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
           <p className="detail-author">{book.author} 著</p>
           <div className="detail-price-row">
             <span className="price-text detail-price">{formatPrice(book.price)}</span>
-            {book.originalPrice != null && <span className="original-price">定价 {formatPrice(book.originalPrice)}</span>}
+            {book.originalPrice != null && <span className="original-price">参考原价 {formatPrice(book.originalPrice)}</span>}
             {book.badge && <Tag className="detail-badge">{book.badge}</Tag>}
           </div>
+          <p className="detail-demo-note">售价与库存为课程演示数据，供体验选书流程使用。</p>
           <p className="detail-summary">{book.summary}</p>
           <dl className="detail-metadata">
             <div><dt>分类</dt><dd>{book.categoryLabel}</dd></div>
             <div><dt>ISBN</dt><dd>{book.isbn || "—"}</dd></div>
             <div><dt>出版社</dt><dd>{book.publisher || "—"}</dd></div>
-            <div><dt>豆瓣评分</dt><dd>{book.rating || "—"}</dd></div>
+            {source && <div><dt>书目来源</dt><dd><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></dd></div>}
             <div><dt>库存状态</dt><dd><Tag className={soldOut ? "detail-stock detail-stock-empty" : "detail-stock"}>{soldOut ? "暂时缺货" : stock == null ? "现货充足" : `库存 ${stock} 本`}</Tag></dd></div>
             <div><dt>配送服务</dt><dd>满 99 元包邮</dd></div>
           </dl>
@@ -105,7 +108,7 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
       <div className="detail-notes">
         <section><h2>内容亮点</h2><p>{book.highlight}</p></section>
         <section><h2>适合人群</h2><p>{book.audience}</p></section>
-        <section><h2>读者评价</h2><p>{book.review}</p></section>
+        <section><h2>选书建议</h2><p>{book.review}</p></section>
       </div>
       {relatedBooks.length > 0 && (
         <section className="detail-related" aria-labelledby="related-title">

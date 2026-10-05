@@ -1,0 +1,156 @@
+{
+  "complete": true,
+  "before": [
+    {
+      "id": "building-microservices",
+      "price": 128.0,
+      "stock": 24,
+      "originalPrice": 158.0
+    },
+    {
+      "id": "clean-code",
+      "price": 79.0,
+      "stock": 32,
+      "originalPrice": 99.0
+    },
+    {
+      "id": "deep-work",
+      "price": 58.0,
+      "stock": 30,
+      "originalPrice": 72.0
+    },
+    {
+      "id": "design",
+      "price": 65.0,
+      "stock": 25,
+      "originalPrice": 82.0
+    },
+    {
+      "id": "js-advanced",
+      "price": 88.0,
+      "stock": 26,
+      "originalPrice": 108.0
+    },
+    {
+      "id": "sapiens",
+      "price": 62.0,
+      "stock": 34,
+      "originalPrice": 78.0
+    },
+    {
+      "id": "three-body",
+      "price": 49.0,
+      "stock": 40,
+      "originalPrice": 59.0
+    }
+  ],
+  "afterRestart": [
+    {
+      "id": "building-microservices",
+      "price": 128.0,
+      "stock": 24,
+      "originalPrice": 158.0
+    },
+    {
+      "id": "clean-code",
+      "price": 79.01,
+      "stock": 33,
+      "originalPrice": 99.0
+    },
+    {
+      "id": "data-intensive-applications",
+      "price": 138.0,
+      "stock": 18,
+      "originalPrice": 168.0
+    },
+    {
+      "id": "deep-work",
+      "price": 58.0,
+      "stock": 30,
+      "originalPrice": 72.0
+    },
+    {
+      "id": "design",
+      "price": 65.0,
+      "stock": 25,
+      "originalPrice": 82.0
+    },
+    {
+      "id": "dont-make-me-think",
+      "price": 86.0,
+      "stock": 16,
+      "originalPrice": 106.0
+    },
+    {
+      "id": "great-gatsby",
+      "price": 48.0,
+      "stock": 20,
+      "originalPrice": 62.0
+    },
+    {
+      "id": "head-first-python",
+      "price": 99.0,
+      "stock": 22,
+      "originalPrice": 128.0
+    },
+    {
+      "id": "js-advanced",
+      "price": 88.0,
+      "stock": 26,
+      "originalPrice": 108.0
+    },
+    {
+      "id": "naked-economics",
+      "price": 68.0,
+      "stock": 19,
+      "originalPrice": 88.0
+    },
+    {
+      "id": "nineteen-eighty-four",
+      "price": 45.0,
+      "stock": 28,
+      "originalPrice": 59.0
+    },
+    {
+      "id": "psychology-of-money",
+      "price": 76.0,
+      "stock": 26,
+      "originalPrice": 98.0
+    },
+    {
+      "id": "sapiens",
+      "price": 62.0,
+      "stock": 34,
+      "originalPrice": 78.0
+    },
+    {
+      "id": "thinking-fast-slow",
+      "price": 85.0,
+      "stock": 23,
+      "originalPrice": 108.0
+    },
+    {
+      "id": "thinking-with-type",
+      "price": 118.0,
+      "stock": 12,
+      "originalPrice": 148.0
+    },
+    {
+      "id": "three-body",
+      "price": 49.0,
+      "stock": 40,
+      "originalPrice": 59.0
+    }
+  ],
+  "restored": {
+    "id": "clean-code",
+    "price": 79.0,
+    "stock": 32,
+    "originalPrice": 99.0
+  },
+  "checks": [
+    "已有7本的库存、售价、原价均未被种子覆盖",
+    "课程库存和售价标记跨真实Spring Boot重启保存",
+    "验证标记已精确恢复"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "testedAt": "2026-10-06T06:02:47.162500",
+  "environment": "真实MySQL专用临时库，两份SQL分别执行",
+  "reports": [
+    {
+      "seed": "backend/src/main/resources/data.sql",
+      "count": 16,
+      "checks": [
+        "空库16本",
+        "重复执行完全幂等",
+        "自定义业务字段保留",
+        "已知旧ISBN与作者封面条件纠正",
+        "纠错保留库存售价及自定义封面"
+      ],
+      "complete": true
+    },
+    {
+      "seed": "backend/database/bookstore.sql",
+      "count": 16,
+      "checks": [
+        "空库16本",
+        "重复执行完全幂等",
+        "自定义业务字段保留",
+        "已知旧ISBN与作者封面条件纠正",
+        "纠错保留库存售价及自定义封面"
+      ],
+      "complete": true
+    }
+  ],
+  "complete": true
+}

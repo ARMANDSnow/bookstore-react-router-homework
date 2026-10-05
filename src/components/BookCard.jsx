@@ -32,7 +32,7 @@ export default function BookCard({ book, onBookSelect, onAddToCart }) {
         onClick={() => onBookSelect(book)}
         aria-label={`查看《${book.title}》详情`}
       >
-        <img src={book.image} alt={book.title} width={150} height={220} loading="lazy" />
+        <img referrerPolicy="no-referrer" src={book.image} alt={book.title} width={150} height={220} loading="lazy" />
       </button>
       <div className="book-info">
         <div className="book-kicker">
