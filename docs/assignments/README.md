@@ -10,7 +10,7 @@
 | 1B REST 单本详情 | 已实现、已通过本地前后端验收 |
 | 1C REST 新增图书 | 已实现、已通过本地前后端验收 |
 | 1D 独立库存更新 | 已实现、已通过本地前后端验收 |
-| 1E OpenAPI 3.0 JSON、完整 Prompt、Few-Shot、多轮记录和模板报告 | 待开始 |
+| 1E OpenAPI 3.0 JSON、完整 Prompt、Few-Shot、多轮记录和模板报告 | 已实现、已通过本地前后端验收 |
 | 2A 真实模型库存与模拟竞价工具、前端助手 | 待开始 |
 | 2B 错误 ISBN、超时与自纠正 | 待开始 |
 | 2C 精简源码提交包 | 待开始 |
@@ -67,3 +67,13 @@
 ### 1D 浏览器验收修正
 
 首次浏览器保存库存返回 403，初始提交中的通过记录过早；原因是 WebConfig 的 allowedMethods 缺少 PATCH，Vite 代理保留的 Origin 触发了后端检查。已允许 PATCH，增加来源头和预检集成测试；重新通过真实桌面页面将库存 24 → 0 → 24，确认缺货禁用加购、其他字段逐一一致，并保存完整 `1d-browser.json`。新证据之后才进入下一功能。
+
+## 1E 验收 2026-10-06
+
+- 真实 DeepSeek `deepseek-flash` 五轮对话：完整 System/User Prompt、Few-Shot、审查输入和原始输出在 `作业1/`。JSON模式和低温度不保证字节一致；各轮检查保持四个操作及核心约束。第四轮基于真实校验错误补充错误 data 的类型、历史 stock 可空和重复 ID 的40903示例；第五轮修正创建字段描述和40000示例。
+- 最终规范仅一份：`backend/src/main/resources/static/api/v1/openapi.json`，HTTP `/api/v1/openapi.json` 可下载；报告含完整可选择 JSON 全文。各轮文件为真实历史记录。
+- Swagger Parser 校验全部五轮结构与引用；最终 AJV schema 对23个真实 Spring Boot/MySQL 响应验证成功，包含201+Location、400、404、409、严格库存token拒绝及临时数据清理后404。未人为触发真实500，报告已限定证据边界。
+- 后端48个测试通过，前端构建通过；桌面书架从Vite代理下载最终规范成功，四张书卡、无横向溢出。证据：`1e-contract.json`、`1e-browser.json`和三张原生现场对话截图。
+- 模板报告：`提交/524031910745-作业1.docx`，保留模板身份区、样式、编号、页脚与页系统，15页全部渲染检查通过；原模板哈希不变，未修改部件逐字节一致。
+- 重跑校验：`node scripts/assignments/verify_openapi.mjs`（需后端启动）；重新真实生成：`node scripts/assignments/generate_openapi.mjs`，从忽略的`backend/.env`读取密钥，已有完整记录时不重复请求。
+- 模型配置依据：[DeepSeek官方文档](https://api-docs.deepseek.com/zh-cn/)；格式依据：[OpenAPI3.0.3](https://spec.openapis.org/oas/v3.0.3.html)。

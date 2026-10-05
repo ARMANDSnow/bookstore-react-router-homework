@@ -1,0 +1,20 @@
+为知页在线书店生成完整 OpenAPI 3.0.3 JSON。以下是已经实现并经过真实 MySQL/浏览器验证的契约，不能改写成理想化接口。
+服务器：http://localhost:8080，描述为本机课程演示后端。接口不要求认证，部署权限控制不在本次契约内。
+
+四个操作：
+1. GET /api/books，operationId=listBooks。query page:integer int32，默认1、最小1；size:integer int32，默认12、范围1～100；category:可选string，去前后空格后精确匹配分类编码；keyword:可选string，去前后空格，书名或作者子串匹配，%和_按字面匹配；sort:string，默认recommended，枚举recommended/price-low/price-high。推荐按id升序，价格排序同价按id升序。先筛选排序后分页，offset=(page-1)*size必须不超过2147483647，否则400。不存在的分类/超过末页返回200空items。成功200 BookPageResponse，非法类型/范围/排序400，内部异常500。
+2. GET /api/books/{id}，operationId=getBook。id必填string路径参数。成功200 BookResponse；不存在404，内部异常500。查询id不单独实施创建ID的pattern校验。
+3. POST /api/books，operationId=createBook。application/json请求体BookCreateRequest。必填id/title/author/stock/price/image。成功201 BookResponse，响应头Location:string，值如/api/books/example-book；非法输入/错误JSON/缺字段400，重复id409，内部异常500。不会自动生成id。创建请求未知字段由当前Jackson忽略，不应声称全部拒绝。
+4. PATCH /api/books/{id}/inventory，operationId=updateBookInventory。id必填string路径参数。application/json请求体InventoryUpdateRequest，仅允许stock，必填integer int32范围0～2147483647；严格拒绝小数token、数字字符串、null、负数、溢出和额外字段。仅修改库存，不改变标题/作者/价格等。成功200 BookResponse；非法请求400，不存在404，内部异常500。
+
+BookCreateRequest字段：
+id：string，最大80，pattern ^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$。
+title/author：非空白string，最大120。image：非空白string，最大255；允许本地资源路径，不要强制uri格式。
+stock：严格JSON整数，int32，0～2147483647。
+price：number，最小0。originalPrice：可选nullable number，最小0。
+可选nullable string：isbn最大40，publisher最大120，category最大60，categoryName最大80，categoryLabel最大120，rating最大40，badge最大80，description最大255，summary/highlight/audience/review无明确长度上限。
+所有必填文本都不接受null；title/author/image可用pattern表达至少一个非空白字符。
+
+Book响应字段都存在，id/title/author/image为string，stock为integer int32，price为number；其他字段originalPrice及所有可选文本可能是null。Book无需套用创建时字段pattern来约束已有旧数据，stock和price非负。BookPage为object，必填items(array<Book>)/page(integer>=1)/size(integer1～100)/totalItems(integer int64>=0)/totalPages(integer>=0)。
+BookResponse为object，必填code(integer enum[0])/message(string)/data(Book)。BookPageResponse类似，data为BookPage。ErrorResponse必填code(integer最小1)/message(string)/data(nullable:true，可为null)。错误例子：40001参数无效、40404图书不存在、40901重复ID、50000服务器错误。响应错误示例不作为全部业务码的封闭枚举。
+请包含列表、图书和库存示例；示例中的售价/库存仅为课程演示值。不要添加第五个操作、工具接口或旧/api/v1/books接口。

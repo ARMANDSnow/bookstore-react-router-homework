@@ -1,0 +1,739 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "知页在线书店 API",
+    "version": "1.0.0",
+    "description": "本机课程演示后端，提供图书列表、详情、创建与库存更新接口。接口不要求认证。示例中的售价与库存仅为课程演示值。"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "本机课程演示后端"
+    }
+  ],
+  "paths": {
+    "/api/books": {
+      "get": {
+        "operationId": "listBooks",
+        "summary": "分页查询图书列表",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "页码，从1开始。offset=(page-1)*size 必须不超过 2147483647，否则返回400。"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 12
+            },
+            "description": "每页条数，范围1～100。"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "分类编码，去前后空格后精确匹配。不存在的分类返回200空items。"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "关键词，去前后空格后对书名或作者进行子串匹配，%和_按字面匹配。"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "recommended",
+                "price-low",
+                "price-high"
+              ],
+              "default": "recommended"
+            },
+            "description": "排序方式。recommended按id升序；price-low/price-high按价格排序，同价按id升序。"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回分页图书列表。不存在的分类或超过末页返回空items。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookPageResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "items": [
+                      {
+                        "id": "example-book",
+                        "title": "示例图书",
+                        "author": "示例作者",
+                        "image": "/images/example-book.jpg",
+                        "stock": 10,
+                        "price": 39.9,
+                        "originalPrice": 59.9,
+                        "isbn": "978-7-111-11111-1",
+                        "publisher": "示例出版社",
+                        "category": "tech",
+                        "categoryName": "技术",
+                        "categoryLabel": "计算机",
+                        "rating": "4.8",
+                        "badge": "热销",
+                        "description": "课程演示图书",
+                        "summary": "摘要",
+                        "highlight": "亮点",
+                        "audience": "大众",
+                        "review": "好评"
+                      }
+                    ],
+                    "page": 1,
+                    "size": 12,
+                    "totalItems": 1,
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createBook",
+        "summary": "创建图书",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookCreateRequest"
+              },
+              "example": {
+                "id": "example-book",
+                "title": "示例图书",
+                "author": "示例作者",
+                "image": "/images/example-book.jpg",
+                "stock": 10,
+                "price": 39.9,
+                "originalPrice": 59.9,
+                "isbn": "978-7-111-11111-1",
+                "publisher": "示例出版社",
+                "category": "tech",
+                "categoryName": "技术",
+                "categoryLabel": "计算机",
+                "rating": "4.8",
+                "badge": "热销",
+                "description": "课程演示图书",
+                "summary": "摘要",
+                "highlight": "亮点",
+                "audience": "大众",
+                "review": "好评"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "创建成功，返回创建的图书。Location响应头指向新资源。",
+            "headers": {
+              "Location": {
+                "description": "新创建图书的资源路径，例如 /api/books/example-book",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "id": "example-book",
+                    "title": "示例图书",
+                    "author": "示例作者",
+                    "image": "/images/example-book.jpg",
+                    "stock": 10,
+                    "price": 39.9,
+                    "originalPrice": 59.9,
+                    "isbn": "978-7-111-11111-1",
+                    "publisher": "示例出版社",
+                    "category": "tech",
+                    "categoryName": "技术",
+                    "categoryLabel": "计算机",
+                    "rating": "4.8",
+                    "badge": "热销",
+                    "description": "课程演示图书",
+                    "summary": "摘要",
+                    "highlight": "亮点",
+                    "audience": "大众",
+                    "review": "好评"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api/books/{id}": {
+      "get": {
+        "operationId": "getBook",
+        "summary": "查询图书详情",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "图书ID。查询时不单独实施创建ID的pattern校验。"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "查询成功，返回图书详情。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "id": "example-book",
+                    "title": "示例图书",
+                    "author": "示例作者",
+                    "image": "/images/example-book.jpg",
+                    "stock": 10,
+                    "price": 39.9,
+                    "originalPrice": 59.9,
+                    "isbn": "978-7-111-11111-1",
+                    "publisher": "示例出版社",
+                    "category": "tech",
+                    "categoryName": "技术",
+                    "categoryLabel": "计算机",
+                    "rating": "4.8",
+                    "badge": "热销",
+                    "description": "课程演示图书",
+                    "summary": "摘要",
+                    "highlight": "亮点",
+                    "audience": "大众",
+                    "review": "好评"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api/books/{id}/inventory": {
+      "patch": {
+        "operationId": "updateBookInventory",
+        "summary": "更新图书库存",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "图书ID。"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryUpdateRequest"
+              },
+              "example": {
+                "stock": 20
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "库存更新成功，返回更新后的图书。仅修改库存，不改变标题、作者、价格等。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "id": "example-book",
+                    "title": "示例图书",
+                    "author": "示例作者",
+                    "image": "/images/example-book.jpg",
+                    "stock": 20,
+                    "price": 39.9,
+                    "originalPrice": 59.9,
+                    "isbn": "978-7-111-11111-1",
+                    "publisher": "示例出版社",
+                    "category": "tech",
+                    "categoryName": "技术",
+                    "categoryLabel": "计算机",
+                    "rating": "4.8",
+                    "badge": "热销",
+                    "description": "课程演示图书",
+                    "summary": "摘要",
+                    "highlight": "亮点",
+                    "audience": "大众",
+                    "review": "好评"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Book": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "author",
+          "image",
+          "stock",
+          "price"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "stock": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0
+          },
+          "originalPrice": {
+            "type": "number",
+            "minimum": 0,
+            "nullable": true
+          },
+          "isbn": {
+            "type": "string",
+            "nullable": true
+          },
+          "publisher": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "rating": {
+            "type": "string",
+            "nullable": true
+          },
+          "badge": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "highlight": {
+            "type": "string",
+            "nullable": true
+          },
+          "audience": {
+            "type": "string",
+            "nullable": true
+          },
+          "review": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "BookCreateRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "author",
+          "stock",
+          "price",
+          "image"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 120,
+            "pattern": "\\S"
+          },
+          "author": {
+            "type": "string",
+            "maxLength": 120,
+            "pattern": "\\S"
+          },
+          "image": {
+            "type": "string",
+            "maxLength": 255,
+            "pattern": "\\S",
+            "description": "非空白字符串，允许本地资源路径，不强制uri格式。"
+          },
+          "stock": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "严格JSON整数，不接受浮点数、数字字符串、null或额外字段。"
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0
+          },
+          "originalPrice": {
+            "type": "number",
+            "minimum": 0,
+            "nullable": true
+          },
+          "isbn": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          },
+          "publisher": {
+            "type": "string",
+            "maxLength": 120,
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          },
+          "categoryName": {
+            "type": "string",
+            "maxLength": 80,
+            "nullable": true
+          },
+          "categoryLabel": {
+            "type": "string",
+            "maxLength": 120,
+            "nullable": true
+          },
+          "rating": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          },
+          "badge": {
+            "type": "string",
+            "maxLength": 80,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "highlight": {
+            "type": "string",
+            "nullable": true
+          },
+          "audience": {
+            "type": "string",
+            "nullable": true
+          },
+          "review": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": true,
+        "description": "创建请求中的未知字段由当前Jackson忽略，不声称全部拒绝。"
+      },
+      "InventoryUpdateRequest": {
+        "type": "object",
+        "required": [
+          "stock"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "stock": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "严格JSON整数，不接受小数token、数字字符串、null、负数、溢出或额外字段。"
+          }
+        }
+      },
+      "BookPage": {
+        "type": "object",
+        "required": [
+          "items",
+          "page",
+          "size",
+          "totalItems",
+          "totalPages"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Book"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
+      "BookResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Book"
+          }
+        }
+      },
+      "BookPageResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "enum": [
+              0
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/BookPage"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "nullable": true
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "请求参数无效或请求体格式错误。",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 40001,
+              "message": "参数无效",
+              "data": null
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "请求的图书不存在。",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 40404,
+              "message": "图书不存在",
+              "data": null
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "创建图书时ID重复。",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 40901,
+              "message": "重复ID",
+              "data": null
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "服务器内部错误。",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "code": 50000,
+              "message": "服务器错误",
+              "data": null
+            }
+          }
+        }
+      }
+    }
+  }
+}

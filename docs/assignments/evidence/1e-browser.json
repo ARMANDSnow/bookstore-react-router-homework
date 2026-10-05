@@ -1,0 +1,15 @@
+{
+  "testedAt": "2026-10-05T19:38:01.399Z",
+  "canonicalDownload": true,
+  "finalRound": 5,
+  "status": 200,
+  "state": {
+    "url": "http://127.0.0.1:5173/books",
+    "title": "知页书城 - React Router 版",
+    "width": 1600,
+    "overflow": false,
+    "cards": 4
+  },
+  "screenLocked": true,
+  "visualEvidence": "此前保留的真实桌面截图，锁屏后未新拍截图"
+}

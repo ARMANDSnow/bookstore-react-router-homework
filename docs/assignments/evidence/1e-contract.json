@@ -1,0 +1,478 @@
+{
+  "testedAt": "2026-10-05T19:36:57.185Z",
+  "environment": "真实 Spring Boot + 本机 MySQL；不是H2或模拟服务",
+  "rounds": [
+    {
+      "round": 1,
+      "json": true,
+      "openapi": true,
+      "fourOperations": true,
+      "invariants": true
+    },
+    {
+      "round": 2,
+      "json": true,
+      "openapi": true,
+      "fourOperations": true,
+      "invariants": true
+    },
+    {
+      "round": 3,
+      "json": true,
+      "openapi": true,
+      "fourOperations": true,
+      "invariants": true
+    },
+    {
+      "round": 4,
+      "json": true,
+      "openapi": true,
+      "fourOperations": true,
+      "invariants": true
+    },
+    {
+      "round": 5,
+      "json": true,
+      "openapi": true,
+      "fourOperations": true,
+      "invariants": true
+    }
+  ],
+  "http": [
+    {
+      "method": "GET",
+      "route": "/api/books?page=1&size=4",
+      "status": 200,
+      "schema": true,
+      "payload": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            },
+            {
+              "id": "clean-code",
+              "title": "代码整洁之道",
+              "author": "Robert C. Martin",
+              "isbn": "9787115216878",
+              "publisher": "人民邮电出版社",
+              "stock": 32,
+              "price": 79,
+              "originalPrice": 99,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / 软件工程",
+              "image": "/images/代码整洁之道.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "限时 8 折",
+              "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+              "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+              "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+              "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+              "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+            },
+            {
+              "id": "deep-work",
+              "title": "深度工作",
+              "author": "Cal Newport",
+              "isbn": "9787550274864",
+              "publisher": "江西人民出版社",
+              "stock": 30,
+              "price": 58,
+              "originalPrice": 72,
+              "category": "business",
+              "categoryName": "经济管理",
+              "categoryLabel": "经济管理 / 时间管理",
+              "image": "/images/深度工作.JPG",
+              "rating": "4.6 / 5.0",
+              "badge": "效率提升",
+              "description": "帮助你建立专注习惯，提高学习与输出效率。",
+              "summary": "帮助读者建立专注习惯，减少分心成本，适合备考、写代码、做课程作业和进行长期项目训练。",
+              "highlight": "强调高质量专注输出的重要性，并提供可执行的训练策略。",
+              "audience": "适合学生、自学者以及希望提高学习效率和工作专注度的人群。",
+              "review": "不是空泛鸡汤，而是可以立即实践的专注方法论。"
+            },
+            {
+              "id": "design",
+              "title": "设计心理学",
+              "author": "Donald A. Norman",
+              "isbn": "9787508648335",
+              "publisher": "中信出版社",
+              "stock": 25,
+              "price": 65,
+              "originalPrice": 82,
+              "category": "design",
+              "categoryName": "设计创意",
+              "categoryLabel": "设计创意 / 用户体验",
+              "image": "/images/设计心理学.JPG",
+              "rating": "4.7 / 5.0",
+              "badge": "设计经典",
+              "description": "理解用户、界面与行为之间关系的入门经典。",
+              "summary": "从可见性、反馈、映射和容错等角度解释为什么有些产品天然顺手，有些产品却让人困惑，非常适合界面设计与交互设计入门。",
+              "highlight": "用大量生活化案例解释好设计如何降低理解成本并提升使用效率。",
+              "audience": "适合产品、设计、前端开发以及任何对用户体验有兴趣的学习者。",
+              "review": "读完之后会重新审视按钮、门把手和页面布局背后的设计逻辑。"
+            }
+          ],
+          "page": 1,
+          "size": 4,
+          "totalItems": 7,
+          "totalPages": 2
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books?category=nonexistent-contract-category",
+      "status": 200,
+      "schema": true,
+      "payload": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [],
+          "page": 1,
+          "size": 12,
+          "totalItems": 0,
+          "totalPages": 0
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books?size=0",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "页码必须大于 0，每页数量必须在 1～100 之间",
+        "data": null
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books?page=oops",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "参数 page 的格式不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books?sort=oops",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "不支持的排序方式",
+        "data": null
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books/building-microservices",
+      "status": 200,
+      "schema": true,
+      "payload": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "id": "building-microservices",
+          "title": "微服务设计（第2版）",
+          "author": "Sam Newman",
+          "isbn": "9787115638762",
+          "publisher": "人民邮电出版社",
+          "stock": 24,
+          "price": 128,
+          "originalPrice": 158,
+          "category": "tech",
+          "categoryName": "计算机与技术",
+          "categoryLabel": "软件架构",
+          "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+          "rating": "暂无评分",
+          "badge": "架构进阶",
+          "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+          "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+          "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+          "audience": "希望理解微服务的软件工程师与架构学习者。",
+          "review": "暂无读者评价。"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books/nonexistent-contract-book",
+      "status": 404,
+      "schema": true,
+      "payload": {
+        "code": 40404,
+        "message": "书籍不存在",
+        "data": null
+      }
+    },
+    {
+      "method": "POST",
+      "route": "/api/books",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "POST",
+      "route": "/api/books",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "售价不能为空",
+        "data": null
+      }
+    },
+    {
+      "method": "POST",
+      "route": "/api/books",
+      "status": 201,
+      "schema": true,
+      "payload": {
+        "code": 0,
+        "message": "书籍已新增",
+        "data": {
+          "id": "contract-1791229016899",
+          "title": "契约验收临时图书",
+          "author": "验收脚本",
+          "isbn": null,
+          "publisher": null,
+          "stock": 3,
+          "price": 12.5,
+          "originalPrice": 12.5,
+          "category": "general",
+          "categoryName": "综合图书",
+          "categoryLabel": "综合图书",
+          "image": "/cover.jpg",
+          "rating": "暂无评分",
+          "badge": null,
+          "description": "契约验收临时图书",
+          "summary": "契约验收临时图书",
+          "highlight": "暂无内容亮点。",
+          "audience": "适合对本书主题感兴趣的读者。",
+          "review": "暂无读者评价。"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books/contract-1791229016899",
+      "status": 200,
+      "schema": true,
+      "payload": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "id": "contract-1791229016899",
+          "title": "契约验收临时图书",
+          "author": "验收脚本",
+          "isbn": null,
+          "publisher": null,
+          "stock": 3,
+          "price": 12.5,
+          "originalPrice": 12.5,
+          "category": "general",
+          "categoryName": "综合图书",
+          "categoryLabel": "综合图书",
+          "image": "/cover.jpg",
+          "rating": "暂无评分",
+          "badge": null,
+          "description": "契约验收临时图书",
+          "summary": "契约验收临时图书",
+          "highlight": "暂无内容亮点。",
+          "audience": "适合对本书主题感兴趣的读者。",
+          "review": "暂无读者评价。"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "route": "/api/books",
+      "status": 409,
+      "schema": true,
+      "payload": {
+        "code": 40903,
+        "message": "书籍 ID 已存在",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 200,
+      "schema": true,
+      "payload": {
+        "code": 0,
+        "message": "库存已更新",
+        "data": {
+          "id": "contract-1791229016899",
+          "title": "契约验收临时图书",
+          "author": "验收脚本",
+          "isbn": null,
+          "publisher": null,
+          "stock": 0,
+          "price": 12.5,
+          "originalPrice": 12.5,
+          "category": "general",
+          "categoryName": "综合图书",
+          "categoryLabel": "综合图书",
+          "image": "/cover.jpg",
+          "rating": "暂无评分",
+          "badge": null,
+          "description": "契约验收临时图书",
+          "summary": "契约验收临时图书",
+          "highlight": "暂无内容亮点。",
+          "audience": "适合对本书主题感兴趣的读者。",
+          "review": "暂无读者评价。"
+        }
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "库存不能为负数",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "库存不能为空",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/contract-1791229016899/inventory",
+      "status": 400,
+      "schema": true,
+      "payload": {
+        "code": 40000,
+        "message": "请求 JSON 的格式或字段类型不正确",
+        "data": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "route": "/api/books/nonexistent-contract-book/inventory",
+      "status": 404,
+      "schema": true,
+      "payload": {
+        "code": 40404,
+        "message": "书籍不存在",
+        "data": null
+      }
+    },
+    {
+      "method": "GET",
+      "route": "/api/books/contract-1791229016899",
+      "status": 404,
+      "schema": true,
+      "payload": {
+        "code": 40404,
+        "message": "书籍不存在",
+        "data": null
+      }
+    }
+  ],
+  "servedCanonical": true,
+  "temporaryRecordCleaned": true,
+  "unverified": [
+    "未人为制造真实服务器内部500异常；仅在契约中声明该兜底响应"
+  ]
+}

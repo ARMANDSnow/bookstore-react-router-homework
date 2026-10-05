@@ -8,6 +8,7 @@ tmp/
 # Homework hand-in files and generated documents
 *.pdf
 *.docx
+!docs/assignments/提交/524031910745-作业1.docx
 *.zip
 答题纸.txt
 scripts/create_answer_doc.py
