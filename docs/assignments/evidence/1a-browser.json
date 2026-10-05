@@ -1,0 +1,42 @@
+[
+  {
+    "case": "server sorting",
+    "prices": [
+      49,
+      58,
+      62,
+      65
+    ],
+    "passed": true
+  },
+  {
+    "case": "page 2",
+    "url": "http://127.0.0.1:5173/books?page=2&size=4",
+    "items": 2,
+    "h1": true,
+    "overflow": false,
+    "passed": true
+  },
+  {
+    "case": "category resets page",
+    "url": "http://127.0.0.1:5173/books?size=4&category=tech",
+    "items": 2,
+    "passed": true
+  },
+  {
+    "case": "category and keyword together",
+    "passed": true
+  },
+  {
+    "case": "empty result",
+    "passed": true
+  },
+  {
+    "case": "network failure feedback",
+    "passed": true
+  },
+  {
+    "case": "retry recovers",
+    "passed": true
+  }
+]

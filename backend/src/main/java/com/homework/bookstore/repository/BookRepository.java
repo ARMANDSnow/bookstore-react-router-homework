@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 书籍数据访问接口（Spring Data JPA）。
@@ -26,6 +28,11 @@ import org.springframework.data.repository.query.Param;
  * </ol>
  */
 public interface BookRepository extends JpaRepository<Book, String> {
+
+    @Query("select b from Book b where (:category is null or b.category = :category)"
+            + " and (:keyword is null or lower(b.title) like lower(concat('%', :keyword, '%')) escape '!'"
+            + " or lower(b.author) like lower(concat('%', :keyword, '%')) escape '!')")
+    Page<Book> findCatalog(@Param("category") String category, @Param("keyword") String keyword, Pageable pageable);
 
     /**
      * 【写法一：派生查询】按"标题 或 作者"模糊搜索，忽略大小写。业务代码实际使用的方法。

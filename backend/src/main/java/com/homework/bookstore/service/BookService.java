@@ -2,6 +2,7 @@ package com.homework.bookstore.service;
 
 import com.homework.bookstore.dto.BookDto;
 import com.homework.bookstore.dto.BookRequest;
+import com.homework.bookstore.dto.BookPageDto;
 import java.util.List;
 
 /**
@@ -12,6 +13,8 @@ import java.util.List;
  * （作业 5 要求：DTO 层 + Service 对 Repository 层进行封装）。
  */
 public interface BookService {
+
+    BookPageDto listCatalog(int page, int size, String category, String keyword, String sort);
 
     /** 查询全部书籍。 */
     List<BookDto> listBooks();

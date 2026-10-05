@@ -1,0 +1,451 @@
+{
+  "database": "MySQL on localhost:3306",
+  "cases": [
+    {
+      "path": "/api/books?size=4&page=1",
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [
+            {
+              "id": "clean-code",
+              "title": "代码整洁之道",
+              "author": "Robert C. Martin",
+              "isbn": "9787115216878",
+              "publisher": "人民邮电出版社",
+              "stock": 32,
+              "price": 79.0,
+              "originalPrice": 99.0,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / 软件工程",
+              "image": "/images/代码整洁之道.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "限时 8 折",
+              "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+              "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+              "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+              "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+              "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+            },
+            {
+              "id": "deep-work",
+              "title": "深度工作",
+              "author": "Cal Newport",
+              "isbn": "9787550274864",
+              "publisher": "江西人民出版社",
+              "stock": 30,
+              "price": 58.0,
+              "originalPrice": 72.0,
+              "category": "business",
+              "categoryName": "经济管理",
+              "categoryLabel": "经济管理 / 时间管理",
+              "image": "/images/深度工作.JPG",
+              "rating": "4.6 / 5.0",
+              "badge": "效率提升",
+              "description": "帮助你建立专注习惯，提高学习与输出效率。",
+              "summary": "帮助读者建立专注习惯，减少分心成本，适合备考、写代码、做课程作业和进行长期项目训练。",
+              "highlight": "强调高质量专注输出的重要性，并提供可执行的训练策略。",
+              "audience": "适合学生、自学者以及希望提高学习效率和工作专注度的人群。",
+              "review": "不是空泛鸡汤，而是可以立即实践的专注方法论。"
+            },
+            {
+              "id": "design",
+              "title": "设计心理学",
+              "author": "Donald A. Norman",
+              "isbn": "9787508648335",
+              "publisher": "中信出版社",
+              "stock": 25,
+              "price": 65.0,
+              "originalPrice": 82.0,
+              "category": "design",
+              "categoryName": "设计创意",
+              "categoryLabel": "设计创意 / 用户体验",
+              "image": "/images/设计心理学.JPG",
+              "rating": "4.7 / 5.0",
+              "badge": "设计经典",
+              "description": "理解用户、界面与行为之间关系的入门经典。",
+              "summary": "从可见性、反馈、映射和容错等角度解释为什么有些产品天然顺手，有些产品却让人困惑，非常适合界面设计与交互设计入门。",
+              "highlight": "用大量生活化案例解释好设计如何降低理解成本并提升使用效率。",
+              "audience": "适合产品、设计、前端开发以及任何对用户体验有兴趣的学习者。",
+              "review": "读完之后会重新审视按钮、门把手和页面布局背后的设计逻辑。"
+            },
+            {
+              "id": "js-advanced",
+              "title": "JavaScript 高级程序设计",
+              "author": "Nicholas C. Zakas",
+              "isbn": "9787115545381",
+              "publisher": "人民邮电出版社",
+              "stock": 26,
+              "price": 88.0,
+              "originalPrice": 108.0,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / JavaScript",
+              "image": "/images/高级程序设计.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "前端进阶",
+              "description": "系统理解 JavaScript 语言机制与工程实践。",
+              "summary": "系统讲解 JavaScript 核心概念、执行机制和常见 API，适合作为前端课程、项目开发与面试准备的长期参考书。",
+              "highlight": "内容覆盖语言基础、浏览器环境、异步编程与工程实践，体系完整。",
+              "audience": "适合前端初学者、进阶开发者以及准备面试的学生。",
+              "review": "内容扎实、覆盖面广，是理解 JavaScript 的高频参考书。"
+            }
+          ],
+          "page": 1,
+          "size": 4,
+          "totalItems": 6,
+          "totalPages": 2
+        }
+      }
+    },
+    {
+      "path": "/api/books?size=4&page=2",
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [
+            {
+              "id": "sapiens",
+              "title": "人类简史",
+              "author": "尤瓦尔·赫拉利",
+              "isbn": "9787508647357",
+              "publisher": "中信出版社",
+              "stock": 34,
+              "price": 62.0,
+              "originalPrice": 78.0,
+              "category": "literature",
+              "categoryName": "文学小说",
+              "categoryLabel": "文学小说 / 历史人文",
+              "image": "/images/人类简史.JPG",
+              "rating": "4.7 / 5.0",
+              "badge": "畅销人文",
+              "description": "以通俗方式重新梳理文明演化的关键节点。",
+              "summary": "从认知革命、农业革命到科学革命，重新梳理人类社会的形成与演变，视角开阔且表达通俗。",
+              "highlight": "将历史、经济、宗教与制度变迁串联起来，帮助读者建立宏观认知框架。",
+              "audience": "适合对历史、人类文明和社会演化感兴趣的读者。",
+              "review": "读完之后看待社会、国家与制度的角度都会更宏观。"
+            },
+            {
+              "id": "three-body",
+              "title": "三体",
+              "author": "刘慈欣",
+              "isbn": "9787536692930",
+              "publisher": "重庆出版社",
+              "stock": 40,
+              "price": 49.0,
+              "originalPrice": 59.0,
+              "category": "literature",
+              "categoryName": "文学小说",
+              "categoryLabel": "文学小说 / 科幻小说",
+              "image": "/images/三体.JPG",
+              "rating": "4.9 / 5.0",
+              "badge": "现象级作品",
+              "description": "宏大的宇宙叙事与冷峻的科学想象交织在一起。",
+              "summary": "以恢弘宇宙视角展开文明碰撞与生存抉择，兼具科学想象力与叙事张力，是中文科幻的重要代表作。",
+              "highlight": "将宏大宇宙命题与人物命运并置，阅读体验极具冲击力。",
+              "audience": "适合喜欢科幻、社会议题和宏大叙事的读者。",
+              "review": "从地球文明的局限，到宇宙尺度的残酷，这本书都写得极具震撼力。"
+            }
+          ],
+          "page": 2,
+          "size": 4,
+          "totalItems": 6,
+          "totalPages": 2
+        }
+      }
+    },
+    {
+      "path": "/api/books?category=tech&keyword=%E4%BB%A3%E7%A0%81&size=1",
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [
+            {
+              "id": "clean-code",
+              "title": "代码整洁之道",
+              "author": "Robert C. Martin",
+              "isbn": "9787115216878",
+              "publisher": "人民邮电出版社",
+              "stock": 32,
+              "price": 79.0,
+              "originalPrice": 99.0,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / 软件工程",
+              "image": "/images/代码整洁之道.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "限时 8 折",
+              "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+              "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+              "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+              "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+              "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+            }
+          ],
+          "page": 1,
+          "size": 1,
+          "totalItems": 1,
+          "totalPages": 1
+        }
+      }
+    },
+    {
+      "path": "/api/books?sort=price-low&size=2",
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [
+            {
+              "id": "three-body",
+              "title": "三体",
+              "author": "刘慈欣",
+              "isbn": "9787536692930",
+              "publisher": "重庆出版社",
+              "stock": 40,
+              "price": 49.0,
+              "originalPrice": 59.0,
+              "category": "literature",
+              "categoryName": "文学小说",
+              "categoryLabel": "文学小说 / 科幻小说",
+              "image": "/images/三体.JPG",
+              "rating": "4.9 / 5.0",
+              "badge": "现象级作品",
+              "description": "宏大的宇宙叙事与冷峻的科学想象交织在一起。",
+              "summary": "以恢弘宇宙视角展开文明碰撞与生存抉择，兼具科学想象力与叙事张力，是中文科幻的重要代表作。",
+              "highlight": "将宏大宇宙命题与人物命运并置，阅读体验极具冲击力。",
+              "audience": "适合喜欢科幻、社会议题和宏大叙事的读者。",
+              "review": "从地球文明的局限，到宇宙尺度的残酷，这本书都写得极具震撼力。"
+            },
+            {
+              "id": "deep-work",
+              "title": "深度工作",
+              "author": "Cal Newport",
+              "isbn": "9787550274864",
+              "publisher": "江西人民出版社",
+              "stock": 30,
+              "price": 58.0,
+              "originalPrice": 72.0,
+              "category": "business",
+              "categoryName": "经济管理",
+              "categoryLabel": "经济管理 / 时间管理",
+              "image": "/images/深度工作.JPG",
+              "rating": "4.6 / 5.0",
+              "badge": "效率提升",
+              "description": "帮助你建立专注习惯，提高学习与输出效率。",
+              "summary": "帮助读者建立专注习惯，减少分心成本，适合备考、写代码、做课程作业和进行长期项目训练。",
+              "highlight": "强调高质量专注输出的重要性，并提供可执行的训练策略。",
+              "audience": "适合学生、自学者以及希望提高学习效率和工作专注度的人群。",
+              "review": "不是空泛鸡汤，而是可以立即实践的专注方法论。"
+            }
+          ],
+          "page": 1,
+          "size": 2,
+          "totalItems": 6,
+          "totalPages": 3
+        }
+      }
+    },
+    {
+      "path": "/api/books?category=absent",
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [],
+          "page": 1,
+          "size": 12,
+          "totalItems": 0,
+          "totalPages": 0
+        }
+      }
+    },
+    {
+      "path": "/api/books?page=999",
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "items": [],
+          "page": 999,
+          "size": 12,
+          "totalItems": 6,
+          "totalPages": 1
+        }
+      }
+    },
+    {
+      "path": "/api/books?page=0",
+      "status": 400,
+      "response": {
+        "code": 40000,
+        "message": "页码必须大于 0，每页数量必须在 1～100 之间",
+        "data": null
+      }
+    },
+    {
+      "path": "/api/books?size=101",
+      "status": 400,
+      "response": {
+        "code": 40000,
+        "message": "页码必须大于 0，每页数量必须在 1～100 之间",
+        "data": null
+      }
+    },
+    {
+      "path": "/api/books?page=abc",
+      "status": 400,
+      "response": {
+        "code": 40000,
+        "message": "参数 page 的格式不正确",
+        "data": null
+      }
+    },
+    {
+      "path": "/api/v1/books",
+      "status": 200,
+      "response": {
+        "code": 0,
+        "message": "ok",
+        "data": [
+          {
+            "id": "clean-code",
+            "title": "代码整洁之道",
+            "author": "Robert C. Martin",
+            "isbn": "9787115216878",
+            "publisher": "人民邮电出版社",
+            "stock": 32,
+            "price": 79.0,
+            "originalPrice": 99.0,
+            "category": "tech",
+            "categoryName": "计算机与技术",
+            "categoryLabel": "计算机与技术 / 软件工程",
+            "image": "/images/代码整洁之道.JPG",
+            "rating": "4.8 / 5.0",
+            "badge": "限时 8 折",
+            "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+            "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+            "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+            "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+            "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+          },
+          {
+            "id": "deep-work",
+            "title": "深度工作",
+            "author": "Cal Newport",
+            "isbn": "9787550274864",
+            "publisher": "江西人民出版社",
+            "stock": 30,
+            "price": 58.0,
+            "originalPrice": 72.0,
+            "category": "business",
+            "categoryName": "经济管理",
+            "categoryLabel": "经济管理 / 时间管理",
+            "image": "/images/深度工作.JPG",
+            "rating": "4.6 / 5.0",
+            "badge": "效率提升",
+            "description": "帮助你建立专注习惯，提高学习与输出效率。",
+            "summary": "帮助读者建立专注习惯，减少分心成本，适合备考、写代码、做课程作业和进行长期项目训练。",
+            "highlight": "强调高质量专注输出的重要性，并提供可执行的训练策略。",
+            "audience": "适合学生、自学者以及希望提高学习效率和工作专注度的人群。",
+            "review": "不是空泛鸡汤，而是可以立即实践的专注方法论。"
+          },
+          {
+            "id": "design",
+            "title": "设计心理学",
+            "author": "Donald A. Norman",
+            "isbn": "9787508648335",
+            "publisher": "中信出版社",
+            "stock": 25,
+            "price": 65.0,
+            "originalPrice": 82.0,
+            "category": "design",
+            "categoryName": "设计创意",
+            "categoryLabel": "设计创意 / 用户体验",
+            "image": "/images/设计心理学.JPG",
+            "rating": "4.7 / 5.0",
+            "badge": "设计经典",
+            "description": "理解用户、界面与行为之间关系的入门经典。",
+            "summary": "从可见性、反馈、映射和容错等角度解释为什么有些产品天然顺手，有些产品却让人困惑，非常适合界面设计与交互设计入门。",
+            "highlight": "用大量生活化案例解释好设计如何降低理解成本并提升使用效率。",
+            "audience": "适合产品、设计、前端开发以及任何对用户体验有兴趣的学习者。",
+            "review": "读完之后会重新审视按钮、门把手和页面布局背后的设计逻辑。"
+          },
+          {
+            "id": "js-advanced",
+            "title": "JavaScript 高级程序设计",
+            "author": "Nicholas C. Zakas",
+            "isbn": "9787115545381",
+            "publisher": "人民邮电出版社",
+            "stock": 26,
+            "price": 88.0,
+            "originalPrice": 108.0,
+            "category": "tech",
+            "categoryName": "计算机与技术",
+            "categoryLabel": "计算机与技术 / JavaScript",
+            "image": "/images/高级程序设计.JPG",
+            "rating": "4.8 / 5.0",
+            "badge": "前端进阶",
+            "description": "系统理解 JavaScript 语言机制与工程实践。",
+            "summary": "系统讲解 JavaScript 核心概念、执行机制和常见 API，适合作为前端课程、项目开发与面试准备的长期参考书。",
+            "highlight": "内容覆盖语言基础、浏览器环境、异步编程与工程实践，体系完整。",
+            "audience": "适合前端初学者、进阶开发者以及准备面试的学生。",
+            "review": "内容扎实、覆盖面广，是理解 JavaScript 的高频参考书。"
+          },
+          {
+            "id": "sapiens",
+            "title": "人类简史",
+            "author": "尤瓦尔·赫拉利",
+            "isbn": "9787508647357",
+            "publisher": "中信出版社",
+            "stock": 34,
+            "price": 62.0,
+            "originalPrice": 78.0,
+            "category": "literature",
+            "categoryName": "文学小说",
+            "categoryLabel": "文学小说 / 历史人文",
+            "image": "/images/人类简史.JPG",
+            "rating": "4.7 / 5.0",
+            "badge": "畅销人文",
+            "description": "以通俗方式重新梳理文明演化的关键节点。",
+            "summary": "从认知革命、农业革命到科学革命，重新梳理人类社会的形成与演变，视角开阔且表达通俗。",
+            "highlight": "将历史、经济、宗教与制度变迁串联起来，帮助读者建立宏观认知框架。",
+            "audience": "适合对历史、人类文明和社会演化感兴趣的读者。",
+            "review": "读完之后看待社会、国家与制度的角度都会更宏观。"
+          },
+          {
+            "id": "three-body",
+            "title": "三体",
+            "author": "刘慈欣",
+            "isbn": "9787536692930",
+            "publisher": "重庆出版社",
+            "stock": 40,
+            "price": 49.0,
+            "originalPrice": 59.0,
+            "category": "literature",
+            "categoryName": "文学小说",
+            "categoryLabel": "文学小说 / 科幻小说",
+            "image": "/images/三体.JPG",
+            "rating": "4.9 / 5.0",
+            "badge": "现象级作品",
+            "description": "宏大的宇宙叙事与冷峻的科学想象交织在一起。",
+            "summary": "以恢弘宇宙视角展开文明碰撞与生存抉择，兼具科学想象力与叙事张力，是中文科幻的重要代表作。",
+            "highlight": "将宏大宇宙命题与人物命运并置，阅读体验极具冲击力。",
+            "audience": "适合喜欢科幻、社会议题和宏大叙事的读者。",
+            "review": "从地球文明的局限，到宇宙尺度的残酷，这本书都写得极具震撼力。"
+          }
+        ]
+      }
+    }
+  ]
+}

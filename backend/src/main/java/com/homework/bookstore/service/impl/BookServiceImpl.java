@@ -2,6 +2,7 @@ package com.homework.bookstore.service.impl;
 
 import com.homework.bookstore.dto.BookDto;
 import com.homework.bookstore.dto.BookRequest;
+import com.homework.bookstore.dto.BookPageDto;
 import com.homework.bookstore.entity.Book;
 import com.homework.bookstore.repository.BookRepository;
 import com.homework.bookstore.service.BookService;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 /**
  * 书籍业务实现：基于 Spring Data JPA 读取 books 表，并把实体转为对外的 {@link BookDto}。
@@ -32,6 +35,28 @@ public class BookServiceImpl implements BookService {
     // 构造器注入
     public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookPageDto listCatalog(int page, int size, String category, String keyword, String sort) {
+        if (page < 1 || size < 1 || size > 100 || ((long) page - 1) * size > Integer.MAX_VALUE) {
+            throw new BusinessException(40000, "页码必须大于 0，每页数量必须在 1～100 之间");
+        }
+        Sort ordering = switch (sort) {
+            case "recommended" -> Sort.by("id");
+            case "price-low" -> Sort.by("price").ascending().and(Sort.by("id"));
+            case "price-high" -> Sort.by("price").descending().and(Sort.by("id"));
+            default -> throw new BusinessException(40000, "不支持的排序方式");
+        };
+        String literalKeyword = normalize(keyword);
+        if (literalKeyword != null) {
+            literalKeyword = literalKeyword.replace("!", "!!").replace("%", "!%").replace("_", "!_");
+        }
+        var result = bookRepository.findCatalog(normalize(category), literalKeyword,
+                PageRequest.of(page - 1, size, ordering));
+        return new BookPageDto(result.getContent().stream().map(BookDto::from).toList(),
+                page, size, result.getTotalElements(), result.getTotalPages());
     }
 
     @Override
