@@ -22,4 +22,9 @@ class AssistantControllerTest {
             mvc.perform(post("/api/assistant/chat").contentType("application/json").content(body)).andExpect(status().isBadRequest());
         verifyNoInteractions(assistant,model);
     }
+    @Test void rejectsUnknownDemoScenarioBeforeModelCall() throws Exception {
+        mvc.perform(post("/api/assistant/chat").contentType("application/json").content("{\"message\":\"查库存\",\"scenario\":\"arbitrary-script\"}"))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(assistant,model);
+    }
 }

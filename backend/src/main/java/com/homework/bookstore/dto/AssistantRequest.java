@@ -9,7 +9,9 @@ import java.util.List;
 
 public record AssistantRequest(
         @NotBlank @Size(max = 1200) String message,
-        @Size(max = 20) List<@NotNull @Valid Turn> history) {
+        @Size(max = 20) List<@NotNull @Valid Turn> history,
+        @Pattern(regexp = "normal|competitor-timeout-once") String scenario) {
+    public AssistantRequest(String message, List<Turn> history) { this(message, history, null); }
     public record Turn(@NotBlank @Pattern(regexp = "user|assistant") String role,
                        @NotBlank @Size(max = 4000) String content) {}
 }

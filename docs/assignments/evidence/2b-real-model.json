@@ -1,0 +1,182 @@
+{
+  "at": "2026-10-05T21:46:44.548Z",
+  "environment": "真实DeepSeek + 本机MySQL；竞价首次超时为显式课程模拟",
+  "complete": true,
+  "cases": [
+    {
+      "message": "查询ISBN 9787115638762的库存，并比较本店售价和竞价。",
+      "scenario": "competitor-timeout-once",
+      "history": [],
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "查询结果如下（ISBN：9787115638762，《微服务设计（第2版）》）：\n\n本店库存与售价（课程演示数据库值）\n有货，库存 24 册，本店售价 128.00 元。\n\n竞价模拟（课程模拟报价，非外部真实行情）\n首次查询出现模拟超时，按规则用同一 ISBN 重试一次后成功：模拟竞价 117.76 元，来自“课程模拟竞价商店”。\n\n对比\n模拟竞价 117.76 元比本店售价 128.00 元低 10.24 元。请注意，该竞价仅为课程模拟数据，不代表外部真实市场价格，不能作为实际比价依据。\n\n如需继续查询，可提供其他 ISBN。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-05T21:46:46.187429Z",
+                "stock": 24,
+                "availability": "有货",
+                "attempt": 1
+              },
+              "durationMillis": 35
+            },
+            {
+              "index": 2,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": false,
+                "error": "COMPETITOR_TIMEOUT",
+                "message": "课程模拟：竞价服务首次查询超时，可使用相同ISBN重试一次",
+                "retryable": true,
+                "simulated": true,
+                "isbn": "9787115638762",
+                "attempt": 1
+              },
+              "durationMillis": 1
+            },
+            {
+              "index": 3,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "price": 117.76,
+                "currency": "CNY",
+                "store": "课程模拟竞价商店",
+                "simulated": true,
+                "source": "课程模拟数据，非外部实时报价",
+                "attempt": 2
+              },
+              "durationMillis": 2
+            }
+          ],
+          "books": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            }
+          ],
+          "modelRequestIds": [
+            "ed0995bb-a166-4a5d-9f27-382134d3ea3e",
+            "ebfdeb49-b34a-4225-8190-2cf68895b02a",
+            "de8703fd-e980-47c5-acf7-1d84d5e8ef63"
+          ]
+        }
+      }
+    },
+    {
+      "message": "请核对ISBN 9780000000000的库存，不要换其他号码。",
+      "scenario": "normal",
+      "history": [],
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "抱歉，ISBN 9780000000000 未查询到对应图书，无法确认库存情况。\n\n请核对号码是否正确，或提供书架中图书的ISBN，我再帮您查询。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9780000000000"
+              },
+              "observation": {
+                "ok": false,
+                "error": "BOOK_NOT_FOUND",
+                "message": "未找到该ISBN，请核对号码或查看书架中的图书",
+                "attempt": 1
+              },
+              "durationMillis": 1
+            }
+          ],
+          "books": [],
+          "modelRequestIds": [
+            "6cb9e7ad-6959-4f21-b0a4-4044c4929f8e",
+            "072bc5fd-6c28-4541-b544-65246b76d1c9"
+          ]
+        }
+      }
+    },
+    {
+      "message": "请核对ISBN为12345的库存。",
+      "scenario": "normal",
+      "history": [
+        {
+          "role": "user",
+          "content": "ISBN 9787115638762 库存是多少？"
+        },
+        {
+          "role": "assistant",
+          "content": "ISBN 9787115638762 当前库存24本。"
+        }
+      ],
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "ISBN 12345 不是有效的ISBN13，无法查询。请核对后提供完整的13位ISBN（可带连字符），我再帮你查库存。",
+          "model": "deepseek-flash",
+          "steps": [],
+          "books": [],
+          "modelRequestIds": [
+            "ecc9e3a3-ecde-4160-89fc-8dd50f7dc239"
+          ]
+        }
+      }
+    }
+  ],
+  "malformedBehavior": "真实模型先要求完整ISBN，未伪造工具调用",
+  "invalidScenario": {
+    "status": 400,
+    "body": {
+      "code": 40000,
+      "message": "must match \"normal|competitor-timeout-once\"",
+      "data": null
+    }
+  },
+  "databaseUnchanged": true
+}

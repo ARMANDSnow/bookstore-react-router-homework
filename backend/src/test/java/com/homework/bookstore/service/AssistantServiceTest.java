@@ -84,6 +84,7 @@ class AssistantServiceTest {
             """));
         assertThrows(BusinessException.class,()->service.chat(new AssistantRequest("查询",null)));
         verify(model,times(4)).complete(any(),any());
+        verify(repository,times(2)).findByNormalizedIsbn("9787115638762");
     }
     @ParameterizedTest
     @ValueSource(strings = {"9787115638762", "978-7-115-63876-2"})
@@ -97,5 +98,55 @@ class AssistantServiceTest {
         var result = service.chat(new AssistantRequest("刚才这本还有多少库存？",List.of(new AssistantRequest.Turn("assistant","ISBN " + isbn + " 之前库存99本"))));
         assertEquals(24,result.steps().get(0).observation().path("stock").asInt());
         assertEquals("重新查到库存24本。",result.answer());verify(model,times(3)).complete(any(),any());
+    }
+    @Test void wrongIsbnShapeDoesNotQueryDatabase() {
+        assertEquals("INVALID_ISBN",tools.check_inventory("12345").path("error").asText());
+        assertEquals("INVALID_ISBN",tools.get_competitor_price("ISBN12345").path("error").asText());
+        verifyNoInteractions(repository);
+    }
+    @Test void missingBookIsDistinctFromInvalidShape() {
+        assertEquals("BOOK_NOT_FOUND",tools.check_inventory("9780000000000").path("error").asText());
+        verify(repository).findByNormalizedIsbn("9780000000000");
+    }
+    @Test void simulatedTimeoutIsReturnedToModelThenSameIsbnRetryRecoversPerRequest() throws Exception {
+        var observed = new ArrayList<ArrayNode>();
+        var call = reply("""
+            {"role":"assistant","tool_calls":[{"id":"quote","function":{"name":"get_competitor_price","arguments":"{\\"isbn\\":\\"9787115638762\\"}"}}]}
+            """);
+        var done = reply("{\"role\":\"assistant\",\"content\":\"模拟超时后重试成功，模拟报价117.76元。\"}");
+        for (int request = 0; request < 2; request++) {
+            observed.clear();
+            doAnswer(invocation -> {
+                observed.add(((ArrayNode)invocation.getArgument(0)).deepCopy());
+                return observed.size() < 3 ? call : done;
+            }).when(model).complete(any(),any());
+            var result = service.chat(new AssistantRequest("ISBN 9787115638762 查询竞价",null,"competitor-timeout-once"));
+            assertEquals(2,result.steps().size());
+            assertEquals("COMPETITOR_TIMEOUT",result.steps().get(0).observation().path("error").asText());
+            assertTrue(result.steps().get(0).observation().path("retryable").asBoolean());
+            assertTrue(result.steps().get(0).observation().path("simulated").asBoolean());
+            assertTrue(result.steps().get(1).observation().path("ok").asBoolean());
+            assertEquals(2,result.steps().get(1).observation().path("attempt").asInt());
+            var toolMessage = observed.get(1).get(3);
+            assertEquals("quote",toolMessage.path("tool_call_id").asText());
+            assertEquals("COMPETITOR_TIMEOUT",mapper.readTree(toolMessage.path("content").asText()).path("error").asText());
+        }
+        assertEquals(24,book.getStock());verify(repository,times(4)).findByNormalizedIsbn("9787115638762");
+    }
+    @Test void thirdIdenticalToolAttemptStopsExecutingTheLocalFunction() throws Exception {
+        var call = reply("""
+            {"role":"assistant","tool_calls":[{"id":"quote","function":{"name":"get_competitor_price","arguments":"{\\"isbn\\":\\"9787115638762\\"}"}}]}
+            """);
+        when(model.complete(any(),any())).thenReturn(call,call,call,reply("{\"role\":\"assistant\",\"content\":\"已到重试上限。\"}"));
+        var result = service.chat(new AssistantRequest("查竞价",null));
+        assertEquals("TOOL_RETRY_LIMIT",result.steps().get(2).observation().path("error").asText());
+        assertFalse(result.steps().get(2).observation().path("retryable").asBoolean());
+        verify(repository,times(2)).findByNormalizedIsbn("9787115638762");
+    }
+    @Test void malformedCurrentIsbnDoesNotForceAQueryUsingHistoricalBook() throws Exception {
+        when(model.complete(any(),any())).thenReturn(reply("{\"role\":\"assistant\",\"content\":\"请核对12345并提供完整13位ISBN。\"}"));
+        var result = service.chat(new AssistantRequest("帮我查ISBN为12345的库存",List.of(new AssistantRequest.Turn("assistant","ISBN 9787115638762 库存24本"))));
+        assertEquals(0,result.steps().size());assertEquals(0,result.books().size());
+        verify(model,times(1)).complete(any(),any());verifyNoInteractions(repository);
     }
 }

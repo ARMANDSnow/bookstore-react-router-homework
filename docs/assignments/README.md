@@ -12,7 +12,7 @@
 | 1D 独立库存更新 | 已实现、已通过本地前后端验收 |
 | 1E OpenAPI 3.0 JSON、完整 Prompt、Few-Shot、多轮记录和模板报告 | 已实现、已通过本地前后端验收 |
 | 2A 真实模型库存与模拟竞价工具、前端助手 | 已实现、已通过本地前后端验收 |
-| 2B 错误 ISBN、超时与自纠正 | 待开始 |
+| 2B 错误 ISBN、超时与自纠正 | 已实现；62项后端测试、真实模型/MySQL与桌面功能及视觉验收通过 |
 | 2C 精简源码提交包 | 待开始 |
 | 3A 政策加载、分块、向量化与 RAG | 待开始 |
 | 3B 导购 Agent、多工具循环和公开行动记录 | 待开始 |
@@ -92,3 +92,15 @@
 启动模型配置：仅在忽略的 `backend/.env` 写入 `DEEPSEEK_API_KEY`，Spring Boot 会从该文件加载；URL默认 `https://api.deepseek.com`，模型默认 `deepseek-flash`。密钥不进入前端、Git、截图或报告。服务商配置遵循[DeepSeek工具调用文档](https://api-docs.deepseek.com/zh-cn/guides/tool_calls/)。状态接口只说明服务器已配置，不代表探测成功；页面在首次真实答复后才显示已连接。
 
 复测真实接口：`node scripts/assignments/verify_assistant.mjs`。桌面复测使用已存在的Ego TaskSpace 11，通过 `ego-browser nodejs` 的heredoc入口导入 `scripts/assignments/verify_assistant_browser.mjs`；保存部分失败证据并在退出时恢复页面联网。
+
+## 2B 异常处理
+
+作业2原文异常项为“如模拟接口超时或传入错误的 ISBN 时模型的 Self-Correction”。本项以真实模型完成“竞价首次模拟超时 → 同一ISBN重试 → 报价成功”的闭环；工具错误以 `role=tool` 回传，未在服务器直接重试后伪装成模型行动。模拟场景由可选 `scenario=competitor-timeout-once` 显式开启，正常查询为默认；其他场景值HTTP400。计数仅在本次请求内生效，同一工具和归一化ISBN最多执行两次，仍保留4轮模型与6工具步骤上限。
+
+ISBN只校验13位形状和数据库精确记录，不机械猜测校验位或替换书籍。格式错误为`INVALID_ISBN`，有效形状但未找到为`BOOK_NOT_FOUND`，多个记录为`AMBIGUOUS_ISBN`。用户明确输入“ISBN为12345”“ISBN 是 12345”等时保留原文；即使历史中有正确ISBN，库存刷新保护也允许澄清当前错误号码。
+
+- 后端62项测试通过，覆盖模拟超时回传与ID配对、同ISBN重试、每次请求重置、第三次不执行函数、非法场景、错误形状不查库和带历史的错误ISBN澄清；前端构建通过。
+- 真实模型证据 `evidence/2b-real-model.json` 保留每个问题、场景、HTTP响应、公开工具步骤和真实服务商请求ID。短ISBN可能由模型先澄清，此时不会伪造工具调用。竞价与工具超时均为课程模拟，库存来自本机真实MySQL。
+- 桌面证据 `2b-browser.json` 记录默认正常查询、错误号码原文、断网后重试恢复原场景、同ISBN模型重试和新对话恢复正常。另有一次真实模型连接失败，经界面重试恢复，记录在 `2b-browser-provider-retry.json`，不将其称为课程工具模拟。
+- 页面依据真实工具观察展示“重试后已获取报价”，并公开首次模拟超时与再次成功的三个步骤。四张桌面截图已检查，文字清晰、输入区稳定，未进行手机比例测试。
+- 重跑：`node scripts/assignments/verify_assistant_errors.mjs`；Ego同空间导入 `scripts/assignments/verify_assistant_errors_browser.mjs`。`2b-browser.json` 的功能与视觉验收均已完成。

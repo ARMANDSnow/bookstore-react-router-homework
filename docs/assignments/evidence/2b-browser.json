@@ -1,0 +1,243 @@
+{
+  "at": "2026-10-05T21:50:50.243Z",
+  "desktopOnly": true,
+  "cases": {
+    "defaultNormalQuery": true,
+    "explicitWrongIsbnPreserved": true,
+    "retryPreservesOriginalScenarioAndQuestion": true,
+    "realModelTimeoutRecovery": true,
+    "newConversationReset": {
+      "scenario": "normal",
+      "turns": 0
+    }
+  },
+  "functionalComplete": true,
+  "visualReview": {
+    "complete": true,
+    "checkedAt": "2026-10-05T21:56:25.895Z",
+    "desktopOnly": true,
+    "screenshots": [
+      "2b-desktop-recovery.png",
+      "2b-desktop-scenario.png",
+      "2b-desktop-invalid-isbn.png",
+      "2b-desktop-notice.png"
+    ],
+    "checks": [
+      "布局与文字可读",
+      "输入区高度稳定",
+      "异常场景可选择且明确标注模拟",
+      "三步调用记录与恢复提示可见",
+      "新对话恢复普通查询"
+    ]
+  },
+  "complete": true,
+  "requests": [
+    {
+      "input": {
+        "message": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：这本书还有库存吗？",
+        "history": [],
+        "scenario": "normal"
+      },
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《微服务设计（第2版）》（ISBN 9787115638762）目前有货，库存 24 册，本店售价 128.00 元。\n\n说明：以上库存与售价来自本店课程演示数据库，仅供课程演示参考。如需继续查询，可提供该 ISBN。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-05T21:50:55.497873Z",
+                "stock": 24,
+                "availability": "有货",
+                "attempt": 1
+              },
+              "durationMillis": 4
+            }
+          ],
+          "books": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            }
+          ],
+          "modelRequestIds": [
+            "3c3b3f55-3b9c-4de1-9cd4-22415bbc1c7b",
+            "a7643872-1d4a-4557-8942-1deadc2d7635"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "message": "帮我查一下 ISBN为12345 的书还有多少本",
+        "history": [
+          {
+            "role": "user",
+            "content": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：这本书还有库存吗？"
+          },
+          {
+            "role": "assistant",
+            "content": "《微服务设计（第2版）》（ISBN 9787115638762）目前有货，库存 24 册，本店售价 128.00 元。\n\n说明：以上库存与售价来自本店课程演示数据库，仅供课程演示参考。如需继续查询，可提供该 ISBN。"
+          }
+        ],
+        "scenario": "normal"
+      },
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "你提供的 ISBN“12345”不是有效的 ISBN13 号码，我无法用它查询库存。\n\n请核对后提供完整的 13 位 ISBN（可带连字符），或者告诉我书名，我帮你确认对应图书。",
+          "model": "deepseek-flash",
+          "steps": [],
+          "books": [],
+          "modelRequestIds": [
+            "101bdf10-847f-4ec7-b731-28ed49ea0289"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "message": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：查库存，并比较本店售价和竞价。",
+        "history": [],
+        "scenario": "competitor-timeout-once"
+      },
+      "networkError": true
+    },
+    {
+      "input": {
+        "message": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：查库存，并比较本店售价和竞价。",
+        "history": [],
+        "scenario": "competitor-timeout-once"
+      },
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《微服务设计（第2版）》查询结果（ISBN 9787115638762）：\n\n库存：有货，24 册（本店课程演示数据库值）。\n\n本店售价：128.00 元。\n\n竞价对比：课程模拟竞价商店报价 117.76 元，比本店低 10.24 元。该竞价首次查询出现模拟超时，重试后成功返回，结果来自课程模拟数据，不是外部真实行情。\n\n说明：以上售价与库存为课程演示数据库值，竞价为课程模拟报价，均非真实市场数据，仅供参考。\n\n如需继续查询，请提供 ISBN。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-05T21:51:02.794999Z",
+                "stock": 24,
+                "availability": "有货",
+                "attempt": 1
+              },
+              "durationMillis": 5
+            },
+            {
+              "index": 2,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": false,
+                "error": "COMPETITOR_TIMEOUT",
+                "message": "课程模拟：竞价服务首次查询超时，可使用相同ISBN重试一次",
+                "retryable": true,
+                "simulated": true,
+                "isbn": "9787115638762",
+                "attempt": 1
+              },
+              "durationMillis": 2
+            },
+            {
+              "index": 3,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "price": 117.76,
+                "currency": "CNY",
+                "store": "课程模拟竞价商店",
+                "simulated": true,
+                "source": "课程模拟数据，非外部实时报价",
+                "attempt": 2
+              },
+              "durationMillis": 2
+            }
+          ],
+          "books": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            }
+          ],
+          "modelRequestIds": [
+            "9adb21bb-33bf-4a8d-a519-644b9fc8c59e",
+            "97439940-2edb-41ec-a775-9265edf33ea4",
+            "9563d7b1-3c2d-4838-a544-7ab84858e555"
+          ]
+        }
+      }
+    }
+  ]
+}

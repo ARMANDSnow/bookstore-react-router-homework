@@ -98,8 +98,8 @@ export function deleteBook(id) {
   return request(`/book/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 
-export function askAssistant(message, history, signal) {
-  return request("/assistant/chat", { method: "POST", body: JSON.stringify({ message, history }), signal }, "/api");
+export function askAssistant(message, history, signal, scenario = "normal") {
+  return request("/assistant/chat", { method: "POST", body: JSON.stringify({ message, history, scenario }), signal }, "/api");
 }
 export function assistantStatus(signal) { return request("/assistant/status", { signal }, "/api"); }
 
