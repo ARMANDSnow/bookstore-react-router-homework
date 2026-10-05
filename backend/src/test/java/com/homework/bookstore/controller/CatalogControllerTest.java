@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(properties = {
@@ -146,5 +147,13 @@ class CatalogControllerTest {
     @Test void inventoryMissingBookIs404() throws Exception {
         mvc.perform(patch("/api/books/missing/inventory").contentType("application/json").content("{\"stock\":5}"))
             .andExpect(status().isNotFound());
+    }
+    @Test void allowsInventoryRequestsFromRealFrontendOrigin() throws Exception {
+        mvc.perform(options("/api/books/a/inventory").header("Origin", "http://127.0.0.1:5173")
+                .header("Access-Control-Request-Method", "PATCH").header("Access-Control-Request-Headers", "content-type"))
+            .andExpect(status().isOk()).andExpect(header().string("Access-Control-Allow-Origin", "http://127.0.0.1:5173"));
+        mvc.perform(patch("/api/books/a/inventory").header("Origin", "http://127.0.0.1:5173")
+                .contentType("application/json").content("{\"stock\":4}"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.stock").value(4));
     }
 }

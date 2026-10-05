@@ -14,14 +14,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * <h3>这里允许什么？</h3>
  * <ul>
  *   <li><b>来源</b>：{@code http://127.0.0.1:5173} 与 {@code http://localhost:5173}</li>
- *   <li><b>方法</b>：GET / POST / PUT / DELETE / OPTIONS（OPTIONS 是浏览器自动发的预检请求）</li>
+ *   <li><b>方法</b>：GET / POST / PUT / PATCH / DELETE / OPTIONS</li>
  *   <li><b>路径</b>：仅 {@code /api/**}，静态资源不开放</li>
  *   <li><b>请求头</b>：全部允许（实际仅用到 {@code Content-Type}）</li>
  * </ul>
  *
  * <h3>注意：开发模式下其实走的是 Vite 代理</h3>
  * Vite 的 {@code server.proxy} 把 {@code /api} 请求在 5173 内部转发到 8080，
- * 浏览器看起来是同源，<b>不走 CORS</b>。
+ * 浏览器看起来是同源；代理仍可能保留 Origin，请求需通过后端来源与方法校验。
  * 这份配置真正生效的场景是：
  * <ul>
  *   <li>生产部署：前端打包成静态文件挂在 Nginx 上、直接调后端 8080</li>
@@ -42,7 +42,7 @@ public class WebConfig {
                                 "http://127.0.0.1:*",
                                 "http://localhost:*"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }
         };
