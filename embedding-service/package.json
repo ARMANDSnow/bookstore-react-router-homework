@@ -1,0 +1,1 @@
+{"name":"bookstore-policy-embeddings","private":true,"type":"module","scripts":{"start":"node server.mjs","download-model":"node download-model.mjs"},"dependencies":{"@huggingface/transformers":"3.8.1"}}

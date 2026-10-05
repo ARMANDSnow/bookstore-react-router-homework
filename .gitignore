@@ -31,3 +31,6 @@ backend/lib/
 构建产物/
 output/
 作业答题纸.docx
+
+# Local embedding model and vector caches
+embedding-service/.cache/

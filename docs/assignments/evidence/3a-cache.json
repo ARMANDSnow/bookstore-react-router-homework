@@ -1,0 +1,32 @@
+{
+  "testedAt": "2026-10-05T22:20:19.237Z",
+  "warm": {
+    "status": "ready",
+    "model": "Xenova/bge-small-zh-v1.5",
+    "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "dimension": 512,
+    "sourceHash": "4979c91639b417091f3f72ad8400302919d0e09b4af7964afeae61b81c760f28",
+    "chunkCount": 6,
+    "cacheHit": true,
+    "threshold": 0.62,
+    "simulatedPolicy": true
+  },
+  "rebuilt": {
+    "status": "ready",
+    "model": "Xenova/bge-small-zh-v1.5",
+    "revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "dimension": 512,
+    "sourceHash": "c6012caa1a62be03cf120f7c4c8cd7ddf0a8d96d294806adbf18d6bf73395928",
+    "chunkCount": 7,
+    "cacheHit": false,
+    "threshold": 0.62,
+    "simulatedPolicy": true
+  },
+  "checks": [
+    "真实模型离线缓存启动",
+    "同政策向量缓存复用",
+    "政策内容改变后生成新索引",
+    "正式政策全文未修改"
+  ],
+  "complete": true
+}

@@ -102,6 +102,8 @@ export function askAssistant(message, history, signal, scenario = "normal") {
   return request("/assistant/chat", { method: "POST", body: JSON.stringify({ message, history, scenario }), signal }, "/api");
 }
 export function assistantStatus(signal) { return request("/assistant/status", { signal }, "/api"); }
+export function queryPolicies(query, signal) { return request("/policies/search", { method: "POST", body: JSON.stringify({ query }), signal }, "/api"); }
+export function policyDocument(signal) { return request("/policies/document", { signal }, "/api"); }
 
 // ------------------------------ 用户 ------------------------------
 export function registerUser(user) {

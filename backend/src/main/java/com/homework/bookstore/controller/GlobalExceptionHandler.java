@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
                 ? HttpStatus.UNAUTHORIZED
                 : (family == 403
                 ? HttpStatus.FORBIDDEN
-                : (family == 404 ? HttpStatus.NOT_FOUND : (family == 409 ? HttpStatus.CONFLICT : HttpStatus.BAD_REQUEST)));
+                : (family == 404 ? HttpStatus.NOT_FOUND : (family == 409 ? HttpStatus.CONFLICT : (family == 503 ? HttpStatus.SERVICE_UNAVAILABLE : HttpStatus.BAD_REQUEST))));
         return ResponseEntity.status(status).body(ApiResponse.error(ex.getCode(), ex.getMessage()));
     }
 

@@ -33,6 +33,7 @@ export default function Layout({ cartCount, children, user, onLogout }) {
   const links = [
     { path: "/books", label: "图书目录", icon: <BookOutlined /> },
     { path: "/assistant", label: "阅读助手", icon: <CommentOutlined /> },
+    { path: "/policies", label: "服务政策", icon: <BookOutlined /> },
     { path: "/cart", label: "购物车", icon: <ShoppingCartOutlined /> },
     { path: "/orders", label: isAdmin ? "订单管理" : "我的订单", icon: <OrderedListOutlined /> },
     { path: "/stats", label: "统计分析", icon: <BarChartOutlined /> },

@@ -23,6 +23,7 @@ import {
 } from "./services/cartService.js";
 import { currentUser, logout } from "./services/authService.js";
 const AssistantPage = lazy(() => import("./pages/AssistantPage.jsx"));
+const PolicyPage = lazy(() => import("./pages/PolicyPage.jsx"));
 
 export default function App() {
   // -------------------------- books --------------------------
@@ -226,6 +227,7 @@ export default function App() {
         <Route path="/orders" element={<OrdersPage user={user} />} />
         <Route path="/stats" element={<StatsPage user={user} />} />
         <Route path="/assistant" element={<Suspense fallback={<div className="assistant-route-loading" role="status">正在打开阅读助手…</div>}><AssistantPage books={books} /></Suspense>} />
+        <Route path="/policies" element={<Suspense fallback={<div role="status">正在打开服务政策…</div>}><PolicyPage /></Suspense>} />
         <Route
           path="/admin/users"
           element={<AdminUsersPage user={user} />}
