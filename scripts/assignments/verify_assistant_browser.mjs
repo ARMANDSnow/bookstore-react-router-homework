@@ -1,8 +1,8 @@
 // Run inside the existing Ego TaskSpace. Records real UI/network results; no mocked replies.
 import { readFile, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
-const root = '/Users/dingyuxuan/Desktop/线上书城';
-const task = await taskSpace(11);
+const root = decodeURIComponent(new URL('../../', import.meta.url).pathname).replace(/\/$/, '');
+const task = await taskSpace(Number(process.env.EGO_TASK_SPACE || 11));
 const page = task.page('p1');
 const evidence = { at: new Date().toISOString(), desktopOnly: true, realModel: true, cases: {}, requests: [], visualReview: '等待解锁后完成', complete: false };
 await page.goto('http://127.0.0.1:5173/assistant');

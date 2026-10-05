@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const root=new URL('../../',import.meta.url);
-const task=await taskSpace(11);const page=task.page('p1');
+const task=await taskSpace(Number(process.env.EGO_TASK_SPACE || 11));const page=task.page('p1');
 const cases=[];
 async function ready(){await page.waitForFunction(()=>document.querySelectorAll('.book-card').length>0&&!document.querySelector('.book-skeleton'),undefined,{timeout:20000});}
 async function covers(){await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));await page.waitForFunction(()=>[...document.querySelectorAll('.book-card img')].every(i=>i.complete&&i.naturalWidth>0),undefined,{timeout:30000});return page.evaluate(()=>[...document.querySelectorAll('.book-card')].map(c=>({id:c.querySelector('h3').id.replace('book-title-',''),title:c.querySelector('h3').textContent,coverLoaded:c.querySelector('img').naturalWidth>0,overflow:c.scrollWidth>c.clientWidth+1})));}

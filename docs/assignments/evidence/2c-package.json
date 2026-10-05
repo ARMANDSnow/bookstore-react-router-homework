@@ -1,0 +1,17 @@
+{
+  "path": "/Users/dingyuxuan/Desktop/线上书城/docs/assignments/提交/524031910745-作业2-源码.zip",
+  "files": 144,
+  "bytes": 4167393,
+  "sha256": "c38f62ce7160e165c792dd045f1ccb000b6229a91435c1491517efbf613b951c",
+  "complete": true,
+  "checks": [
+    "ZIP CRC通过",
+    "144个文件及全部SHA256核对",
+    "未含密钥、第三方Jar、依赖目录或构建目录",
+    "解压安装依赖通过",
+    "解压后62项后端测试通过",
+    "解压前端构建通过",
+    "独立8082/5182真实前后端运行通过"
+  ],
+  "runtimeEvidence": "2c-package-runtime.json"
+}

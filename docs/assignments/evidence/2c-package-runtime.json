@@ -1,0 +1,20 @@
+{
+  "testedAt": "2026-10-05T22:09:32.819Z",
+  "source": "从最终ZIP解压，无密钥配置",
+  "frontend": {
+    "selected": "building-microservices",
+    "configured": " 助手待配置",
+    "text": "微服务设计（第2版）Sam NewmanISBN 9787115638762查看图书详情 ↗",
+    "overflow": false
+  },
+  "backend": {
+    "total": 16
+  },
+  "checks": [
+    "独立8082后端真实MySQL启动",
+    "独立5182前端代理通过",
+    "16本书及微服务上下文显示",
+    "无密钥时清楚提示待配置"
+  ],
+  "complete": true
+}
