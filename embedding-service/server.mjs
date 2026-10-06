@@ -48,7 +48,7 @@ const server=http.createServer(async(req,res)=>{
    const [vector]=await embed([input.query.trim()],true);
    const ranked=index.map(({vector:doc,...chunk})=>({...chunk,score:doc.reduce((sum,n,i)=>sum+n*vector[i],0)})).sort((a,b)=>b.score-a.score);
    const matches=ranked.filter(c=>c.score>=THRESHOLD).slice(0,3);
-   return {ok:true,query:input.query.trim(),matched:matches.length>0,chunks:matches,...metadata(),message:matches.length?'以下为检索到的课程政策原文，请结合条件阅读。':'未找到足够相关的政策依据，请咨询人工客服。'};
+   return {ok:true,query:input.query.trim(),matched:matches.length>0,chunks:matches,...metadata(),message:matches.length?'以下为匹配的服务条款，请结合条件阅读。':'未找到足够相关的政策依据，请咨询人工客服。'};
   };
   const job=queue.then(run);queue=job.catch(()=>{});json(res,200,await job);
  }catch{json(res,400,{message:'政策查询未完成，请检查输入后重试'});}

@@ -55,7 +55,7 @@ function LoginPanel({ onSuccess }) {
       >
         <Input
           prefix={<UserOutlined />}
-          placeholder="demo"
+          placeholder="请输入用户名"
           size="large"
           autoComplete="username"
         />
@@ -67,7 +67,7 @@ function LoginPanel({ onSuccess }) {
       >
         <Input.Password
           prefix={<LockOutlined />}
-          placeholder="123456"
+          placeholder="请输入密码"
           size="large"
           autoComplete="current-password"
         />
@@ -83,9 +83,6 @@ function LoginPanel({ onSuccess }) {
           登录
         </Button>
       </Form.Item>
-      <Text type="secondary" className="account-demo-note">
-        演示账号：demo / 123456
-      </Text>
     </Form>
   );
 }

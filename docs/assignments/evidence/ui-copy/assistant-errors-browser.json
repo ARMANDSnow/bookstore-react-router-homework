@@ -1,0 +1,203 @@
+{
+  "at": "2026-10-06T06:11:11.906Z",
+  "desktopOnly": true,
+  "cases": {
+    "defaultNormalQuery": true,
+    "explicitWrongIsbnPreserved": true,
+    "retryPreservesOriginalScenarioAndQuestion": true,
+    "realModelTimeoutRecovery": true,
+    "newConversationPreservesSelectedBook": true,
+    "newConversationRestoresNormal": true
+  },
+  "functionalComplete": true,
+  "visualReview": {
+    "complete": true,
+    "method": "真实桌面截图逐张检查及DOM内容核对",
+    "screenshots": [
+      "assistant-desktop.png",
+      "assistant-quote-desktop.png"
+    ],
+    "desktopOnly": true
+  },
+  "complete": true,
+  "requests": [
+    {
+      "input": {
+        "message": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：查库存，并比较本店售价和竞价。",
+        "history": [],
+        "scenario": "competitor-timeout-once"
+      },
+      "networkError": true
+    },
+    {
+      "input": {
+        "message": "当前选书：《微服务设计（第2版）》（ISBN 9787115638762）。\n用户问题：查库存，并比较本店售价和竞价。",
+        "history": [],
+        "scenario": "competitor-timeout-once"
+      },
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《微服务设计（第2版）》（ISBN 9787115638762）查询结果如下：\n\n库存：有货，24 册。\n本店售价：128.00 元。\n参考报价：117.76 元（本地估算的参考报价，非外部商家实时实际售价）。\n\n对比来看，参考报价比本店售价低约 10.24 元。如需继续查询其他图书，可提供 ISBN。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "check_inventory",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "source": "本店数据库",
+                "checkedAt": "2026-10-06T06:11:24.013319Z",
+                "stock": 24,
+                "availability": "有货",
+                "attempt": 1
+              },
+              "durationMillis": 3
+            },
+            {
+              "index": 2,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": false,
+                "error": "COMPETITOR_TIMEOUT",
+                "message": "报价服务查询超时，可使用相同ISBN重试一次",
+                "retryable": true,
+                "simulated": true,
+                "isbn": "9787115638762",
+                "attempt": 1
+              },
+              "durationMillis": 2
+            },
+            {
+              "index": 3,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115638762"
+              },
+              "observation": {
+                "ok": true,
+                "id": "building-microservices",
+                "isbn": "9787115638762",
+                "title": "微服务设计（第2版）",
+                "ourPrice": 128,
+                "price": 117.76,
+                "currency": "CNY",
+                "store": "参考报价服务",
+                "simulated": true,
+                "source": "选书价格参考",
+                "attempt": 2
+              },
+              "durationMillis": 5
+            }
+          ],
+          "books": [
+            {
+              "id": "building-microservices",
+              "title": "微服务设计（第2版）",
+              "author": "Sam Newman",
+              "isbn": "9787115638762",
+              "publisher": "人民邮电出版社",
+              "stock": 24,
+              "price": 128,
+              "originalPrice": 158,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "软件架构",
+              "image": "https://www.oreilly.com.cn/images/bookcover/Building-Microservices-2e_cvr_l.gif",
+              "rating": "暂无评分",
+              "badge": "架构进阶",
+              "description": "从服务拆分到测试部署，理解微服务架构的关键取舍。",
+              "summary": "围绕服务边界、通信、部署、测试与监控，理解微服务何时适用，以及如何从单体系统逐步演进。",
+              "highlight": "以系统演进的实际问题为线索，讨论服务拆分与分布式系统的设计。",
+              "audience": "希望理解微服务的软件工程师与架构学习者。",
+              "review": "暂无读者评价。"
+            }
+          ],
+          "modelRequestIds": [
+            "d1877bc0-8a0e-4d67-8d5b-cd4690da4490",
+            "cdede1d2-dd19-43f1-9817-25f15c8a980b",
+            "4c3f39bd-3d8b-4eec-857d-1a69fd367f84"
+          ]
+        }
+      }
+    },
+    {
+      "input": {
+        "message": "当前选书：《代码整洁之道》（ISBN 9787115216878）。\n用户问题：这本书的参考报价是多少？",
+        "history": [],
+        "scenario": "normal"
+      },
+      "status": 200,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "answer": "《代码整洁之道》（ISBN 9787115216878）的参考报价约为 72.68 元。\n\n如需了解本店售价和库存，我可以再帮您查询。",
+          "model": "deepseek-flash",
+          "steps": [
+            {
+              "index": 1,
+              "name": "get_competitor_price",
+              "arguments": {
+                "isbn": "9787115216878"
+              },
+              "observation": {
+                "ok": true,
+                "id": "clean-code",
+                "isbn": "9787115216878",
+                "title": "代码整洁之道",
+                "ourPrice": 79,
+                "price": 72.68,
+                "currency": "CNY",
+                "store": "参考报价服务",
+                "simulated": true,
+                "source": "选书价格参考",
+                "attempt": 1
+              },
+              "durationMillis": 2
+            }
+          ],
+          "books": [
+            {
+              "id": "clean-code",
+              "title": "代码整洁之道",
+              "author": "Robert C. Martin",
+              "isbn": "9787115216878",
+              "publisher": "人民邮电出版社",
+              "stock": 32,
+              "price": 79,
+              "originalPrice": 99,
+              "category": "tech",
+              "categoryName": "计算机与技术",
+              "categoryLabel": "计算机与技术 / 软件工程",
+              "image": "/images/代码整洁之道.JPG",
+              "rating": "4.8 / 5.0",
+              "badge": "限时 8 折",
+              "description": "聚焦高可读性与可维护性的经典软件工程实践。",
+              "summary": "本书围绕可读性、可维护性、可演进性展开，适合正在学习程序设计、软件工程与项目实践的读者。内容覆盖命名、函数设计、注释、对象与数据结构、错误处理、测试等核心主题。",
+              "highlight": "通过大量代码案例解释坏味道与重构思路，帮助读者建立工程级代码审美。",
+              "audience": "适合学习 Java、JavaScript、Python 等语言的开发者，也适合作为课程设计与项目作业参考书。",
+              "review": "不仅讲语法，更讲判断标准；看完之后写代码会更在意结构与命名。"
+            }
+          ],
+          "modelRequestIds": [
+            "09609f06-202b-4344-b6a2-c95be06b2807",
+            "1e0afcd4-d2a6-4ce8-a196-b5463ae640e0"
+          ]
+        }
+      }
+    }
+  ]
+}

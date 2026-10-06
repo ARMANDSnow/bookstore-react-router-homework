@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';import assert from 'node:assert/strict';
-const base=process.env.BOOKSTORE_API_BASE||'http://127.0.0.1:8080';const output=new URL('../../docs/assignments/evidence/3b-real-model.json',import.meta.url);const results=[];
+const base=process.env.BOOKSTORE_API_BASE||'http://127.0.0.1:8080';const output=(process.env.BOOKSTORE_EVIDENCE_FILE || new URL('../../docs/assignments/evidence/3b-real-model.json',import.meta.url));const results=[];
 const before=await(await fetch(base+'/api/v1/books')).json();
 const cases=[
  {name:'catalog-only',question:'请推荐一本学习微服务架构的本店图书',tools:['search_book_catalog']},

@@ -17,7 +17,7 @@ public class BookTools {
     public BookTools(BookRepository books, ObjectMapper mapper) { this.books = books; this.mapper = mapper; }
 
     public ObjectNode check_inventory(String isbn) {
-        if (!validShape(isbn)) return error("INVALID_ISBN", "ISBN需要13位数字，可带空格或连字符。请核对用户提供的号码，不要猜测或换用其他图书");
+        if (!validShape(isbn)) return error("INVALID_ISBN", "ISBN需要13位数字，可带空格或连字符，请核对号码");
         var matches = find(isbn);
         if (matches.isEmpty()) return error("BOOK_NOT_FOUND", "未找到该ISBN，请核对号码或查看书架中的图书");
         if (matches.size() > 1) return error("AMBIGUOUS_ISBN", "同一ISBN对应多个记录，请联系书店核对版本");
@@ -31,16 +31,16 @@ public class BookTools {
         return get_competitor_price(isbn, false);
     }
     public ObjectNode get_competitor_price(String isbn, boolean simulateFirstTimeout) {
-        if (!validShape(isbn)) return error("INVALID_ISBN", "ISBN需要13位数字，可带空格或连字符。请核对用户提供的号码，不要猜测或换用其他图书");
+        if (!validShape(isbn)) return error("INVALID_ISBN", "ISBN需要13位数字，可带空格或连字符，请核对号码");
         var matches = find(isbn);
-        if (matches.isEmpty()) return error("BOOK_NOT_FOUND", "模拟报价库没有该ISBN，请核对图书");
+        if (matches.isEmpty()) return error("BOOK_NOT_FOUND", "该ISBN暂无参考报价，请核对图书");
         if (matches.size() > 1) return error("AMBIGUOUS_ISBN", "同一ISBN对应多个记录，请联系书店核对版本");
         Book book = matches.get(0);
-        if (simulateFirstTimeout) return error("COMPETITOR_TIMEOUT", "课程模拟：竞价服务首次查询超时，可使用相同ISBN重试一次")
+        if (simulateFirstTimeout) return error("COMPETITOR_TIMEOUT", "报价服务查询超时，可使用相同ISBN重试一次")
                 .put("retryable", true).put("simulated", true).put("isbn", book.getIsbn());
         return identity(book).put("price", book.getPrice().multiply(new BigDecimal("0.92")).setScale(2, RoundingMode.HALF_UP))
-                .put("currency", "CNY").put("store", "课程模拟竞价商店").put("simulated", true)
-                .put("source", "课程模拟数据，非外部实时报价");
+                .put("currency", "CNY").put("store", "参考报价服务").put("simulated", true)
+                .put("source", "选书价格参考");
     }
     private List<Book> find(String isbn) {
         if (isbn == null) return List.of();

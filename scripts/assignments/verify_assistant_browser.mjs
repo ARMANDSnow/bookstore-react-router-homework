@@ -78,7 +78,7 @@ try {
   const first = initial.requests.at(-1).response.data;
   assert.deepEqual(first.steps.map(step=>step.name).sort(), ['check_inventory','get_competitor_price']);
   assert.equal(first.steps.find(step=>step.name==='check_inventory').observation.stock, 24);
-  assert.match(first.answer,/模拟/); assert.equal(initial.overflow,false);
+  assert.match(first.answer,/参考报价/); assert.equal(initial.overflow,false);
   evidence.cases.inventoryAndPrice = { steps: 2, simulatedDisclosed: true, waitingDisabled: true };
   await page.selectOption('#assistant-book','clean-code');
   const switched = await send('还有多少库存？',2);
@@ -130,7 +130,7 @@ try {
   await page.cdp('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1});
   const pendingCapture = await page.evaluate(()=>window.__assistantQaRequests);
   if (pendingCapture) evidence.requests = pendingCapture;
-  const output = `${root}/docs/assignments/evidence/2a-browser.json`;
+  const output = process.env.BOOKSTORE_EVIDENCE_FILE || `${root}/docs/assignments/evidence/2a-browser.json`;
   try { evidence.prior = JSON.parse(await readFile(output,'utf8')); delete evidence.prior.prior; } catch {}
   await writeFile(output, JSON.stringify(evidence,null,2)+'\n');
 }

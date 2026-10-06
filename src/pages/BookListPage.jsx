@@ -93,7 +93,7 @@ export default function BookListPage({ books, loading, onBookSelect, onAddToCart
           <div className="catalog-title-wrap"><CatalogHeading id="catalog-title">{heading}</CatalogHeading><span className="result-count" role="status">{searching ? "正在整理书架…" : error ? "书架加载失败" : `共 ${result?.totalItems ?? 0} 本图书`}</span></div>
           <div className="sort-field"><label htmlFor="book-sort">排序</label><Select id="book-sort" aria-label="图书排序" value={sort} onChange={(value) => updateFilters({ sort: value, page: 1 })} options={[{ value: "recommended", label: "默认推荐" }, { value: "price-low", label: "价格从低到高" }, { value: "price-high", label: "价格从高到低" }]} /></div>
         </div>
-        <p className="catalog-demo-note">一本一本，慢慢挑选。书目对应真实出版版本；售价与库存为课程演示数据。</p>
+        <p className="catalog-demo-note">一本一本，慢慢挑选。</p>
         {(keyword || activeCategory !== "all") && <div className="search-summary"><span className="result-count">{keyword ? `搜索“${keyword}”` : "已按分类筛选"}{keyword && activeCategory !== "all" && " · 已叠加分类筛选"}</span><Button type="link" size="small" onClick={() => setSearchParams({})}>清除筛选</Button></div>}
         {error ? <Alert type="error" showIcon title="书架暂时无法加载" description={error} action={<Button onClick={() => setRetry((value) => value + 1)}>重新加载</Button>} /> : <div className="book-grid">
           {searching ? <BookSkeletons /> : result?.items.length ? result.items.map((book) => <BookCard key={book.id} book={book} onBookSelect={onBookSelect} onAddToCart={onAddToCart} />) : <section className="state-panel catalog-empty"><Empty description={page > 1 ? "这一页暂时没有图书" : keyword ? "没有搜到相关书籍" : "当前分类暂无书籍"} /><Button onClick={() => page > 1 ? updateFilters({ page: 1 }) : setSearchParams({})}>{page > 1 ? "回到第一页" : "查看全部图书"}</Button></section>}

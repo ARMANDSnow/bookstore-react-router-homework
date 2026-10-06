@@ -22,7 +22,7 @@ export default function CartPage({ cart, loading, user, onUpdateQuantity, onRemo
   }
 
   if (!user) {
-    return <div className="state-panel"><Alert type="warning" showIcon message="尚未登录" description="请先去「个人信息」登录，登录后购物车数据会自动从后端加载并随你保留。" action={<Link to="/profile" className="commerce-login-link">去登录 <ArrowRightOutlined /></Link>} /></div>;
+    return <div className="state-panel"><Alert type="warning" showIcon message="尚未登录" description="登录后可同步并保留购物车，随时继续选书。" action={<Link to="/profile" className="commerce-login-link">去登录 <ArrowRightOutlined /></Link>} /></div>;
   }
   if (loading) {
     return <div className="state-panel" role="status" aria-label="正在加载购物车"><Skeleton active paragraph={{ rows: 8 }} /></div>;

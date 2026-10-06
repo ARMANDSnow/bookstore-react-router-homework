@@ -87,7 +87,6 @@ export default function BookDetailPage({ books, loading, selectedBook, onBookSel
             {book.originalPrice != null && <span className="original-price">参考原价 {formatPrice(book.originalPrice)}</span>}
             {book.badge && <Tag className="detail-badge">{book.badge}</Tag>}
           </div>
-          <p className="detail-demo-note">售价与库存为课程演示数据，供体验选书流程使用。</p>
           <p className="detail-summary">{book.summary}</p>
           <dl className="detail-metadata">
             <div><dt>分类</dt><dd>{book.categoryLabel}</dd></div>
