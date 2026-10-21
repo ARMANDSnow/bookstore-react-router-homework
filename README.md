@@ -176,13 +176,13 @@
 
 | 工具 | 版本 | 验证命令 |
 |------|------|----------|
-| JDK | 17 及以上（编译目标为 17，实测 17–26 均可运行） | `java -version` |
+| JDK | 21（作业4编译及运行验收使用 Java 21） | `java -version` |
 | Maven | 3.8+（或用 IDE 内置） | `mvn -version` |
 | Node.js | 20.19+（20.x）或 22.12+ | `node --version` |
 | MySQL | 8.x（服务需已启动） | `mysqladmin ping` |
 | curl / Python | 模型下载 / 精简打包需要 | `curl --version` / `python3 --version` |
 
-> **关于 JDK 版本**：`pom.xml` 编译目标是 Java 17。若你的机器是 JDK 21+，跑测试所需的 Mockito / ByteBuddy 版本已在 `pom.xml` 里处理好兼容，`mvn test` 可直接运行，无需切换 JDK。
+> **关于 JDK 版本**：作业4将 `pom.xml` 编译目标更新为 Java 21，并默认开启虚拟线程。请将 `JAVA_HOME` 指向 JDK 21；隔离运行及验收步骤见 [作业4运行说明](docs/assignments/作业4-运行说明.md)。
 
 ### 1. 准备数据库（先启动 MySQL）
 

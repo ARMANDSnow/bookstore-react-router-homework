@@ -12,7 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.mockito.Mockito.verifyNoInteractions;
 
 @WebMvcTest(AssistantController.class)
-@org.springframework.context.annotation.Import(com.homework.bookstore.config.SecurityConfig.class)
+@org.springframework.context.annotation.Import({com.homework.bookstore.config.SecurityConfig.class,
+    com.homework.bookstore.security.JwtTokenService.class})
 class AssistantControllerTest {
     @Autowired MockMvc mvc;
     @MockBean AssistantService assistant;

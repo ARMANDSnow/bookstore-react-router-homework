@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>作业4 JWT 与虚拟线程验收</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:#172337;font:16px/1.65 system-ui,-apple-system,sans-serif}main{max-width:1060px;margin:34px auto;padding:0 24px}h1{font-size:30px;margin:0 0 6px}p{color:#526078;margin:4px 0 20px}.card{background:white;border:1px solid #dce3ee;border-radius:14px;padding:22px;margin:16px 0}.fields{display:flex;gap:16px;flex-wrap:wrap}label{display:flex;flex-direction:column;font-size:14px;color:#526078;flex:1}input{padding:10px;border:1px solid #bdc9da;border-radius:7px;font:inherit;width:100%;color:#172337}button{padding:11px 16px;margin:16px 10px 0 0;border:1px solid #aebed6;border-radius:8px;background:#fff;color:#123968;font:inherit;cursor:pointer}button.primary{background:#173f74;color:white;border-color:#173f74}button:disabled{opacity:.5;cursor:wait}#token{font-size:14px;margin-top:12px;color:#526078}.status{font-size:22px;font-weight:700}pre{font:14px/1.6 ui-monospace,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f8fc;padding:16px;border-radius:8px;margin:10px 0;max-height:330px;overflow:auto}#summary{display:flex;gap:22px;flex-wrap:wrap;color:#354d6f;font-size:14px}.hint{font-size:13px}#request{font-size:14px;color:#526078;overflow-wrap:anywhere}#result:empty{display:none}
+</style>
+<main>
+<h1>JWT 无状态认证与虚拟线程</h1>
+<p>应用系统体系架构 作业4 · 524031910745 丁宇轩</p>
+<section class="card">
+<div class="fields"><label>用户名<input id="username" value="demo" autocomplete="username"></label><label>密码<input id="password" type="password" value="123456" autocomplete="current-password"></label><label>图书 ID<input id="book" value="assignment4-book"></label></div>
+<button id="login">1 登录获取 JWT</button><button id="anonymous">2 不携带 Token 查询</button><button id="authorized" class="primary">3 携带 Token 查询</button>
+<div id="token">Token 尚未获取，仅保存在当前页面内存中。</div>
+</section>
+<section class="card" id="result" aria-live="polite"><div id="request">点击按钮发起真实 HTTP 请求。</div><div id="status" class="status"></div><div id="summary"></div><pre id="body">响应将在这里显示。</pre></section>
+<p class="hint">受保护资源：GET /api/secure/books/{id}。每次请求独立验签；线程信息来自实际执行查询的服务端线程。登录接口：POST /api/auth/login。</p>
+</main>
+<script>
+let token='';
+const el=id=>document.getElementById(id);
+async function run(kind){
+ const buttons=[...document.querySelectorAll('button')]; buttons.forEach(b=>b.disabled=true);
+ try{
+  const path=kind==='login'?'/api/auth/login':'/api/secure/books/'+encodeURIComponent(el('book').value);
+  const options={credentials:'omit',headers:{}};
+  if(kind==='login'){options.method='POST';options.headers['Content-Type']='application/json';options.body=JSON.stringify({username:el('username').value,password:el('password').value});}
+  if(kind==='authorized'){if(!token)throw Error('请先登录获取 JWT。');options.headers.Authorization='Bearer '+token;}
+  const start=performance.now(),response=await fetch(path,options),body=await response.json();
+  if(kind==='login'&&response.ok){token=body.data.accessToken;el('token').textContent='JWT 已获取 · '+body.data.tokenType+' · 有效期 '+body.data.expiresIn+' 秒 · 不保存到 Cookie 或 localStorage';}
+  el('request').textContent=new Date().toISOString()+'  '+(options.method||'GET')+' '+path+'  |  Authorization: '+(options.headers.Authorization?'Bearer [已隐藏]':'未携带');
+  el('status').textContent='HTTP '+response.status+' '+response.statusText;
+  el('status').style.color=response.ok?'#147246':'#b43130';
+  el('summary').textContent='虚拟线程: '+(response.headers.get('X-Thread-Virtual')||'—')+'　线程: '+(response.headers.get('X-Thread-Name')||'—')+'　Java: '+(response.headers.get('X-Java-Version')||'—')+'　耗时: '+Math.round(performance.now()-start)+' ms';
+  const displayed=JSON.parse(JSON.stringify(body));if(kind==='login'&&displayed.data?.accessToken)displayed.data.accessToken='[JWT 已获取，截图隐藏签名凭证]';
+  el('body').textContent=JSON.stringify(displayed,null,2);
+ }catch(error){el('status').textContent=error.message;el('body').textContent='';}finally{buttons.forEach(b=>b.disabled=false);}
+}
+['login','anonymous','authorized'].forEach(id=>el(id).addEventListener('click',()=>run(id)));
+</script>
+</html>

@@ -1,0 +1,14 @@
+# 隔离数据库，不改动本机 MySQL；鉴权与虚拟线程在默认配置中开启。
+spring:
+  datasource:
+    url: jdbc:h2:mem:assignment4;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data-assignment4.sql

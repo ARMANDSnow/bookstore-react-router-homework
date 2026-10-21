@@ -30,9 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <h3>仍保留的教学简化（答辩可主动提）</h3>
  * <ul>
- *   <li><b>无 Session / JWT</b>：登录成功直接返回用户信息，由前端写到 localStorage；
- *       后续业务接口靠 {@code ?userId=} 传身份。生产环境应用 Spring Security
- *       的认证体系签发凭证并做接口鉴权（SecurityConfig 中已留展望说明）</li>
+ *   <li>历史用户接口保留原契约；作业4的 /api/auth/login 在密码校验后签发 JWT，
+ *       /api/secure/** 每次验签，不依赖 HttpSession。历史公开接口不属于该鉴权边界。</li>
  * </ul>
  *
  * <h3>错误码约定</h3>

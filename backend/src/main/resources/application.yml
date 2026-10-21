@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   config:
     import: optional:file:.env[.properties]
   application:
@@ -32,3 +35,11 @@ deepseek:
   api-key: ${DEEPSEEK_API_KEY:}
   base-url: https://api.deepseek.com
   model: deepseek-flash
+
+bookstore:
+  jwt:
+    # 留空时为本地运行生成随机密钥，重启使旧 token 失效；多实例必须共享环境变量。
+    secret: ${JWT_SECRET:}
+    ttl-seconds: ${JWT_TTL_SECONDS:3600}
+  catalog:
+    simulated-delay-ms: ${CATALOG_DELAY_MS:0}

@@ -1,0 +1,231 @@
+{
+  "complete": true,
+  "at": "2026-10-21T09:21:01.230947+00:00",
+  "baseUrl": "http://127.0.0.1:8085",
+  "checks": [
+    {
+      "name": "missing-token",
+      "status": 401,
+      "headers": {
+        "Vary": "Origin",
+        "WWW-Authenticate": "Bearer",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "70",
+        "Date": "Wed, 21 Oct 2026 09:21:00 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 40101,
+        "message": "请提供有效的 Bearer Token",
+        "data": null
+      },
+      "ms": 56.13
+    },
+    {
+      "name": "invalid-token",
+      "status": 401,
+      "headers": {
+        "Vary": "Origin",
+        "WWW-Authenticate": "Bearer",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "70",
+        "Date": "Wed, 21 Oct 2026 09:21:00 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 40101,
+        "message": "请提供有效的 Bearer Token",
+        "data": null
+      },
+      "ms": 17.3
+    },
+    {
+      "name": "incorrect-password",
+      "status": 401,
+      "headers": {
+        "Vary": "Origin",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Date": "Wed, 21 Oct 2026 09:21:00 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 40101,
+        "message": "用户名或密码错误",
+        "data": null
+      },
+      "ms": 141.01
+    },
+    {
+      "name": "login",
+      "status": 200,
+      "headers": {
+        "Vary": "Origin",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Date": "Wed, 21 Oct 2026 09:21:00 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "accessToken": "[redacted]",
+          "tokenType": "Bearer",
+          "expiresIn": 3600
+        }
+      },
+      "ms": 77.67
+    },
+    {
+      "name": "tampered-token",
+      "status": 401,
+      "headers": {
+        "Vary": "Origin",
+        "WWW-Authenticate": "Bearer",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "70",
+        "Date": "Wed, 21 Oct 2026 09:21:00 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 40101,
+        "message": "请提供有效的 Bearer Token",
+        "data": null
+      },
+      "ms": 4.77
+    },
+    {
+      "name": "valid-token",
+      "status": 200,
+      "headers": {
+        "Vary": "Origin",
+        "X-Thread-Virtual": "true",
+        "X-Thread-Name": "tomcat-handler-5",
+        "X-Java-Version": "21.0.12.1",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Date": "Wed, 21 Oct 2026 09:21:00 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "id": "assignment4-book",
+          "title": "Java 21 虚拟线程与无状态服务",
+          "author": "书城课程示例",
+          "isbn": null,
+          "publisher": null,
+          "stock": 20,
+          "price": 59.0,
+          "originalPrice": 59.0,
+          "category": "tech",
+          "categoryName": "计算机与技术",
+          "categoryLabel": "技术实践",
+          "image": "/cover.jpg",
+          "rating": "未提供评分",
+          "badge": null,
+          "description": "用于验证图书 REST API。",
+          "summary": "通过受保护接口读取数据库图书。",
+          "highlight": "Java 21 Virtual Threads",
+          "audience": "课程学习者",
+          "review": "JWT 无状态认证示例"
+        }
+      },
+      "ms": 227.46
+    },
+    {
+      "name": "no-session-after-success",
+      "status": 401,
+      "headers": {
+        "Vary": "Origin",
+        "WWW-Authenticate": "Bearer",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "70",
+        "Date": "Wed, 21 Oct 2026 09:21:00 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 40101,
+        "message": "请提供有效的 Bearer Token",
+        "data": null
+      },
+      "ms": 1.57
+    },
+    {
+      "name": "authorized-not-found",
+      "status": 404,
+      "headers": {
+        "Vary": "Origin",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Frame-Options": "DENY",
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Date": "Wed, 21 Oct 2026 09:21:01 GMT",
+        "Connection": "close"
+      },
+      "body": {
+        "code": 40404,
+        "message": "书籍不存在",
+        "data": null
+      },
+      "ms": 206.51
+    }
+  ],
+  "concurrency": {
+    "requests": 64,
+    "allStatus200": true,
+    "allVirtual": true,
+    "totalMs": 225.08,
+    "minRequestMs": 205.67,
+    "maxRequestMs": 220.41
+  },
+  "note": "并发慢I/O功能验证；未与平台线程对照，不据此声称性能提升倍数。"
+}
