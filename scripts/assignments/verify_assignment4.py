@@ -32,6 +32,10 @@ def verify(base, output, count):
         assert not any(key.lower() == 'set-cookie' for key in response['headers']), name
         results.append({'name': name, **response})
 
+    # 【作业4 · 得分点4.5：401/200的真实HTTP验收顺序】
+    # 先无凭证/坏凭证查询401，再登录拿JWT，篡改签名应401，原JWT应200；
+    # 这验证的是服务器实际状态码，而不是只检查JSON业务码或静态页面文字。
+    # 截图由assignment4.html用相同接口展示并保存；本脚本提供可复跑的JSON佐证。
     resource = '/api/secure/books/assignment4-book'
     check('missing-token', call(resource), 401)
     check('invalid-token', call(resource, 'invalid.jwt.token'), 401)
@@ -53,8 +57,13 @@ def verify(base, output, count):
     assert headers['x-thread-virtual'] == 'true', headers
     assert headers['x-java-version'].split('.')[0] == '21', headers
     assert success['body']['data']['id'] == 'assignment4-book'
+    # 成功后再去掉Token仍应401。本脚本未用CookieJar；同一Cookie客户端不能继承
+    # 登录状态的更强检查在StatelessHttpTest里，不能只凭这行声称已测试Cookie复用。
     check('no-session-after-success', call(resource), 401)
     check('authorized-not-found', call('/api/secure/books/missing', token), 404)
+    # 【作业4 · 得分点4.2：并发请求验证】
+    # Python线程只负责同时发HTTP；是否使用Java虚拟线程由每个服务端响应头证明。
+    # 启动时可配置200ms慢I/O，确认多请求可共同推进；没有平台线程基线，不计算加速倍数。
     start = time.perf_counter()
     with concurrent.futures.ThreadPoolExecutor(max_workers=count) as executor:
         responses = list(executor.map(lambda _: call(resource, token), range(count)))

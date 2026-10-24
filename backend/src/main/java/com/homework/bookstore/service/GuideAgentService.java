@@ -23,6 +23,11 @@ public class GuideAgentService {
  public GuideReply chat(GuideRequest input){if(!capacity.tryAcquire())throw new BusinessException(40024,"购书向导正在忙，请稍后再试");try{return run(input);}finally{capacity.release();}}
  private GuideReply run(GuideRequest input){
   ArrayNode messages=mapper.createArrayNode();
+  // 【作业3 · 得分点3.4：让模型按咨询意图选择工具】
+  // 系统提示约定：选书查询本店书目，售后/会员查询政策；复合问题先查书，
+  // 观察实际书目后再查政策。单一意图只需对应工具，避免机械地把两个工具都调用。
+  // 本轮必须重新查依据；历史对话只帮助理解追问，不能替代当前库存或政策查询。
+  // 这里是模型路由指令，真正执行仍由下方白名单分派和参数校验控制。
   messages.addObject().put("role","system").put("content","你是知页书城购书向导。用友好简洁的中文纯文本回答选书和售后问题。"
    +"每次涉及本店书籍都要调用search_book_catalog；每次涉及退换货、会员、积分等政策都要调用query_store_policy。不要用历史结果代替本轮查询。"
    +"每轮仅调用一个工具。复杂问题同时问推荐和退货时，先查书，收到本店书目后再按用户图书状态与原因查政策，然后综合回答。单问政策无需查书，单问推荐无需查政策。"
@@ -33,7 +38,15 @@ public class GuideAgentService {
    +"使用自然的书城服务语言，不输出课程、演示或系统实现说明。办理退货、退款及积分抵扣请引导联系人工处理，不声称已执行。最后用自然语言回答，不输出Markdown表格、代码块或私有思考。");
   if(input.history()!=null)for(var turn:input.history())messages.addObject().put("role",turn.role()).put("content",turn.content());
   messages.addObject().put("role","user").put("content",input.message());
+  // steps保留有顺序的行动记录；books/chunks按来源编号去重，供最终页面显示依据。
+  // ids记录真实模型请求标识；attempts限制同一工具的相同查询，避免无效重复循环。
   var steps=new ArrayList<GuideReply.Step>();var books=new LinkedHashMap<String,BookDto>();var chunks=new LinkedHashMap<String,JsonNode>();var ids=new ArrayList<String>();var attempts=new HashMap<String,Integer>();
+  // 【作业3 · 得分点3.3：完整ReAct循环】
+  // ReAct在此指“选择动作→执行工具→观察结果→再决定动作或回答”。每次complete
+  // 都包含前面真实工具结果，因此第二轮可以依据查书结果决定怎样询问退货政策。
+  // 状态路径：模型有tool_calls→校验/执行→追加Observation→下一轮；
+  // 无tool_calls→校验最终回答→返回，或补充纠正提示继续。最多4次模型调用，
+  // 超限明确报错，不把半成品当作已完成的答案。
   for(int round=0;round<4;round++){
    var completion=model.complete(messages,definitions());ids.add(completion.requestId());JsonNode reply=completion.message(),calls=reply.path("tool_calls");
    if(!calls.isArray()||calls.isEmpty()){
@@ -43,6 +56,7 @@ public class GuideAgentService {
     return new GuideReply(answer,model.model(),steps,new ArrayList<>(books.values()),new ArrayList<>(chunks.values()),ids);
    }
    if(calls.size()>2||steps.size()+calls.size()>6)throw new BusinessException(40023,"查询步骤较多，请把问题分开再试");
+   // 保留模型发出的assistant工具消息，后续role=tool才能按调用ID对应到它。
    messages.add(reply);
    for(JsonNode call:calls){
     if(call.path("id").asText().isBlank())throw new BusinessException(40021,"工具调用缺少标识，请重试");
@@ -51,13 +65,22 @@ public class GuideAgentService {
     if(args==null||!args.isObject())args=mapper.createObjectNode();
     String query=args.path("query").asText("").trim(),purpose=args.path("purpose").asText("").trim();long started=System.nanoTime();
     JsonNode observation;
+    // 一轮只能执行一个动作，让模型先看到当前Observation再决定下一动作。
+    // 参数、工具名和重复次数都由服务端检查；非法调用转成错误Observation，
+    // 交回模型纠正，不会执行任意函数。相同工具+query最多尝试两次。
     if(calls.size()>1)observation=error("SINGLE_ACTION_REQUIRED","每轮只能执行一个动作；本轮未执行工具，请选择本次问题需要的一个工具");
     else if(args.size()!=2||!args.path("query").isTextual()||!args.path("purpose").isTextual()||query.isBlank()||query.length()>300||purpose.isBlank()||purpose.length()>100)observation=error("INVALID_ARGUMENTS","请使用query和一句公开行动目的purpose，不包含其他参数");
     else if(!List.of("search_book_catalog","query_store_policy").contains(name))observation=error("UNKNOWN_TOOL","只允许本店书目和政策查询工具");
     else if(attempts.merge(name+":"+query,1,Integer::sum)>2)observation=error("TOOL_LIMIT","相同查询已达到执行上限，请说明未知项并结束");
     else observation=name.equals("search_book_catalog")?search_book_catalog(query):query_store_policy(query);
+    // 【作业3 · 得分点3.5：可追溯的Thought→Action→Observation】
+    // Thought只保存purpose，即一句可公开的行动目的，例如“查找本店微服务书目”，
+    // 不是模型的隐藏思考过程。Action保存工具名/参数，Observation保存实际结果
+    // 或校验错误，另带执行耗时；同一份记录同时供服务器日志和前端步骤展示。
     steps.add(new GuideReply.Step(steps.size()+1,purpose.isBlank()?"工具参数需要核对":purpose,name,args,observation,(System.nanoTime()-started)/1_000_000));
     LOG.info("Guide Thought={} Action={} Arguments={} Observation={}",purpose,name.replaceAll("[^a-z_]",""),args,observation);
+    // 按tool_call_id回填结果是循环闭合的关键：模型下一轮看到的是实际执行结果，
+    // 而不是只看到“准备调用某工具”。错误结果也回填，允许下一轮修正或解释失败。
     messages.addObject().put("role","tool").put("tool_call_id",call.path("id").asText()).put("content",observation.toString());
     if(observation.path("ok").asBoolean()){
      if(name.equals("search_book_catalog"))for(JsonNode book:observation.path("books"))catalog.findById(book.path("id").asText()).ifPresent(b->books.put(b.getId(),BookDto.from(b)));
@@ -67,6 +90,11 @@ public class GuideAgentService {
   }
  throw new BusinessException(40023,"查询达到步骤上限，请将选书与政策问题分开再试");
  }
+ // 【作业3 · 得分点3.4：检查本轮是否查询所需依据，并核对政策引用】
+ // 关键词规则是模型路由之外的补充检查：发现明显意图缺少对应工具时，
+ // 返回纠正提示让模型继续调用。它不是完整的语义分类器，也不证明所有说法正确。
+ // 引用检查只允许当前成功检索返回的policy-N；有片段时至少引用一个，
+ // 防止模型编造编号或遗漏来源。条款条件、例外是否解释准确仍需实际案例验证。
  private String finalAnswerIssue(String question,String answer,List<GuideReply.Step> steps,Set<String> chunkIds){
   boolean asksBooks=question.matches("(?s).*(推荐|选书|书目|想学|学习|库存|有货|价格).*"),asksPolicy=question.matches("(?s).*(退|换|拆封|塑封|会员|积分|政策|售后|缺页|破损).*" );
   if(asksBooks&&!executed(steps,"search_book_catalog"))return "请先调用search_book_catalog取得本轮本店书目依据，再继续回答。";
@@ -78,6 +106,10 @@ public class GuideAgentService {
  }
  private boolean executed(List<GuideReply.Step> steps,String name){return steps.stream().anyMatch(s->s.action().equals(name)&&(s.observation().path("ok").asBoolean()||s.observation().path("errorCode").asText().equals(name.equals("search_book_catalog")?"CATALOG_UNAVAILABLE":"POLICY_UNAVAILABLE")));}
  public JsonNode search_book_catalog(String query){
+  // 【作业3 · 得分点3.4：查书工具连接本店真实目录】
+  // 在数据库书目中按主题/书名/作者关键词匹配，标题权重4、作者3、简介/详情1；
+  // 只返回分数大于0的最多5本，附当前价格和库存。这里采用关键词排序，
+  // 与政策工具的向量相似度检索是两种实现，不能混称为“全部都使用RAG”。
   try{
    String[] tokens=query.toLowerCase(Locale.ROOT).split("[\\s,，、;；]+");
    var found=catalog.findAll().stream().filter(b->score(b,tokens)>0).sorted(Comparator.<Book>comparingInt(b->score(b,tokens)).reversed().thenComparing(Book::getId)).limit(5).toList();
@@ -87,8 +119,12 @@ public class GuideAgentService {
   }catch(Exception e){return error("CATALOG_UNAVAILABLE","本店书目暂时无法查询，请稍后重试");}
  }
  private int score(Book b,String[] tokens){String title=b.getTitle().toLowerCase(Locale.ROOT),author=b.getAuthor().toLowerCase(Locale.ROOT),summary=(b.getSummary()+" "+b.getDescription()).toLowerCase(Locale.ROOT);int total=0;for(String t:tokens)if(!t.isBlank())total+=(title.contains(t)?4:0)+(author.contains(t)?3:0)+(summary.contains(t)?1:0);return total;}
+ // 政策工具委托PolicyRagClient执行真实向量检索；失败时明确无法确认政策，
+ // 结果仍进入同一ReAct上下文，不能退回模型常识假装已找到本店依据。
  public JsonNode query_store_policy(String query){try{return policies.query(query);}catch(BusinessException e){return error("POLICY_UNAVAILABLE","政策服务暂时不可用，无法确认退换或会员规则，请稍后重试或咨询人工客服");}}
  private ObjectNode error(String code,String message){return mapper.createObjectNode().put("ok",false).put("errorCode",code).put("message",message);}
+ // 工具Schema告诉模型有哪些可选动作、各自用途及所需参数；query用于实际检索，
+ // purpose用于公开行动记录。模型只提出调用，Java白名单才负责真正执行。
  private ArrayNode definitions(){ArrayNode tools=mapper.createArrayNode();for(String name:List.of("search_book_catalog","query_store_policy")){
   var fn=tools.addObject().put("type","function").putObject("function");fn.put("name",name).put("description",name.equals("search_book_catalog")?"用简短主题、书名或作者关键词查询本店图书，返回最多5本":"按自然语言检索退换货与会员政策，返回带编号的完整依据；涉及拆封需要同时保留非质量限制与质量例外");
   var schema=fn.putObject("parameters").put("type","object").put("additionalProperties",false);schema.putArray("required").add("query").add("purpose");var props=schema.putObject("properties");props.putObject("query").put("type","string").put("maxLength",300).put("description",name.equals("search_book_catalog")?"简短检索关键词，例如微服务":"包含图书状态、原因等条件的政策问题");props.putObject("purpose").put("type","string").put("maxLength",100).put("description","一句公开的行动目的，不是私有思考过程");

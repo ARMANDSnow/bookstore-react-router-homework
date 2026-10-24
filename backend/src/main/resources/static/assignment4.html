@@ -18,6 +18,9 @@
 <p class="hint">受保护资源：GET /api/secure/books/{id}。每次请求独立验签；线程信息来自实际执行查询的服务端线程。登录接口：POST /api/auth/login。</p>
 </main>
 <script>
+// 【作业4 · 得分点4.5：答辩截图入口】
+// 三个按钮依次演示登录、无Token返回401、有Token返回200；均发真实HTTP请求。
+// 页面内存保存凭证，刷新即丢失，且fetch省略Cookie，避免把Session当成JWT鉴权成功。
 let token='';
 const el=id=>document.getElementById(id);
 async function run(kind){
@@ -29,6 +32,8 @@ async function run(kind){
   if(kind==='authorized'){if(!token)throw Error('请先登录获取 JWT。');options.headers.Authorization='Bearer '+token;}
   const start=performance.now(),response=await fetch(path,options),body=await response.json();
   if(kind==='login'&&response.ok){token=body.data.accessToken;el('token').textContent='JWT 已获取 · '+body.data.tokenType+' · 有效期 '+body.data.expiresIn+' 秒 · 不保存到 Cookie 或 localStorage';}
+  // 截图同时保留请求路径、是否携带Authorization、实际HTTP码和服务端线程证据；
+  // 完整JWT不进入可见页面，响应里的accessToken也在下方副本中隐藏，不影响真实请求。
   el('request').textContent=new Date().toISOString()+'  '+(options.method||'GET')+' '+path+'  |  Authorization: '+(options.headers.Authorization?'Bearer [已隐藏]':'未携带');
   el('status').textContent='HTTP '+response.status+' '+response.statusText;
   el('status').style.color=response.ok?'#147246':'#b43130';

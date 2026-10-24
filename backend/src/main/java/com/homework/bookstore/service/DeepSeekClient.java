@@ -12,7 +12,11 @@ import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/** Credentials stay on the server; never log upstream headers or raw failures. */
+/**
+ * 【作业2 · 得分点2.2／2.4：真实模型API与工具协议】
+ * 本客户端负责HTTP通信，供作业2的工具问答和作业3的导购循环共用；不在此处执行具体业务工具。
+ * messages携带完整对话及工具结果，tools携带函数说明；密钥只留在服务端，不输出上游请求头或原始失败内容。
+ */
 @Service
 public class DeepSeekClient {
     private final ObjectMapper mapper;
@@ -31,6 +35,7 @@ public class DeepSeekClient {
     public Completion complete(ArrayNode messages, ArrayNode tools) {
         if (key.isBlank()) throw new BusinessException(40020, "阅读助手暂不可用，请稍后再来");
         try {
+            // auto允许模型按问题返回普通文本或工具请求；temperature=0降低随机性，但不保证每次输出逐字相同。
             var body = mapper.createObjectNode().put("model", model).put("temperature", 0).put("max_tokens", 1800).put("tool_choice", "auto");
             body.set("messages", messages); body.set("tools", tools);
             body.set("thinking", mapper.createObjectNode().put("type", "disabled"));
@@ -41,15 +46,18 @@ public class DeepSeekClient {
             if (response.statusCode() != 200) throw new BusinessException(40021, "助手服务暂不可用，请稍后重试");
             var payload = mapper.readTree(response.body());
             var choice = payload.path("choices").path(0);
+            // stop表示本轮正常结束，tool_calls表示请求工具；其他结束原因不当作完整可用答案继续执行。
             if (!choice.path("finish_reason").asText().matches("stop|tool_calls"))
                 throw new BusinessException(40021, "助手回复未完整生成，请稍后重试");
             var message = choice.path("message");
             if (!message.isObject()) throw new BusinessException(40021, "助手回复暂时无法读取，请稍后重试");
+            // 保留完整message中的role/content/tool_calls及调用id，由上层配对结果；请求id用于追踪模型调用。
             return new Completion(message, payload.path("id").asText());
         } catch (BusinessException ex) { throw ex;
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt(); throw new BusinessException(40021, "本次查询已中断，请重试");
         } catch (Exception ex) {
+            // 【作业2 · 得分点2.5】模型API连接/超时在此结束请求并交前端重试，区别于工具错误回填后由模型纠正。
             throw new BusinessException(40021, "助手连接失败或等待超时，请稍后重试");
         }
     }

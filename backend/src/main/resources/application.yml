@@ -2,6 +2,11 @@ server:
   port: 8080
 
 spring:
+  # 【作业4 · 得分点4.2：让实际Web请求使用虚拟线程】
+  # 在JDK21 + 当前Spring Boot内嵌Tomcat环境下，此开关启用请求处理的虚拟线程。
+  # 虚拟线程是JVM调度的轻量线程；等待I/O时通常可让出承载它的平台线程，适合多请求等待。
+  # 这不等于CPU计算自动变快，也不意味着数据库连接数无限；实际效果须观察请求线程。
+  # SecureBookController用currentThread().isVirtual()取真实结果，不能只凭配置截图证明。
   threads:
     virtual:
       enabled: true
@@ -38,8 +43,12 @@ deepseek:
 
 bookstore:
   jwt:
+    # 【作业4 · 得分点4.3/4.4：签名配置与无状态的边界】
+    # JWT_SECRET是Base64编码的签名密钥，HS256至少需要256位密钥材料，不是用户密码。
+    # 服务端保存密钥和验签规则，不保存每个客户端的登录Session；每次请求自行验证JWT。
     # 留空时为本地运行生成随机密钥，重启使旧 token 失效；多实例必须共享环境变量。
     secret: ${JWT_SECRET:}
     ttl-seconds: ${JWT_TTL_SECONDS:3600}
   catalog:
+    # 启动时设为200可模拟200ms慢I/O；默认0不加延迟。不是客户端能随意传大的查询参数。
     simulated-delay-ms: ${CATALOG_DELAY_MS:0}

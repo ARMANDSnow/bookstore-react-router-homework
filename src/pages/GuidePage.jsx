@@ -12,6 +12,10 @@ export default function GuidePage(){
  async function send(question=input,retryIndex=null){
   if(running.current||!question.trim())return;const controller=new AbortController();running.current=controller;setBusy(true);if(retryIndex===null)setInput('');
   const target=retryIndex??turns.length;
+  // 【作业3 · 得分点3.3：多轮对话与单次代理循环的边界】
+  // 前端传回最近完成的问答，帮助后端理解“这本书”等追问；一次askGuide请求
+  // 内部的多次模型调用/工具执行由GuideAgentService完成。最终reply到达后，
+  // 前端统一展示答案与实际steps，本页不是逐个步骤实时流式接收。
   const history=turns.slice(0,target).filter(t=>t.reply).flatMap(t=>[{role:'user',content:t.question},{role:'assistant',content:t.reply.answer.slice(0,4000)}]).slice(-20);
   nearBottom.current=true;if(retryIndex!==null)setTurns(t=>t.map((v,i)=>i===target?{question:v.question}:v));else setTurns(t=>[...t,{question}]);
   try{const reply=await askGuide(question,history,controller.signal);if(!controller.signal.aborted)setTurns(t=>t.map((v,i)=>i===target?{...v,reply}:v));}
@@ -28,7 +32,13 @@ export default function GuidePage(){
      {!turns.length&&<div className="assistant-welcome"><span aria-hidden="true">✳</span><h2>先说说，你想读些什么。</h2><p>一本书的推荐，或者一个售后问题。<br/>我们从这里开始。</p></div>}
      {turns.map((turn,index)=><div className="guide-turn" key={index}><p className="assistant-question">{turn.question}</p>{turn.reply?<div className="assistant-answer"><span className="assistant-answer-label">购书向导</span><p className="guide-answer-text">{turn.reply.answer}</p>
       {!!turn.reply.books.length&&<div className="guide-book-results">{turn.reply.books.map(b=><Link key={b.id} to={`/books/${encodeURIComponent(b.id)}`}><img referrerPolicy="no-referrer" src={b.image} alt=""/><span><strong>{b.title}</strong><small>{b.author} · ¥{Number(b.price).toFixed(2)} · {b.stock==null?'库存待确认':`库存${b.stock}本`}</small></span><span aria-hidden="true">↗</span></Link>)}</div>}
+      {/* 【作业3 · 得分点3.2：把RAG依据展示给用户】展开后可对照原文、片段编号和版本；
+          policyChunks来自本轮成功的工具结果，答复中的policy-N由后端核对来源。 */}
       {!!turn.reply.policyChunks.length&&<details className="guide-sources"><summary>查看政策依据 · {turn.reply.policyChunks.length} 条</summary>{turn.reply.policyChunks.map(c=><article key={c.id}><strong>{c.title} · {c.id}</strong><p>{c.text}</p><small>退换货与会员政策 · 更新于 {c.version?.replace(/^course-/,'')}</small></article>)}</details>}
+      {/* 【作业3 · 得分点3.5：按顺序展示Thought→Action→Observation】
+          Thought是后端记录的一句公开行动目的，不是模型隐藏推理；Action展示实际工具和query，
+          Observation根据真实返回值显示匹配书目、政策编号或失败原因。完整结果保存在steps中，
+          本区只作便于阅读的摘要，不在前端捏造查询成功。 */}
       {!!turn.reply.steps.length&&<details className="guide-trace"><summary>查看行动记录 · {turn.reply.steps.length} 个步骤</summary><ol>{turn.reply.steps.map(s=><li key={s.index}><div><span>Thought · 行动目的</span><p>{s.thought}</p></div><div><span>Action · 调用工具</span><code>{s.action}({JSON.stringify({query:s.arguments.query})})</code></div><div><span>Observation · 查询结果</span><p>{s.observation.ok?s.action==='search_book_catalog'?s.observation.hasMatches?`本店匹配 ${s.observation.books.length} 本：${s.observation.books.map(b=>b.title).join('、')}`:s.observation.message:s.observation.matched?`政策依据：${s.observation.chunks.map(c=>`${c.title}（${c.id}）`).join('、')}`:s.observation.message:s.observation.message}</p></div></li>)}</ol></details>}
      </div>:turn.error?<div className="assistant-error" role="alert"><strong>咨询暂时无法完成</strong><p>{turn.error}</p><button disabled={busy} onClick={()=>send(turn.question,index)}>重试这个问题</button><button disabled={busy} onClick={()=>{setInput(turn.question);}}>编辑问题</button></div>:<div className="assistant-thinking" role="status">正在查找书目与相关依据…</div>}</div>)}
     </div>

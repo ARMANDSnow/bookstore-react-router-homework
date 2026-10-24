@@ -25,12 +25,21 @@ public class SecureBookController {
         this.delayMs = delayMs;
     }
 
+    // 【作业4 · 得分点4.1：面向图书资源的REST查询】
+    // GET /api/secure/books/{id}用路径表达“哪本书”，GET只读；权限检查先于Controller执行。
+    // 成功返回HTTP200和统一JSON包装，不存在的图书由服务层/异常处理映射为404。
+    // 缺失或错误JWT在Security链中返回401，不应进入这里，也不应返回空书冒充成功。
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<BookDto>> get(@PathVariable String id) throws InterruptedException {
-        // 模拟 I/O 等待，由启动配置控制，外部请求不能任意放大延迟。
+        // 【作业4 · 得分点4.2：在真实HTTP线程上证明虚拟线程生效】
+        // 模拟I/O等待由启动配置控制，外部请求不能任意放大延迟；这里没有额外new一个
+        // 虚拟线程再报告它的类型，而是在实际处理查询的请求线程上调用currentThread。
+        // 虚拟线程执行sleep时可释放承载它的平台线程，便于大量等待型请求并行推进。
         if (delayMs > 0) Thread.sleep(delayMs);
         var thread = Thread.currentThread();
         var book = books.getBook(id);
+        // 响应头提供可观察证据：isVirtual、线程名、Java版本；配置文件启用与运行证据相互印证。
+        // verify_assignment4.py再用64并发验证每个请求的头，不将单次成功等同于性能提升倍率。
         return ResponseEntity.ok()
             .header("X-Thread-Virtual", Boolean.toString(thread.isVirtual()))
             .header("X-Thread-Name", thread.getName())

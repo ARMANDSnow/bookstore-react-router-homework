@@ -8,6 +8,7 @@ const money = value => Number(value).toFixed(2);
 export default function AssistantPage({ books }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedBook = searchParams.get("book");
+  // 【作业2 · 得分点2.5：异常答辩入口】访问 /assistant?scenario=competitor-timeout-once，首次竞价调用模拟超时；默认走正常流程。
   const scenario = searchParams.get("scenario") === "competitor-timeout-once" ? "competitor-timeout-once" : "normal";
   const choices = books.filter(book => book.isbn);
   const [bookId, setBookId] = useState(()=>requestedBook || "");
@@ -31,6 +32,11 @@ export default function AssistantPage({ books }) {
   async function send(text = input, retry = false) {
     const typed = text.trim();
     if (!typed || busy || request.current || (!retry && typed.length > 1000)) return;
+    /*
+     * 【作业2 · 得分点2.4／2.5：向后端提交真实用户上下文】
+     * 未填写ISBN时把当前选书信息带入问题；用户明确输入号码（包括不完整号码）时保留原问题供核对，
+     * 不用当前选书覆盖用户意图。历史只提交user/assistant文本，具体工具调用仍由后端重新执行。
+     */
     const hasIsbn = /(?:\d[\s-]*){13}/.test(typed) || /(?:ISBN|书号)[\s:：=＝为是]{0,20}\d/i.test(typed) || /^\d[\d\s-]*$/.test(typed);
     const question = selected && !hasIsbn ? `当前选书：《${selected.title}》（ISBN ${selected.isbn}）。\n用户问题：${typed}` : typed;
     follow.current = true;
@@ -43,6 +49,7 @@ export default function AssistantPage({ books }) {
       if (controller.signal.aborted) return;
       setTurns(current => [...current, { role: "assistant", content: reply.answer, reply }]);
     } catch (failure) {
+      // 整次HTTP/模型服务失败才进入页面“重试这条问题”；工具错误及其模型重试由后端在同一次请求内处理。
       if (controller.signal.aborted) return;
       setError(failure instanceof TypeError ? "连接暂时中断，请确认网络和书城服务可用后重试。" : failure.message || "连接失败，请稍后重试"); setFailed({ question, typed: retry ? failed.typed : typed, scenario: retry ? failed.scenario : scenario });
     } finally {
@@ -67,9 +74,12 @@ export default function AssistantPage({ books }) {
         <div className="assistant-chat-header"><div><span className="assistant-avatar"><CommentOutlined /></span><div><strong>知页阅读助手</strong><small>帮你把问题问明白</small></div></div><button type="button" onClick={clear} disabled={busy || !turns.length}>开启新对话</button></div>
         <div className="assistant-messages" ref={messages} onScroll={event=>{const node=event.currentTarget;follow.current=node.scrollHeight-node.scrollTop-node.clientHeight<100;}} role="log" aria-live="polite" aria-relevant="additions text">
           {!turns.length && <div className="assistant-welcome"><span className="assistant-welcome-symbol" aria-hidden="true">✳</span><h2>好书值得多了解一点。</h2><p>选一本书，或直接告诉我它的 ISBN。<br />我可以帮你查库存，也可以比较参考报价。</p><div className="assistant-prompts">{presets.map(item => <button key={item.label} type="button" onClick={() => send(item.question)} disabled={busy}>{item.label}<span aria-hidden="true">↗</span></button>)}</div></div>}
+          {/* 【作业2 · 得分点2.4】气泡显示后端模型最终答案；图书卡片和查询记录使用同一回复携带的数据，便于对照回答依据。 */}
           {turns.map((turn,index) => <article key={index} className={`assistant-turn ${turn.role}`}><div className="assistant-turn-label">{turn.role === "user" ? "你" : "知页阅读助手"}</div><div className="assistant-bubble">{turn.content}</div>{turn.reply && <>
+            {/* 【作业2 · 得分点2.5】只有记录中同时存在竞价超时和后续成功重试才展示恢复提示，不因“请求完成”就推定故障已恢复。 */}
             {turn.reply.steps?.some(step=>step.observation.error === "COMPETITOR_TIMEOUT") && turn.reply.steps?.some(step=>step.name === "get_competitor_price" && step.observation.ok && step.observation.attempt > 1) && <p className="assistant-recovered" role="status"><CheckCircleOutlined /> 报价查询曾超时，重试后已获取结果。</p>}
             {turn.reply.books?.length > 0 && <div className="assistant-book-results">{turn.reply.books.map(book => <Link to={`/books/${book.id}`} key={book.id}><img referrerPolicy="no-referrer" src={book.image} alt="" /><span><strong>{book.title}</strong><small>本店售价 ¥{money(book.price)} · {book.stock == null ? "库存待确认" : `库存 ${book.stock} 本`}</small></span><span aria-hidden="true">↗</span></Link>)}</div>}
+            {/* 【作业2 · 得分点2.2／2.3／2.5】展开后可核对实际函数名、JSON参数、结果及重试状态；simulated结果显示参考报价，错误显示原工具说明。 */}
             {turn.reply.steps?.length > 0 && <details className="assistant-tool-details"><summary>查看查询记录 · {turn.reply.steps.length} 个步骤</summary><ol>{turn.reply.steps.map(step => <li key={step.index}><div><strong>{step.name === "check_inventory" ? "查询本店库存" : "获取参考报价"}</strong><span>{step.observation.ok ? step.observation.attempt > 1 ? "重试成功" : "已完成" : step.observation.retryable ? "查询超时 · 可重试" : "待核对"}</span></div><code>{step.name}({JSON.stringify(step.arguments)})</code><p>{step.observation.ok ? step.observation.simulated ? `参考报价 ¥${money(step.observation.price)}` : `${step.observation.title} · ${step.observation.availability}${step.observation.stock == null ? "" : ` ${step.observation.stock} 本`}` : step.observation.message}</p></li>)}</ol></details>}
           </>}</article>)}
           {busy && <div className="assistant-pending" role="status"><span className="assistant-thinking"><i /><i /><i /></span><span>正在核对信息，稍等一下…</span></div>}

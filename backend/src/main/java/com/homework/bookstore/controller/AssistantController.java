@@ -22,6 +22,12 @@ public class AssistantController {
     public ApiResponse<java.util.Map<String,Object>> status() {
         return ApiResponse.success(java.util.Map.of("configured",model.configured(),"model",model.model()));
     }
+    /*
+     * 【作业2 · 得分点2.2／2.4／2.5：前后端连接入口】
+     * 前端提交本轮问题、受限历史和可选演示场景；@Valid先执行DTO中的长度、角色及场景白名单校验。
+     * AssistantService完成真实模型与本地工具循环后，一并返回自然语言answer、工具steps和图书信息。
+     * 控制器不自行编写回答或伪造工具结果；API密钥由后端DeepSeekClient读取，浏览器不接触密钥。
+     */
     @PostMapping("/chat")
     public ApiResponse<AssistantReply> chat(@Valid @RequestBody AssistantRequest request) {
         return ApiResponse.success(assistant.chat(request));

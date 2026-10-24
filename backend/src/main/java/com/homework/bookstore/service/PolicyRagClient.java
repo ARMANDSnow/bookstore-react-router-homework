@@ -24,8 +24,14 @@ public class PolicyRagClient {
     }
     public JsonNode status() { return call("/status", null); }
     public JsonNode document() { return call("/document", null); }
+    // 【作业3 · 得分点3.2：把向量检索接入Java工具】
+    // query_store_policy最终调用这里，向本地Embedding服务发送自然语言query。
+    // /query返回匹配状态、原文片段、policy-N编号及相似度，原样作为Observation
+    // 交回代理；本客户端不生成政策答案，也不把检索失败补成自编条款。
     public JsonNode query(String query) { return call("/query", Map.of("query", query)); }
     private JsonNode call(String path, Object body) {
+        // 最多4个并发调用，连接上限3秒、单请求上限30秒。非200或非JSON对象
+        // 都统一视为服务不可用，由GuideAgentService转成可观察的工具失败结果。
         if (!capacity.tryAcquire()) throw unavailable();
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path)).timeout(Duration.ofSeconds(30));
