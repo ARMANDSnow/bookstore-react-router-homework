@@ -1,0 +1,44 @@
+[
+  {
+    "assignment": 2,
+    "sourceFilesChangedSinceExtraction": [],
+    "tests": {
+      "tests": 62,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "npmCi": "passed --ignore-scripts, installed 149 packages",
+    "frontendBuild": "passed",
+    "buildWarning": "bundle chunk >500 kB only",
+    "javaRuntime": "21.0.12.1",
+    "javaSourceTarget": 17,
+    "mavenRepo": "/private/tmp/bookstore-assignment4-runtime/m2",
+    "logs": [
+      "/tmp/bookstore-audit-package2-maven.log",
+      "/tmp/bookstore-audit-package2-npm-ci.log",
+      "/tmp/bookstore-audit-package2-build.log"
+    ]
+  },
+  {
+    "assignment": 3,
+    "sourceFilesChangedSinceExtraction": [],
+    "tests": {
+      "tests": 76,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "npmCi": "passed --ignore-scripts, installed 149 packages",
+    "frontendBuild": "passed",
+    "buildWarning": "bundle chunk >500 kB only",
+    "javaRuntime": "21.0.12.1",
+    "javaSourceTarget": 17,
+    "mavenRepo": "/private/tmp/bookstore-assignment4-runtime/m2",
+    "logs": [
+      "/tmp/bookstore-audit-package3-maven.log",
+      "/tmp/bookstore-audit-package3-npm-ci.log",
+      "/tmp/bookstore-audit-package3-build.log"
+    ]
+  }
+]
